@@ -33,23 +33,14 @@ void mouse(int button, int state, int x, int y);
 void update();
 
 // MAIN FUNCTION:
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-	// HIDE CONSOLE WINDOW:
-	FreeConsole();
-
 	// PARSING COMMAND LINE ARGUMENTS TO GLUT:
 	glutInit(&argc, argv);
 
 	// SETUP GLUT DISPLAY MODE AND WINDOW:
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowSize(S_WIDTH, S_HEIGHT);
-
-	// CENTER WINDOW RELATIVE TO SCREEN RESOLUTION:
-	RECT resolution;
-	GetWindowRect(GetDesktopWindow(), &resolution);
-	glutInitWindowPosition((resolution.right / 2) - (S_WIDTH / 2),
-						   (resolution.bottom / 2) - (S_HEIGHT / 2));
 
 	// WINDOW TITLE:
 	glutCreateWindow("Topdown Racing");

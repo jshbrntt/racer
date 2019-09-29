@@ -1,0 +1,3 @@
+[submodule "SOIL"]
+	path = SOIL
+	url = git@github.com:DeVaukz/SOIL.git
