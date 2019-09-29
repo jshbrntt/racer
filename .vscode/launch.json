@@ -5,7 +5,7 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/racer",
+            "program": "${workspaceFolder}/bin/racer",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
