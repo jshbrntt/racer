@@ -7,6 +7,8 @@ That being said this is a far from perfect example of how to program a game in C
 
 As of 2019-09-29 I decided to dig out the original source code and get it compiling and running on macOS (10.13.6 High Sierra) using [Visual Studio Code](https://code.visualstudio.com/) and [Clang](https://clang.llvm.org/).
 
+![Demo](https://github.com/synthecypher/racer/blob/master/demo.gif?raw=true)
+
 # Building
 
 # macOS (10.13.6 High Sierra)
