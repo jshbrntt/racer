@@ -20,7 +20,7 @@ As of 2019-09-29 I decided to dig out the original source code and get it compil
 $ xcode-select --install
 xcode-select: error: command line tools are already installed, use "Software Update" to install updates
 
-# Ensure Clange is ready to use.
+# Ensure Clang is ready to use.
 $ clang++ -v
 Apple LLVM version 10.0.0 (clang-1000.10.44.4)
 Target: x86_64-apple-darwin17.7.0
