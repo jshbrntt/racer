@@ -19,12 +19,18 @@
 #include <vector>
 #include <math.h>
 #include <time.h>
+#ifdef _WIN32
 #include <windows.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
+#include "glut.h"	// The OpenGL Utility Toolkit (GLUT),	http://user.xmission.com/~nate/glut.html
+#else
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#include <GLUT/glut.h>
+#endif
 
 // GAME HEADERS:
-#include "glut.h"	// The OpenGL Utility Toolkit (GLUT),	http://user.xmission.com/~nate/glut.html
 #include "SOIL.h"	// Simple OpenGL Image Library,			http://www.lonesock.net/soil.html
 #include "point.h"	// Multi-purpose Textures,				http://www.mptextures.com/
 #include "glrgb.h"
