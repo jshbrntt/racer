@@ -25,12 +25,14 @@
 #include <gl/glu.h>
 #include "glut.h"	// The OpenGL Utility Toolkit (GLUT),	http://user.xmission.com/~nate/glut.html
 #include "SOIL.h"	// Simple OpenGL Image Library,			http://www.lonesock.net/soil.html
-#else
+#elif __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
 #include <SOIL/SOIL.h>
 #include <float.h>
+#else
+#error unsupported platform
 #endif
 
 // GAME HEADERS:
