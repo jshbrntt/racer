@@ -33,7 +33,7 @@ void mouse(int button, int state, int x, int y);
 void update();
 
 // MAIN FUNCTION:
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	// HIDE CONSOLE WINDOW:
 	FreeConsole();
