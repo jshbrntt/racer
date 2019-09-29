@@ -28,6 +28,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #include <GLUT/glut.h>
+#include <float.h>
 #endif
 
 // GAME HEADERS:
