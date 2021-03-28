@@ -33,36 +33,47 @@ void mouse(int button, int state, int x, int y);
 void update();
 
 // MAIN FUNCTION:
-int main(int argc, char **argv)
+int main(int argc, char *args[])
 {
+	STUBBED("Create window");
 	// PARSING COMMAND LINE ARGUMENTS TO GLUT:
-	glutInit(&argc, argv);
+	// glutInit(&argc, argv);
 
 	// SETUP GLUT DISPLAY MODE AND WINDOW:
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-	glutInitWindowSize(S_WIDTH, S_HEIGHT);
+	// glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	// glutInitWindowSize(S_WIDTH, S_HEIGHT);
 
 	// WINDOW TITLE:
-	glutCreateWindow("Topdown Racing");
+	STUBBED("Set window title");
+	// glutCreateWindow("Topdown Racing");
 	init();
 
 	// GLUT FUNCTIONS:
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutMouseFunc(mouse);
-	glutPassiveMotionFunc(mouseMotion);
-	glutIdleFunc(update);
+	STUBBED("Set update function");
+	// glutDisplayFunc(display);
+	STUBBED("Set window resize function");
+	// glutReshapeFunc(reshape);
+	STUBBED("Set mouse button function");
+	// glutMouseFunc(mouse);
+	STUBBED("Set mouse move function");
+	// glutPassiveMotionFunc(mouseMotion);
+	STUBBED("Set render function");
+	// glutIdleFunc(update);
 
 	// GLUT KEYBOARD:
-	glutIgnoreKeyRepeat(GLUT_DEVICE_IGNORE_KEY_REPEAT);
-	glutKeyboardFunc(keyDown);
-	glutKeyboardUpFunc(keyUp);
+	// glutIgnoreKeyRepeat(GLUT_DEVICE_IGNORE_KEY_REPEAT);
+	STUBBED("Set key down function");
+	// glutKeyboardFunc(keyDown);
+	STUBBED("Set key up function");
+	// glutKeyboardUpFunc(keyUp);
 
 	// INITIALIZING GAME MENU:
 	gameMenu();
 
 	// START MAIN LOOP:
-	glutMainLoop();
+	STUBBED("Start main loop");
+	// glutMainLoop();
+	return 0;
 }
 
 // DECLARING EXTERNAL GAME VARIABLES:
@@ -214,7 +225,8 @@ void display()
 	
 	// FLUSH AND SWAP BUFFERS:
 	glFlush();
-	glutSwapBuffers();
+	STUBBED("Swap buffers");
+	// glutSwapBuffers();
 }
 
 void reshape(int width, int height)
@@ -269,44 +281,49 @@ void mouseMotion(int x, int y)
 void mouse(int button, int state, int x, int y)
 {
 	// DETECTING MOUSE BUTTON PRESSES:
-	switch(button)
-	{
-		case GLUT_LEFT_BUTTON:
-			if(state == GLUT_DOWN)
-			{
-				LEFTMOUSE = true;
-			} else {
-				LEFTMOUSE = false;
-			}
-			break;
-		case GLUT_RIGHT_BUTTON:
-			break;
-		default:
-			break;
-	}
+	STUBBED("Check mouse button state");
+	// switch(button)
+	// {
+	// 	case GLUT_LEFT_BUTTON:
+	// 		if(state == GLUT_DOWN)
+	// 		{
+	// 			LEFTMOUSE = true;
+	// 		} else {
+	// 			LEFTMOUSE = false;
+	// 		}
+	// 		break;
+	// 	case GLUT_RIGHT_BUTTON:
+	// 		break;
+	// 	default:
+	// 		break;
+	// }
 }
 
 void update()
 {
-	glutPostRedisplay();
+	STUBBED("Redisplay required");
+	// glutPostRedisplay();
 }
 
 GLuint PNGtoGLtexture(const char *filename)
 {
+	STUBBED("Load PNG as texture: " + string(filename));
 	// IMPORTING PNG INTO OPENGL:
-	GLuint textureID = SOIL_load_OGL_texture
-	(
-		filename,
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-	);
-	if(textureID == 0)
-	{
-		printf("SOIL loading error: '%s'\n", filename);
-		exit(1);
-	}
-	return textureID;
+	// GLuint textureID = SOIL_load_OGL_texture
+	// (
+	// 	filename,
+	// 	SOIL_LOAD_AUTO,
+	// 	SOIL_CREATE_NEW_ID,
+	// 	SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	// );
+	// if(textureID == 0)
+	// {
+	// 	printf("SOIL loading error: '%s'\n", filename);
+	// 	exit(1);
+	// }
+	// return textureID;
+	GLuint stubTextureId;
+	return stubTextureId;
 }
 
 int roundUp(int num, int multiple)
@@ -351,6 +368,7 @@ void renderBitmapString(float x, float y, void* font, const char* string)
 	glRasterPos2f(x, y);
 	for (c = string; *c != '\0'; c++)
 	{
-		glutBitmapCharacter(font, *c);
+		STUBBED("Render character");
+		// glutBitmapCharacter(font, *c);
 	}
 }

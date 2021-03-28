@@ -113,5 +113,6 @@ void HUD::draw()
 	stringstream hud;
 	hud << "LAP: " << player->currentLap << "/" << lapLimit << endl;
 	glColor3f(1.0f, 0.0f, 0.0f);
-	renderBitmapString(6, S_HEIGHT - 20, GLUT_BITMAP_HELVETICA_18, hud.str().c_str());
+	STUBBED("RENDER LAP COUNTER");
+	// renderBitmapString(6, S_HEIGHT - 20, GLUT_BITMAP_HELVETICA_18, hud.str().c_str());
 }

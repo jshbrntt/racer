@@ -1,3 +1,9 @@
-[submodule "SOIL"]
-	path = SOIL
-	url = git@github.com:DeVaukz/SOIL.git
+[submodule "cmake/sdl2"]
+	path = cmake/sdl2
+	url = https://gitlab.com/aminosbh/sdl2-cmake-modules.git
+[submodule "libsdl-org/SDL"]
+	path = libsdl-org/SDL
+	url = git@github.com:libsdl-org/SDL.git
+[submodule "libsdl-org/SDL_image"]
+	path = libsdl-org/SDL_image
+	url = git@github.com:libsdl-org/SDL_image.git
