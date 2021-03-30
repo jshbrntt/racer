@@ -2,10 +2,15 @@
 
 #include "menu.h"
 
-GLuint Menu::menuTexture()
+SDL_Surface *Menu::menuTexture()
 {
-	// IMPORTING SPLASH SCREEN TEXTURE:
-	return PNGtoGLtexture("textures/menu/splashscreen.png");
+  // IMPORTING SPLASH SCREEN TEXTURE:
+  return loadSurface("textures/menu/splashscreen.png");
 }
 
-Menu::Menu():Entity(getBox(S_WIDTH, S_HEIGHT), getBox(S_WIDTH, S_HEIGHT), Point(0, 0), 0, menuTexture()){}
+Menu::Menu() : Entity(
+                   getBox(S_WIDTH, S_HEIGHT),
+                   getBox(S_WIDTH, S_HEIGHT),
+                   Point(0, 0),
+                   0,
+                   menuTexture()) {}

@@ -1,13 +1,13 @@
 // FILE: "global.h"
 
-#ifndef	GLOBAL_H
-#define	GLOBAL_H
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
 // DEBUG MACROS:
-#define DEBUG		1
-#define COLLISION	1
-#define RESPONSE	1
-#define AI			1
+#define DEBUG 1
+#define COLLISION 1
+#define RESPONSE 1
+#define AI 1
 
 // SYSTEM MACROS:
 #define _USE_MATH_DEFINES
@@ -24,11 +24,12 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <SDL.h>
+#include <SDL_image.h>
 
 #define STUBBED(x) SDL_Log("STUBBED: %s\n", x)
 
 // GAME HEADERS:
-#include "point.h"	// Multi-purpose Textures,				http://www.mptextures.com/
+#include "point.h" // Multi-purpose Textures: http://www.mptextures.com/
 #include "glrgb.h"
 #include "entity.h"
 #include "menu.h"
@@ -42,26 +43,29 @@
 extern const float S_WIDTH;
 extern const float S_HEIGHT;
 extern bool LEFTMOUSE;
-extern int	MOUSE_X;
+extern int MOUSE_X;
 extern int MOUSE_Y;
 extern vector<bool> KEYS;
 
 // GAME VARIABLES:
-extern Track* track;
-extern Player* player;
-extern Enemy* enemy;
-extern vector<Car*> cars;
+extern Track *track;
+extern Player *player;
+extern Enemy *enemy;
+extern vector<Car *> cars;
 extern int lapLimit;
 extern bool raceStarted;
 extern bool resetGame;
 extern bool gameRun;
 extern bool pause;
+extern SDL_Window *gWindow;
+extern SDL_Surface *gScreenSurface;
 
 // GLOBAL FUNCTIONS:
 GLuint PNGtoGLtexture(const char *filename);
+SDL_Surface *loadSurface(std::string path);
 int roundUp(int numToRound, int multiple);
 vector<Point> getBox(float width, float height, Point position = Point(0, 0));
 vector<Point> getPoly(int sides, float radius, Point position = Point(0, 0));
-void renderBitmapString(float x, float y, void* font, const char* string);
+void renderBitmapString(float x, float y, void *font, const char *string);
 
 #endif

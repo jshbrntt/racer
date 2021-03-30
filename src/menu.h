@@ -2,15 +2,16 @@
 
 #include "global.h"
 
-#ifndef	MENU_H
-#define	MENU_H
+#ifndef MENU_H
+#define MENU_H
 
 class Menu : public Entity
 {
 private:
-	GLuint menuTexture();
+  SDL_Surface *menuTexture();
+
 public:
-	Menu();
+  Menu();
 };
 
 #endif
