@@ -30,10 +30,10 @@ vector<Point> Player::playerShape()
   return shape;
 }
 
-SDL_Surface *Player::playerTexture()
+SDL_Texture *Player::playerTexture()
 {
   // IMPORTING PLAYER TEXTURE:
-  return loadSurface("textures/cars/red_car.png");
+  return loadTexture("../textures/cars/red_car.png");
 }
 
 Player::Player() : Car()
@@ -70,11 +70,11 @@ void Player::update()
   }
   if (KEYS['a'] || KEYS['A'])
   {
-    player->turnLeft();
+    player->turnRight();
   }
   if (KEYS['d'] || KEYS['D'])
   {
-    player->turnRight();
+    player->turnLeft();
   }
 }
 

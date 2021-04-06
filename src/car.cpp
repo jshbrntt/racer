@@ -8,7 +8,7 @@ Car::Car(
     vector<Point> shape,
     Point position,
     float angle,
-    SDL_Surface *texture) : Entity(verts,
+    SDL_Texture *texture) : Entity(verts,
                                    shape,
                                    position,
                                    angle,
@@ -36,7 +36,7 @@ Car::Car(
   vector<Point> flameBox = getBox(28, 28, Point(-14, -14));
   Point flamePosition(position.x + 40 * cos(angle * (M_PI / 180)),
                       position.y + 40 * sin(angle * (M_PI / 180)));
-  SDL_Surface *flameTexture = loadSurface("textures/fx/flame.png");
+  SDL_Texture *flameTexture = loadTexture("../textures/fx/flame.png");
   flame = Entity(flameBox, flameBox, flamePosition, angle, flameTexture);
 }
 void Car::accelerate()

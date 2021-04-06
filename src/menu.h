@@ -8,7 +8,7 @@
 class Menu : public Entity
 {
 private:
-  SDL_Surface *menuTexture();
+  SDL_Texture *menuTexture();
 
 public:
   Menu();

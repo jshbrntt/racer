@@ -17,7 +17,7 @@ public:
   int currentNode;
   vector<Point> enemyVerts();
   vector<Point> enemyShape();
-  SDL_Surface *enemyTexture();
+  SDL_Texture *enemyTexture();
   Enemy();
   Enemy(
       Point position,

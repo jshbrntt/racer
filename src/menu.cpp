@@ -2,10 +2,10 @@
 
 #include "menu.h"
 
-SDL_Surface *Menu::menuTexture()
+SDL_Texture *Menu::menuTexture()
 {
   // IMPORTING SPLASH SCREEN TEXTURE:
-  return loadSurface("textures/menu/splashscreen.png");
+  return loadTexture("../textures/menu/splashscreen.png");
 }
 
 Menu::Menu() : Entity(

@@ -12,7 +12,7 @@ class Player : public Car
 public:
   vector<Point> playerVerts();
   vector<Point> playerShape();
-  SDL_Surface *playerTexture();
+  SDL_Texture *playerTexture();
   Player();
   Player(Point position, float angle = 0);
   void update();

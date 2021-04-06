@@ -9,11 +9,12 @@ Entity::Entity()
   angle = 0;
   texture = 0;
 }
+
 Entity::Entity(vector<Point> verts,
                vector<Point> shape,
                Point position,
                float angle,
-               SDL_Surface *texture)
+               SDL_Texture *texture)
 {
   // PARSING PARAMETERS:
   this->verts = verts;
@@ -41,13 +42,14 @@ Entity::Entity(vector<Point> verts,
   this->width = xProj.y - xProj.x;
   this->height = yProj.y - yProj.x;
 }
+
 void Entity::draw(Point parentPosition)
 {
   // LOAD IDENTITY MATRIX:
-  glLoadIdentity();
+  // glLoadIdentity();
 
   // IF TEXTURE EXISTS ENABLE TEXTURING:
-  if (texture != 0)
+  if (texture != NULL)
   {
     // glEnable(GL_BLEND);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -57,94 +59,97 @@ void Entity::draw(Point parentPosition)
     // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     // glBindTexture(GL_TEXTURE_2D, texture);
     SDL_Rect fillRect;
-    fillRect.x = (int)position.x;
-    fillRect.y = (int)position.y;
+    fillRect.x = (int)parentPosition.x + position.x;
+    fillRect.y = (int)parentPosition.y + position.y;
     fillRect.w = (int)width;
     fillRect.h = (int)height;
-    SDL_BlitSurface(
-        texture,
-        NULL,
-        gScreenSurface,
-        &fillRect);
-  }
+    SDL_RenderCopyEx(gRenderer,
+                     texture,
+                     NULL,
+                     &fillRect,
+                     (double)angle,
+                     NULL,
+                     SDL_FLIP_NONE);
 
-  // TRANSLATE
-  glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
+    // // TRANSLATE
+    // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
 
-  // ROTATE:
-  glRotatef(angle, 0.0f, 0.0f, 1.0f);
+    // // ROTATE:
+    // glRotatef(angle, 0.0f, 0.0f, 1.0f);
 
-  // DRAW POLYGON FROM VERTS:
-  if (verts.size() >= 3)
-  {
-    // BEGIN DRAWING POLYGON:
-    glBegin(GL_POLYGON);
-    for (int i = 0; i != verts.size(); i++)
-    {
-      // GETTING CURRENT VERT:
-      Point vert = verts[i];
+    // // DRAW POLYGON FROM VERTS:
+    // if (verts.size() >= 3)
+    // {
+    //   // BEGIN DRAWING POLYGON:
+    //   glBegin(GL_POLYGON);
+    //   for (int i = 0; i != verts.size(); i++)
+    //   {
+    //     // GETTING CURRENT VERT:
+    //     Point vert = verts[i];
 
-      // MAP TEXTURE IF IT EXISTS:
-      if (texture != 0)
-      {
-        // MAP TEXTURE RELATIVE TO VERTS:
-        Point texturePosition = Point(0, 0);
-        if (vert.x > 0)
-          texturePosition.x = 1;
-        if (vert.y > 0)
-          texturePosition.y = 1;
+    //     // MAP TEXTURE IF IT EXISTS:
+    //     if (texture != 0)
+    //     {
+    //       // MAP TEXTURE RELATIVE TO VERTS:
+    //       Point texturePosition = Point(0, 0);
+    //       if (vert.x > 0)
+    //         texturePosition.x = 1;
+    //       if (vert.y > 0)
+    //         texturePosition.y = 1;
 
-        // APPLYING POSITION:
-        glTexCoord2f(texturePosition.x, texturePosition.y);
-      }
-      // DRAW CURRENT VERT:
-      glVertex2f(vert.x, vert.y);
-    }
-    glEnd();
-  }
+    //       // APPLYING POSITION:
+    //       glTexCoord2f(texturePosition.x, texturePosition.y);
+    //     }
+    //     // DRAW CURRENT VERT:
+    //     glVertex2f(vert.x, vert.y);
+    //   }
+    //   glEnd();
+    // }
 
-  // IF TEXTURE EXISTS DISABLE TEXTURING:
-  if (texture != 0)
-  {
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
+    // // IF TEXTURE EXISTS DISABLE TEXTURING:
+    // if (texture != 0)
+    // {
+    //   glDisable(GL_TEXTURE_2D);
+    //   glDisable(GL_BLEND);
+    // }
   }
 }
+
 void Entity::highlight(Point parentPosition, glRGB color, bool fill)
 {
-  // LOAD IDENTITY MATRIX:
-  glLoadIdentity();
+  // // LOAD IDENTITY MATRIX:
+  // glLoadIdentity();
 
-  // TRANSLATE:
-  glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
+  // // TRANSLATE:
+  // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
 
-  // ROTATE:
-  glRotatef(angle, 0.0f, 0.0f, 1.0f);
+  // // ROTATE:
+  // glRotatef(angle, 0.0f, 0.0f, 1.0f);
 
-  // DRAW POLYGON FROM VERTS:
-  if (verts.size() >= 3)
-  {
-    // HIGHLIGHT IN RED:
-    glColor3f(color.red, color.blue, color.green);
+  // // DRAW POLYGON FROM VERTS:
+  // if (verts.size() >= 3)
+  // {
+  //   // HIGHLIGHT IN RED:
+  //   glColor3f(color.red, color.blue, color.green);
 
-    // BEGIN DRAWING POLYGON / LINE_LOOP:
-    fill ? glBegin(GL_POLYGON) : glBegin(GL_LINE_LOOP);
-    for (int i = 0; i != shape.size(); i++)
-    {
-      // GETTING CURRENT VERT:
-      Point vert = shape[i];
+  //   // BEGIN DRAWING POLYGON / LINE_LOOP:
+  //   fill ? glBegin(GL_POLYGON) : glBegin(GL_LINE_LOOP);
+  //   for (int i = 0; i != shape.size(); i++)
+  //   {
+  //     // GETTING CURRENT VERT:
+  //     Point vert = shape[i];
 
-      // DRAW CURRENT VERT:
-      glVertex2f(vert.x, vert.y);
-    }
-    glEnd();
-  }
+  //     // DRAW CURRENT VERT:
+  //     glVertex2f(vert.x, vert.y);
+  //   }
+  //   glEnd();
+  // }
 
-  // DRAW ORIGIN OF THE SHAPE:
-  glPointSize(10.0f);
-  glBegin(GL_POINTS);
-  glVertex2f(0, 0);
-  glEnd();
+  // // DRAW ORIGIN OF THE SHAPE:
+  // glPointSize(10.0f);
+  // glBegin(GL_POINTS);
+  // glVertex2f(0, 0);
+  // glEnd();
 }
 void Entity::update() {}
 vector<Point> Entity::getOrientedShape()

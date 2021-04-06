@@ -10,7 +10,7 @@ using namespace std;
 class Track
 {
 public:
-  vector<SDL_Surface *> textures;
+  vector<SDL_Texture *> textures;
   int tileSize;
   vector<Point> aiMap;
   vector<Point> turboMap;

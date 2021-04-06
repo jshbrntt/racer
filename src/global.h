@@ -58,11 +58,10 @@ extern bool resetGame;
 extern bool gameRun;
 extern bool pause;
 extern SDL_Window *gWindow;
-extern SDL_Surface *gScreenSurface;
+extern SDL_Renderer *gRenderer;
 
 // GLOBAL FUNCTIONS:
-GLuint PNGtoGLtexture(const char *filename);
-SDL_Surface *loadSurface(std::string path);
+SDL_Texture *loadTexture(std::string path);
 int roundUp(int numToRound, int multiple);
 vector<Point> getBox(float width, float height, Point position = Point(0, 0));
 vector<Point> getPoly(int sides, float radius, Point position = Point(0, 0));

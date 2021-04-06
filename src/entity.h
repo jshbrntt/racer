@@ -12,7 +12,7 @@ class Entity
 protected:
   vector<Point> verts;
   vector<Point> shape;
-  SDL_Surface *texture;
+  SDL_Texture *texture;
 
 public:
   float width;
@@ -24,7 +24,7 @@ public:
          vector<Point> shape,
          Point position = Point(0, 0),
          float angle = 0,
-         SDL_Surface *texture = 0);
+         SDL_Texture *texture = NULL);
   virtual void draw(Point parentPosition = Point(0, 0));
   void highlight(Point parentPosition = Point(0, 0),
                  glRGB color = glRGB(1.0f, 1.0f, 1.0f),

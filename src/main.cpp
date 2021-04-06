@@ -10,6 +10,9 @@ using namespace std;
 const float S_WIDTH = 800;
 const float S_HEIGHT = 600;
 
+//The frames per second
+const int FRAMES_PER_SECOND = 20;
+
 // MOUSE:
 bool LEFTMOUSE = false;
 int MOUSE_X = 0;
@@ -26,15 +29,15 @@ void checkKeys();
 void reshape(int width, int height);
 bool init();
 void checkCollisions();
-void keyDown(unsigned char key, int x, int y);
-void keyUp(unsigned char key, int x, int y);
+void keyDown(SDL_Keysym keysym);
+void keyUp(SDL_Keysym keysym);
 void mouseMotion(int x, int y);
 void mouse(int button, int state, int x, int y);
 void update();
 
 Menu *menu;
 SDL_Window *gWindow = NULL;
-SDL_Surface *gScreenSurface = NULL;
+SDL_Renderer *gRenderer = NULL;
 
 // MAIN FUNCTION:
 int main(int argc, char *args[])
@@ -72,7 +75,10 @@ int main(int argc, char *args[])
   // glutKeyboardUpFunc(keyUp);
 
   // INITIALIZING GAME MENU:
-  gameMenu();
+  // gameMenu();
+
+  gameStart();
+  gameRun = true;
 
   // START MAIN LOOP:
   STUBBED("Start main loop");
@@ -82,8 +88,8 @@ int main(int argc, char *args[])
   SDL_Event e;
   while (!quit)
   {
-    menu->draw();
-    SDL_UpdateWindowSurface(gWindow);
+    Uint64 start = SDL_GetPerformanceCounter();
+
     while (SDL_PollEvent(&e) != 0)
     {
       //User requests quit
@@ -91,7 +97,30 @@ int main(int argc, char *args[])
       {
         quit = true;
       }
+      if (e.type == SDL_KEYDOWN)
+      {
+        keyDown(e.key.keysym);
+      }
+      if (e.type == SDL_KEYUP)
+      {
+        keyUp(e.key.keysym);
+      }
     }
+    //Clear screen
+    SDL_RenderClear(gRenderer);
+
+    //Render texture to screen
+    display();
+
+    //Update screen
+    SDL_RenderPresent(gRenderer);
+
+    Uint64 end = SDL_GetPerformanceCounter();
+
+    float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
+    float elapsedMS = elapsed * 1000.0f;
+    SDL_Log("Current FPS: %f\n", 1.0f / elapsed);
+    SDL_Delay(floor(16.666f - elapsedMS));
   }
   // glutMainLoop();
   return 0;
@@ -166,6 +195,11 @@ void gameStart()
 
     // GAME STARTED FLAG:
     gameStarted = true;
+
+    // START
+    player->immobilized = false;
+    enemy->immobilized = false;
+    // raceStarted = true;
   }
   else
   {
@@ -218,7 +252,7 @@ void checkKeys()
 void display()
 {
   // RESET SCREEN TO BACKGROUND COLOR:
-  glClear(GL_COLOR_BUFFER_BIT);
+  // glClear(GL_COLOR_BUFFER_BIT);
 
   if (gameRun)
   {
@@ -244,7 +278,7 @@ void display()
       track->update();
 
     // DRAW HUD:
-    hud->draw();
+    // hud->draw();
   }
   else
   {
@@ -256,30 +290,30 @@ void display()
   checkKeys();
 
   // FLUSH AND SWAP BUFFERS:
-  glFlush();
-  STUBBED("Swap buffers");
+  // glFlush();
+  // STUBBED("Swap buffers");
   // glutSwapBuffers();
 }
 
 void reshape(int width, int height)
 {
   // SETUP VIEWPORT:
-  glViewport(0, 0, width, height);
+  // glViewport(0, 0, width, height);
 
-  // SELECT PROJECTION MATRIX:
-  glMatrixMode(GL_PROJECTION);
+  // // SELECT PROJECTION MATRIX:
+  // glMatrixMode(GL_PROJECTION);
 
-  // RESET SELECTED MATRIX:
-  glLoadIdentity();
+  // // RESET SELECTED MATRIX:
+  // glLoadIdentity();
 
-  // SETUP COORDINATE SYSTEM;
-  gluOrtho2D(0, S_WIDTH, 0, S_HEIGHT);
+  // // SETUP COORDINATE SYSTEM;
+  // gluOrtho2D(0, S_WIDTH, 0, S_HEIGHT);
 
-  // SELECT MODELVIEW MATRIX:
-  glMatrixMode(GL_MODELVIEW);
+  // // SELECT MODELVIEW MATRIX:
+  // glMatrixMode(GL_MODELVIEW);
 
-  // RESET SELECTED MATRIX:
-  glLoadIdentity();
+  // // RESET SELECTED MATRIX:
+  // glLoadIdentity();
 }
 
 bool init()
@@ -296,31 +330,42 @@ bool init()
   else
   {
     //Create window
-    gWindow = SDL_CreateWindow(
-        "Topdown Racing",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        S_WIDTH,
-        S_HEIGHT,
-        SDL_WINDOW_SHOWN);
+    gWindow = SDL_CreateWindow("Topdown Racing",
+                               SDL_WINDOWPOS_UNDEFINED,
+                               SDL_WINDOWPOS_UNDEFINED,
+                               S_WIDTH,
+                               S_HEIGHT,
+                               SDL_WINDOW_SHOWN);
     if (gWindow == NULL)
     {
-      SDL_Log("Window could not be created! SDL Error: %s\n", SDL_GetError());
+      SDL_Log("Window could not be created! SDL Error: %s\n",
+             SDL_GetError());
       success = false;
     }
     else
     {
-      //Initialize PNG loading
-      int imgFlags = IMG_INIT_PNG;
-      if (!(IMG_Init(imgFlags) & imgFlags))
+      //Create renderer for window
+      gRenderer = SDL_CreateRenderer(
+          gWindow,
+          -1,
+          SDL_RENDERER_ACCELERATED);
+      if (gRenderer == NULL)
       {
-        SDL_Log("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        SDL_Log("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
         success = false;
       }
       else
       {
-        //Get window surface
-        gScreenSurface = SDL_GetWindowSurface(gWindow);
+        //Initialize renderer color
+        SDL_SetRenderDrawColor(gRenderer, 0x00, 0xA2, 0xED, 0xFF);
+
+        //Initialize PNG loading
+        int imgFlags = IMG_INIT_PNG;
+        if (!(IMG_Init(imgFlags) & imgFlags))
+        {
+          SDL_Log("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+          success = false;
+        }
       }
     }
   }
@@ -328,24 +373,24 @@ bool init()
   return success;
 }
 
-void keyDown(unsigned char key, int x, int y)
+void keyDown(SDL_Keysym keysym)
 {
   // PREVENTING KEYS GETTING LOCKED IN STATE AFTER CASE CHANGE:
-  if (key >= 65 && key <= 90)
-    KEYS[key + 32] = true;
-  if (key >= 97 && key <= 122)
-    KEYS[key - 32] = true;
-  KEYS[key] = true;
+  if (keysym.sym >= 65 && keysym.sym <= 90)
+    KEYS[keysym.sym + 32] = true;
+  if (keysym.sym >= 97 && keysym.sym <= 122)
+    KEYS[keysym.sym - 32] = true;
+  KEYS[keysym.sym] = true;
 }
 
-void keyUp(unsigned char key, int x, int y)
+void keyUp(SDL_Keysym keysym)
 {
   // PREVENTING KEYS GETTING LOCKED IN STATE AFTER CASE CHANGE:
-  if (key >= 65 && key <= 90)
-    KEYS[key + 32] = false;
-  if (key >= 97 && key <= 122)
-    KEYS[key - 32] = false;
-  KEYS[key] = false;
+  if (keysym.sym >= 65 && keysym.sym <= 90)
+    KEYS[keysym.sym + 32] = false;
+  if (keysym.sym >= 97 && keysym.sym <= 122)
+    KEYS[keysym.sym - 32] = false;
+  KEYS[keysym.sym] = false;
 }
 
 void mouseMotion(int x, int y)
@@ -384,50 +429,34 @@ void update()
   // glutPostRedisplay();
 }
 
-SDL_Surface *loadSurface(std::string path)
+SDL_Texture *loadTexture(std::string path)
 {
-  //The final optimized image
-  SDL_Surface *optimizedSurface = NULL;
+  //The final texture
+  SDL_Texture *newTexture = NULL;
 
   //Load image at specified path
-  SDL_Surface *loadedSurface = IMG_Load(path.c_str());
+  SDL_Surface *loadedSurface = IMG_Load(
+      path.c_str());
   if (loadedSurface == NULL)
   {
     SDL_Log("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
   }
   else
   {
-    //Convert surface to screen format
-    optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, 0);
-    if (optimizedSurface == NULL)
+    //Create texture from surface pixels
+    newTexture = SDL_CreateTextureFromSurface(
+        gRenderer,
+        loadedSurface);
+    if (newTexture == NULL)
     {
-      SDL_Log("Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+      SDL_Log("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
     }
 
     //Get rid of old loaded surface
     SDL_FreeSurface(loadedSurface);
   }
 
-  return optimizedSurface;
-}
-
-GLuint PNGtoGLtexture(const char *filename)
-{
-  STUBBED("Load PNG as texture: " + string(filename));
-  // IMPORTING PNG INTO OPENGL:
-  // GLuint textureID = SOIL_load_OGL_texture(
-  //     filename,
-  //     SOIL_LOAD_AUTO,
-  //     SOIL_CREATE_NEW_ID,
-  //     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-  // if (textureID == 0)
-  // {
-  //   SDL_Log("SOIL loading error: '%s'\n", filename);
-  //   exit(1);
-  // }
-  // return textureID;
-  GLuint stubTextureId;
-  return stubTextureId;
+  return newTexture;
 }
 
 int roundUp(int num, int multiple)
@@ -468,12 +497,12 @@ vector<Point> getPoly(int sides, float radius, Point position)
 void renderBitmapString(float x, float y, void *font, const char *string)
 {
   // RENDERING STRING TO OPENGL:
-  const char *c;
-  glLoadIdentity();
-  glRasterPos2f(x, y);
-  for (c = string; *c != '\0'; c++)
-  {
-    STUBBED("Render character");
-    // glutBitmapCharacter(font, *c);
-  }
+  // const char *c;
+  // glLoadIdentity();
+  // glRasterPos2f(x, y);
+  // for (c = string; *c != '\0'; c++)
+  // {
+  //   STUBBED("Render character");
+  //   glutBitmapCharacter(font, *c);
+  // }
 }

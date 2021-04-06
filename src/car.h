@@ -44,7 +44,7 @@ public:
       vector<Point> shape,
       Point position,
       float rotation = 0,
-      SDL_Surface *texture = NULL);
+      SDL_Texture *texture = NULL);
   // PUBLIC FIELDS:
   Point currentTileIndex;
   Point linearVelocity;
