@@ -1,6 +1,7 @@
 // FILE: "car.cpp"
 
 #include "car.h"
+#include <algorithm>
 
 Car::Car() : Entity() {}
 Car::Car(
@@ -15,12 +16,19 @@ Car::Car(
                                    texture)
 {
   // INITIALIZING CAR PROPERTIES:
+  speed = 0;
+  speedAcceleration = 0.01f;
+  speedDeceleration = 0.99f;
+  steer = 0;
+  steerAcceleration = 0.1f;
+  steerDeceleration = 0.9f;
+
   angularVelocity = 0;
   angularMagnitude = 0.4;
   angularFriction = 0.86;
   linearVelocity = Point(0, 0);
-  linearMagnitude = 1;
-  linearFriction = 0.9;
+  linearMagnitude = 0.2;
+  linearFriction = 0.98;
   lapState = 0;
   immobilized = true;
   currentLap = 0;
@@ -32,6 +40,11 @@ Car::Car(
   flameDist = 0;
   flameOffset = 38;
 
+  turningCurve.push_back(Point(0, 0));
+  turningCurve.push_back(Point(0.1, 1.7));
+  turningCurve.push_back(Point(0.5, 0.7));
+  turningCurve.push_back(Point(1, 0.7));
+
   // CREATING FLAME ENTITY:
   vector<Point> flameBox = getBox(28, 28, Point(-14, -14));
   Point flamePosition(position.x + 40 * cos(angle * (M_PI / 180)),
@@ -39,10 +52,42 @@ Car::Car(
   SDL_Texture *flameTexture = loadTexture("../textures/fx/flame.png");
   flame = Entity(flameBox, flameBox, flamePosition, angle, flameTexture);
 }
+
+float factorial(float num)
+{
+  if (num <= 1)
+  {
+    return 1;
+  }
+  float fac = 1;
+  for (float i = 1; i <= num; i++)
+  {
+    fac *= i;
+  }
+  return fac;
+}
+
+float choose(float a, float b)
+{
+  return factorial(a) / (factorial(b) * factorial(a - b));
+}
+
+Point bezier(vector<Point> &pts, float t)
+{
+  Point p;
+  size_t len = pts.size();
+  for (size_t i = 0; i < len; i++)
+  {
+    p += pts[i] * choose(len - 1, i) * pow(1 - t, len - 1 - i) * pow(t, i);
+  }
+  return p;
+}
+
 void Car::accelerate()
 {
   if (!immobilized)
   {
+    speed += speedAcceleration;
     // SELECT MAGNITUDE:
     float magnitude = turboOn ? turboMagnitude : linearMagnitude;
 
@@ -55,6 +100,7 @@ void Car::reverse()
 {
   if (!immobilized)
   {
+    speed -= speedAcceleration;
     // SELECT MAGNITUDE:
     float magnitude = turboOn ? turboMagnitude : linearMagnitude;
 
@@ -67,24 +113,27 @@ void Car::turnLeft()
 {
   if (!immobilized)
   {
+    steer += steerAcceleration * bezier(turningCurve, abs(speed)).y;
     // CHECK THE CAR IS MOVING BEFORE IT'S ALLOWED TO TURN:
-    if (getAverageSpeed() >= 2)
-    {
-      // TURNING THE CAR TO THE LEFT:
-      angularVelocity += angularMagnitude;
-    }
+    // if (getAverageSpeed() >= 2)
+    // {
+    // TURNING THE CAR TO THE LEFT:
+    angularVelocity += angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
+    // SDL_Log("Speed: %f\n", getAverageSpeed());
+    // }
   }
 }
 void Car::turnRight()
 {
   if (!immobilized)
   {
+    steer -= steerAcceleration * bezier(turningCurve, abs(speed)).y;
     // CHECK THE CAR IS MOVING BEFORE IT'S ALLOWED TO TURN:
-    if (getAverageSpeed() >= 2)
-    {
-      // TURNING THE CAR TO THE RIGHT:
-      angularVelocity -= angularMagnitude;
-    }
+    // if (getAverageSpeed() >= 2)
+    // {
+    // TURNING THE CAR TO THE RIGHT:
+    angularVelocity -= angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
+    // }
   }
 }
 void Car::turbo()
@@ -134,66 +183,113 @@ void Car::update()
     proximityTiles.push_back(Point(currentTileIndex.x, currentTileIndex.y - 1));     // BOTTOM
   }
 
+  // CLAMP
+  // speed = clamp(speed, -1.0f, 1.0f);
+  // steer = clamp(steer, -1.0f, 1.0f);
+  if (speed < -1.0f) {
+    speed = -1.0f;
+  }
+  if (speed > 1.0f) {
+    speed = 1.0f;
+  }
+  if (steer < -1.0f) {
+    steer = -1.0f;
+  }
+  if (steer > 1.0f) {
+    steer = 1.0f;
+  }
+
+  SDL_Log("Speed: %f\nSteer: %f\n\n", speed, steer);
+
+  // PASSIVE DECELERATION
+  speed *= speedDeceleration;
+  steer *= steerDeceleration;
+
+  // SDL_Log("Speed: %f\nSteer: %f\n\n", speed, steer);
+
   // APPLYING LINEAR VELOCITY / FRICTION:
-  position += linearVelocity;
-  linearVelocity *= linearFriction;
+  position.x += (speed * cos(angle * (M_PI / 180))) * 6;
+  position.y += (speed * sin(angle * (M_PI / 180))) * 6;
+  angle += steer * 3;
 
   // APPLYING ANGULAR VELOCITY / FRICTION:
-  angle += angularVelocity;
-  angularVelocity *= angularFriction;
+  // angle += angularVelocity;
+  // angularVelocity *= angularFriction;
 
   // CLAMPING ANGLE BETWEEN 180 AND -180:
   angle = (angle >= 180) ? (angle - 360) : (angle <= -180) ? (angle + 360)
                                                            : angle;
 
   // IF TURBO IS ON:
-  if (turboOn)
-  {
-    // HEADING:
-    float heading = atan2(linearVelocity.y, linearVelocity.x) * (180 / M_PI);
-    bool forward = (heading / abs(heading)) == (angle / abs(angle));
+  // if (turboOn)
+  // {
+  //   // HEADING:
+  //   float heading = atan2(linearVelocity.y, linearVelocity.x) * (180 / M_PI);
+  //   bool forward = (heading / abs(heading)) == (angle / abs(angle));
 
-    // IF THE CAR IS TRAVELLING FORWARDS:
-    if (forward)
-      flameDist += ((abs(linearVelocity.x) + abs(linearVelocity.y)) / 6);
+  //   // IF THE CAR IS TRAVELLING FORWARDS:
+  //   if (forward)
+  //     flameDist += ((abs(linearVelocity.x) + abs(linearVelocity.y)) / 6);
 
-    // APPLY DECAY TO FLAME DISTANCE:
-    flameDist *= linearFriction;
+  //   // APPLY DECAY TO FLAME DISTANCE:
+  //   flameDist *= linearFriction;
 
-    // IF CAR TRAVELLING FORWARD:
-    flame.angle = angle;
+  //   // IF CAR TRAVELLING FORWARD:
+  //   flame.angle = angle;
 
-    // UPDATE FLAME ANGLE / POSITION:
-    flame.position = Point(position.x - (flameDist + flameOffset) * cos(flame.angle * (M_PI / 180)),
-                           position.y - (flameDist + flameOffset) * sin(flame.angle * (M_PI / 180)));
+  //   // UPDATE FLAME ANGLE / POSITION:
+  //   flame.position = Point(position.x - (flameDist + flameOffset) * cos(flame.angle * (M_PI / 180)),
+  //                          position.y - (flameDist + flameOffset) * sin(flame.angle * (M_PI / 180)));
 
-    // CHECK IF TURBO HAS TIMED OUT:
-    if ((clock() - turboTimer) >= turboTimeOut)
-    {
-      turboOn = false;
-    }
-  }
+  //   // CHECK IF TURBO HAS TIMED OUT:
+  //   if ((clock() - turboTimer) >= turboTimeOut)
+  //   {
+  //     turboOn = false;
+  //   }
+  // }
 }
+
+vector<SDL_Point> trail;
 
 void Car::draw(Point parentPosition)
 {
-  // CHECKING CAR IS ONSCREEN:
-  Point relative = position + track->position;
+  // // CHECKING CAR IS ONSCREEN:
+  // Point relative = position + track->position;
 
-  //USE TO DEMONSTRATE CLIPPING WORKS:
-  int offset = 0;
+  // //USE TO DEMONSTRATE CLIPPING WORKS:
+  // int offset = 0;
 
-  // CLIPPING CAR IF OUTSIDE VIEWPORT:
-  if ((relative.x >= offset - track->tileSize && relative.x <= S_WIDTH + track->tileSize - offset) &&
-      (relative.y >= offset - track->tileSize && relative.y <= S_HEIGHT + track->tileSize - offset))
+  // // CLIPPING CAR IF OUTSIDE VIEWPORT:
+  // if ((relative.x >= offset - track->tileSize && relative.x <= S_WIDTH + track->tileSize - offset) &&
+  //     (relative.y >= offset - track->tileSize && relative.y <= S_HEIGHT + track->tileSize - offset))
+  // {
+  //   // IF TURBO IS ON, DRAWING FLAME UNDER CAR:
+  //   if (turboOn)
+  //     flame.draw(parentPosition);
+
+  // DRAWING CAR:
+  Entity::draw(parentPosition);
+
+  SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+  vector<SDL_Point> sdlPoints;
+  for (float t = 0; t <= 1; t += 0.01)
   {
-    // IF TURBO IS ON, DRAWING FLAME UNDER CAR:
-    if (turboOn)
-      flame.draw(parentPosition);
-
-    // DRAWING CAR:
-    Entity::draw(parentPosition);
+    Point curvePoint = bezier(turningCurve, t);
+    curvePoint.x *= 300;
+    curvePoint.y *= 300;
+    // SDL_Log("%f %f %f", t, curvePoint.x, curvePoint.y);
+    sdlPoints.push_back(SDL_Point{(int)curvePoint.x, (int)curvePoint.y});
   }
+  SDL_Point* curvePoints = &sdlPoints[0];
+  SDL_RenderDrawLines(gRenderer, curvePoints, sdlPoints.size());
+
+  trail.push_back(SDL_Point{(int)position.x * 2, (int)position.y * 2});
+  if (trail.size() > 500) {
+    trail.erase(trail.begin());
+  }
+  SDL_Point* trailPoints = &trail[0];
+  SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderDrawLines(gRenderer, trailPoints, trail.size());
 }
 
 void Car::updateCurrentLap()

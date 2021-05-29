@@ -1,6 +1,7 @@
 // FILE: "entity.cpp"
 
 #include "entity.h"
+#include <algorithm>
 
 Entity::Entity()
 {
@@ -43,6 +44,29 @@ Entity::Entity(vector<Point> verts,
   this->height = yProj.y - yProj.x;
 }
 
+Point rotatePoint(
+    Point point,
+    float angle,
+    Point center = Point(0, 0))
+{
+  float sine = sin(angle);
+  float cosine = cos(angle);
+
+  // translate point back to origin:
+  point.x -= center.x;
+  point.y -= center.y;
+
+  // rotate point
+  Point rotatedPoint = Point(
+      point.x * cosine - point.y * sine,
+      point.x * sine + point.y * cosine);
+
+  // translate point back:
+  rotatedPoint.x += center.x;
+  rotatedPoint.y += center.y;
+  return rotatedPoint;
+}
+
 void Entity::draw(Point parentPosition)
 {
   // LOAD IDENTITY MATRIX:
@@ -58,18 +82,45 @@ void Entity::draw(Point parentPosition)
     // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
     // glBindTexture(GL_TEXTURE_2D, texture);
-    SDL_Rect fillRect;
-    fillRect.x = (int)parentPosition.x + position.x;
-    fillRect.y = (int)parentPosition.y + position.y;
-    fillRect.w = (int)width;
-    fillRect.h = (int)height;
-    SDL_RenderCopyEx(gRenderer,
-                     texture,
-                     NULL,
-                     &fillRect,
-                     (double)angle,
-                     NULL,
-                     SDL_FLIP_NONE);
+    // SDL_Rect fillRect;
+    // fillRect.x = 0;
+    // fillRect.y = 0;
+    // fillRect.w = (int)width;
+    // fillRect.h = (int)height;
+    // SDL_RenderCopyEx(gRenderer,
+    //                  texture,
+    //                  NULL,
+    //                  &fillRect,
+    //                  (double)angle,
+    //                  NULL,
+    //                  SDL_FLIP_NONE);
+
+    vector<Point> orientedShape = this->getOrientedShape();
+
+    // Convert to SDL_Point array
+    SDL_Point points[orientedShape.size() + 1];
+    transform(orientedShape.begin(),
+              orientedShape.end(),
+              points,
+              [](const auto &point) {
+                const int x = (int)point.x;
+                const int y = (int)point.y;
+                return SDL_Point{x, y};
+              });
+
+    // Add first point as also the final point
+    points[orientedShape.size()] = SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y};
+
+    // Offset points by entity position
+    for (int i = 0; i < orientedShape.size() + 1; i++)
+    {
+      points[i].x += (int)position.x;
+      points[i].y += (int)position.y;
+    }
+
+    // Draw oriented shape.
+    SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawLines(gRenderer, points, shape.size() + 1);
 
     // // TRANSLATE
     // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);

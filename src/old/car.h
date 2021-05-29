@@ -11,6 +11,12 @@ class Car : public Entity
 {
 protected:
   // PROTECTED FIELDS:
+  float speed;
+  float speedAcceleration;
+  float speedDeceleration;
+  float steer;
+  float steerAcceleration;
+  float steerDeceleration;
   float angularVelocity;
   float angularMagnitude;
   float angularFriction;
@@ -26,6 +32,7 @@ protected:
   glRGB color;
   int lapState;
   vector<Point> proximityTiles;
+  vector<Point> turningCurve;
   // PROTECTED FUNCTIONS:
   void accelerate();
   void reverse();
