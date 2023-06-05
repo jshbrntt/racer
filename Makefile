@@ -18,22 +18,11 @@ else
 
 .PHONY: build
 build: clean
-build: cmake-modules
 build: configure
 
 .PHONY: clean
 clean:
 	rm -rf build
-
-.PHONY: cmake-modules
-cmake-modules: WinMsvc.cmake
-cmake-modules: ClangClCMakeCompileRules.cmake
-
-WinMsvc.cmake:
-	wget -q https://github.com/llvm/llvm-project/raw/llvmorg-16.0.0/llvm/cmake/platforms/WinMsvc.cmake
-
-ClangClCMakeCompileRules.cmake:
-	wget -q https://github.com/llvm/llvm-project/raw/llvmorg-16.0.0/llvm/cmake/platforms/ClangClCMakeCompileRules.cmake
 
 .PHONY: configure
 configure:
