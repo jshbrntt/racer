@@ -1,53 +1,85 @@
-FROM conanio/gcc7-mingw AS windows
+FROM ubuntu:23.04 AS base
 
-RUN conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan \
-&& conan config set general.revisions_enabled=1
+RUN apt-get update \
+&& apt-get install --no-install-recommends --yes \
+ca-certificates \
+git \
+gnupg \
+lsb-release \
+make \
+software-properties-common \
+wget
 
-RUN sudo apt-get update && \
-sudo apt-get install --yes \
-libgl1-mesa-dev \
-&& sudo rm -rf /var/lib/apt/lists/*
+# Add LLVM APT repository (https://apt.llvm.org/)
+RUN wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc \
+&& OS_CODENAME=$(lsb_release -sc) \
+&& add-apt-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME} main"
 
-FROM conanio/gcc7 AS linux
+ARG LLVM_VERSION="16"
 
-RUN conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan \
-&& conan config set general.revisions_enabled=1
+# Install clang and lld
+RUN apt-get update \
+&& apt-get install --no-install-recommends --yes \
+clang-${LLVM_VERSION} \
+llvm-${LLVM_VERSION} \
+lld-${LLVM_VERSION}
 
-RUN sudo apt-get update && \
-sudo apt-get install --yes \
-libaudio-dev \
-libfontenc-dev \
-libgl1-mesa-dev \
-libice-dev \
-libjack-dev \
-libsm-dev \
-libx11-xcb-dev \
-libxaw7-dev \
-libxcb-icccm4-dev \
-libxcb-image0-dev \
-libxcb-keysyms1-dev \
-libxcb-render-util0-dev \
-libxcb-shm0-dev \
-libxcb-util-dev \
-libxcb-xinerama0-dev \
-libxcb-xkb-dev \
-libxcomposite-dev \
-libxcursor-dev \
-libxft-dev \
-libxi-dev \
-libxinerama-dev \
-libxkbfile-dev \
-libxmu-dev \
-libxmuu-dev \
-libxpm-dev \
-libxrandr-dev \
-libxrender-dev \
-libxres-dev \
-libxss-dev \
-libxt-dev \
-libxtst-dev \
-libxv-dev \
-libxvmc-dev \
-xkb-data \
-xorg-dev \
-&& sudo rm -rf /var/lib/apt/lists/*
+# Add CMake APT repository (https://apt.kitware.com/)
+RUN wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | tee /etc/apt/trusted.gpg.d/apt.kitware.com.asc \
+# TODO: Update this when a lunar one is available.
+&& OS_CODENAME=jammy \
+&& add-apt-repository "deb https://apt.kitware.com/ubuntu/ ${OS_CODENAME} main"
+
+# Install cmake and make
+RUN apt-get update \
+&& apt-get install --no-install-recommends --yes \
+cmake \
+&& rm -rf /var/lib/apt/lists/*
+
+# COPY --from=xwin /xwin /xwin
+
+# Create missing LLVM symlinks
+RUN ln -s clang /usr/lib/llvm-${LLVM_VERSION}/bin/clang-cl \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/clang /usr/bin/clang \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/clang-cl /usr/bin/clang-cl \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/clang-cpp /usr/bin/clang-cpp \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/clang++ /usr/bin/clang++ \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/lld /usr/bin/lld \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/lld-link /usr/bin/lld-link \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/ld.lld /usr/bin/ld.lld
+
+# RUN ln -s clang-${LLVM_VERSION} /usr/bin/clang \
+# && ln -s clang /usr/bin/clang++ \
+# && ln -s lld-${LLVM_VERSION} /usr/bin/ld.lld \
+# # We also need to setup symlinks ourselves for the MSVC shims because they aren't in the debian packages
+# && ln -s clang-${LLVM_VERSION} /usr/lib/llvm-${LLVM_VERSION}/bin/clang-cl \
+# && ln -s /usr/lib/llvm-${LLVM_VERSION}/bin/clang-cl /usr/bin/clang-cl \
+# && ln -s lld-link-${LLVM_VERSION} /usr/bin/lld-link \
+# # Use clang instead of gcc when compiling and linking binaries targeting the host (eg proc macros, build files)
+# && update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100 \
+# && update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100 \
+# && update-alternatives --install /usr/bin/ld ld /usr/bin/ld.lld 100\
+
+# Note that we're using the full target triple for each variable instead of the
+# simple CC/CXX/AR shorthands to avoid issues when compiling any C/C++ code for
+# build dependencies that need to compile and execute in the host environment
+ENV CC_x86_64_pc_windows_msvc="clang-cl" \
+CXX_x86_64_pc_windows_msvc="clang-cl" \
+# Note that we only disable unused-command-line-argument here since clang-cl
+# doesn't implement all of the options supported by cl, but the ones it doesn't
+# are _generally_ not interesting.
+CL_FLAGS="-Wno-unused-command-line-argument -fuse-ld=lld-link /imsvc/xwin/crt/include /imsvc/xwin/sdk/include/ucrt /imsvc/xwin/sdk/include/um /imsvc/xwin/sdk/include/shared"
+
+# These are separate since docker/podman won't transform environment variables defined in the same ENV block
+ENV CFLAGS_x86_64_pc_windows_msvc="${CL_FLAGS}" \
+CXXFLAGS_x86_64_pc_windows_msvc="${CL_FLAGS}"
+
+ARG XWIN_VERSION="0.2.12"
+
+# Download WinSDK and WinRT (https://github.com/Jake-Shadle/xwin/blob/main/xwin.dockerfile#LL49C1-L58C1)
+RUN XWIN_PREFIX="xwin-$XWIN_VERSION-x86_64-unknown-linux-musl"; \
+# Install xwin to cargo/bin via github release. Note you could also just use `cargo install xwin`.
+wget -qO- https://github.com/Jake-Shadle/xwin/releases/download/$XWIN_VERSION/$XWIN_PREFIX.tar.gz | tar -xvz -C /usr/local/bin --strip-components=1 $XWIN_PREFIX/xwin \
+&& mkdir -p /xwin \
+# Splat the CRT and SDK files to /xwin/crt and /xwin/sdk respectively
+&& xwin --accept-license splat --include-debug-libs --include-debug-symbols --output /xwin
