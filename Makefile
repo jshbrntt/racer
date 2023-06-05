@@ -31,6 +31,7 @@ configure:
 	cd build
 	cmake .. \
 	-DCMAKE_TOOLCHAIN_FILE=clang_windows_cross.cmake \
+	-DCMAKE_BUILD_TYPE=Debug \
 	-DCMAKE_C_COMPILER=clang-cl \
 	-DCMAKE_CXX_COMPILER=clang-cl \
 	-DCMAKE_LINKER=lld-link \
