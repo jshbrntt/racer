@@ -17,8 +17,9 @@ else
 .ONESHELL:
 
 .PHONY: build
-build: clean
 build: configure
+	cd build
+	cmake --build .
 
 .PHONY: clean
 clean:
@@ -37,6 +38,5 @@ configure:
 	-DWINSDK_BASE=/xwin/sdk \
 	-DWINSDK_VER=10.0.22000 \
 	-DTARGET_ARCH=x86_64
-	cmake --build .
 
 endif
