@@ -1,6 +1,6 @@
-# conan-hello-world
+# `racer`
 
-Dockerized Conan hello world project which can build for Windows and Linux.
+SDL2 game project with cross-compilation toolchains for all major desktop platforms.
 
 ## Requirements
 -   [Make](https://www.gnu.org/software/make/)
@@ -10,34 +10,34 @@ Dockerized Conan hello world project which can build for Windows and Linux.
 
 1. Clone the repository.
 
+1.  Run `make` to start the dev container.
+
 ### Windows
 
-1.  Run `make`
+1.  Run `make WIN32=1`
 
-2.  Run the built executable.
+1.  Run the built executable.
 
     ```
-    $ ./build_Windows_x86_64_Release/bin/greet.exe 
-    Hello World Release!
+    $ ./build/win32/snake.exe 
+    ```
+
+### macOS
+
+1.  Run `make MACOS=1`
+
+1.  Run the built executable.
+
+    ```
+    $ ./build/macos/snake
     ```
 
 ### Linux
-1.  Run `make OS=Linux`
 
-2.  Run the built executable.
+1.  Run `make LINUX=1`
 
-    ```
-    $ ./build_Linux_x86_64_Release/bin/greet
-    Hello World Release!
-    ```
-
-### Debug Build
-
-1.  Run `make BUILD_TYPE=Debug`
-
-2.  Run the built executable.
+1.  Run the built executable.
 
     ```
-    $ ./build_Windows_x86_64_Debug/bin/greet.exe 
-    Hello World Debug
+    $ ./build/linux/snake
     ```

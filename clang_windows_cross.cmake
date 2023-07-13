@@ -37,27 +37,39 @@ set(WINSDK_INCLUDE "${WINSDK_BASE}/Include/${WINSDK_VER}")
 set(WINSDK_LIB "${WINSDK_BASE}/lib/${WINSDK_VER}")
 
 set(COMPILE_FLAGS
-	-D_CRT_SECURE_NO_WARNINGS
-	-imsvc "'${MSVC_INCLUDE}'"
-	-imsvc "'${WINSDK_INCLUDE}/ucrt'"
-	-imsvc "'${WINSDK_INCLUDE}/shared'"
-	-imsvc "'${WINSDK_INCLUDE}/um'"
-	-imsvc "'${WINSDK_INCLUDE}/winrt'"
+  -D_CRT_SECURE_NO_WARNINGS
+  -imsvc "'${MSVC_INCLUDE}'"
+  -imsvc "'${WINSDK_INCLUDE}/ucrt'"
+  -imsvc "'${WINSDK_INCLUDE}/shared'"
+  -imsvc "'${WINSDK_INCLUDE}/um'"
+  -imsvc "'${WINSDK_INCLUDE}/winrt'"
+	-msse3
 )
+# msse3: https://github.com/libsdl-org/SDL/issues/5186
 
 string(REPLACE ";" " " COMPILE_FLAGS "${COMPILE_FLAGS}")
 
+set(CMAKE_RC_FLAGS
+  -I "'${MSVC_INCLUDE}'"
+  -I "'${WINSDK_INCLUDE}/ucrt'"
+  -I "'${WINSDK_INCLUDE}/shared'"
+  -I "'${WINSDK_INCLUDE}/um'"
+  -I "'${WINSDK_INCLUDE}/winrt'"
+)
+
+string(REPLACE ";" " " CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS}")
+
 set(_CMAKE_C_FLAGS_INITIAL "${CMAKE_C_FLAGS}" CACHE STRING "")
-set(CMAKE_C_FLAGS "${_CMAKE_C_FLAGS_INITIAL} ${COMPILE_FLAGS}" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS "${COMPILE_FLAGS} ${_CMAKE_C_FLAGS_INITIAL}" CACHE STRING "" FORCE)
 
 set(_CMAKE_CXX_FLAGS_INITIAL "${CMAKE_C_FLAGS}" CACHE STRING "")
-set(CMAKE_CXX_FLAGS "${_CMAKE_CXX_FLAGS_INITIAL} ${COMPILE_FLAGS}" CACHE STRING "" FORCE)
+set(CMAKE_CXX_FLAGS "${COMPILE_FLAGS} ${_CMAKE_CXX_FLAGS_INITIAL}" CACHE STRING "" FORCE)
 
 set(LINK_FLAGS
-	/manifest:no
-	-libpath:"${MSVC_LIB}/${TARGET_ARCH}"
-	-libpath:"${WINSDK_LIB}/ucrt/${TARGET_ARCH}"
-	-libpath:"${WINSDK_LIB}/um/${TARGET_ARCH}"
+  /manifest:no
+  -libpath:"${MSVC_LIB}/${TARGET_ARCH}"
+  -libpath:"${WINSDK_LIB}/ucrt/${TARGET_ARCH}"
+  -libpath:"${WINSDK_LIB}/um/${TARGET_ARCH}"
 )
 
 string(REPLACE ";" " " LINK_FLAGS "${LINK_FLAGS}")
@@ -71,6 +83,7 @@ set(CMAKE_MODULE_LINKER_FLAGS "${_CMAKE_MODULE_LINKER_FLAGS_INITIAL} ${LINK_FLAG
 set(_CMAKE_SHARED_LINKER_FLAGS_INITIAL "${CMAKE_SHARED_LINKER_FLAGS}" CACHE STRING "")
 set(CMAKE_SHARED_LINKER_FLAGS "${_CMAKE_SHARED_LINKER_FLAGS_INITIAL} ${LINK_FLAGS}" CACHE STRING "" FORCE)
 
+# https://github.com/llvm-mirror/llvm/blob/master/cmake/platforms/WinMsvc.cmake#L317-L319
 set(CMAKE_C_STANDARD_LIBRARIES "" CACHE STRING "" FORCE)
 set(CMAKE_CXX_STANDARD_LIBRARIES "" CACHE STRING "" FORCE)
 

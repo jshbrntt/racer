@@ -5,7 +5,7 @@
             "name": "Debug",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/snake.exe",
+            "program": "${workspaceFolder}/build/linux/snake",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
@@ -13,6 +13,14 @@
             "sourceFileMap": {
                 "/root/racer": "${workspaceFolder}"
             }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Launch",
+            "program": "${workspaceFolder}/build/linux/snake",
+            "args": [],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

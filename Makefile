@@ -16,28 +16,74 @@ else
 
 .ONESHELL:
 
+ifdef LINUX
 .PHONY: build
 build: configure
-	cd build
+	cd build/linux
 	cmake --build .
+
+.PHONY: configure
+configure: $(if $(CLEAN),clean)
+	mkdir -p build/linux
+	cd build/linux
+	cmake ../..
 
 .PHONY: clean
 clean:
-	rm -rf build
+	rm -rf build/linux
+endif
+
+ifdef WIN32
+.PHONY: build
+build: configure
+	cd build/win32
+	cmake --build .
 
 .PHONY: configure
-configure:
-	mkdir -p build
-	cd build
-	cmake .. \
+configure: $(if $(CLEAN),clean)
+	mkdir -p build/win32
+	cd build/win32
+	cmake ../.. \
 	-DCMAKE_TOOLCHAIN_FILE=clang_windows_cross.cmake \
 	-DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_AR=llvm-lib-16 \
+	-DCMAKE_RC_COMPILER=llvm-windres-16 \
 	-DCMAKE_C_COMPILER=clang-cl \
 	-DCMAKE_CXX_COMPILER=clang-cl \
 	-DCMAKE_LINKER=lld-link \
 	-DMSVC_BASE=/xwin/crt \
 	-DWINSDK_BASE=/xwin/sdk \
 	-DWINSDK_VER=10.0.22000 \
-	-DTARGET_ARCH=x86_64
+	-DTARGET_ARCH=x86_64 \
+	-DHAVE_STDINT_H=1 \
+	-DSDL_JOYSTICK_XINPUT=1
+
+.PHONY: clean
+clean:
+	rm -rf build/win32
+endif
+
+ifdef MACOS
+
+.PHONY: build
+build: configure
+	cd build/macos
+	cmake --build .
+
+.PHONY: configure
+configure: $(if $(CLEAN),clean)
+	mkdir -p build/macos
+	cd build/macos
+	OSXCROSS_TARGET=darwin21.4 \
+	OSXCROSS_HOST=x86_64-apple-darwin21.4 \
+	OSXCROSS_TARGET_DIR=/osxcross/target \
+	OSXCROSS_SDK=/osxcross/target/SDK/MacOSX12.3.sdk \
+	cmake ../.. \
+	-DCMAKE_TOOLCHAIN_FILE=/osxcross/tools/toolchain.cmake
+
+.PHONY: clean
+clean:
+	rm -rf build/macos
+endif
 
 endif

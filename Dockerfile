@@ -8,7 +8,13 @@ gnupg \
 lsb-release \
 make \
 software-properties-common \
-wget
+wget \
+patch \
+libxml2-dev \
+libssl-dev \
+zlib1g-dev \
+xz-utils \
+rc
 
 # Add LLVM APT repository (https://apt.llvm.org/)
 RUN wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc \
@@ -83,3 +89,36 @@ wget -qO- https://github.com/Jake-Shadle/xwin/releases/download/$XWIN_VERSION/$X
 && mkdir -p /xwin \
 # Splat the CRT and SDK files to /xwin/crt and /xwin/sdk respectively
 && xwin --accept-license splat --include-debug-libs --include-debug-symbols --output /xwin
+
+COPY osxcross /osxcross
+
+WORKDIR /osxcross/tarballs
+
+ENV MACOSX_DEPLOYMENT_TARGET="12.3"
+RUN wget -q https://github.com/joseluisq/macosx-sdks/releases/download/${MACOSX_DEPLOYMENT_TARGET}/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz
+
+WORKDIR /osxcross
+
+RUN UNATTENDED=1 ./build.sh
+
+ENV PATH="${PATH}:/osxcross/target/bin"
+
+RUN mkdir -p /osxcross/target/macports \
+&& echo "https://packages.macports.org" > /osxcross/target/macports/MIRROR
+
+RUN apt-get update \
+&& apt-get install --no-install-recommends --yes \
+# Required to install freetype via macports
+bzip2 \
+&& rm -rf /var/lib/apt/lists/*
+
+# SDL_ttf requires freetype when targetting macosx
+RUN osxcross-macports install freetype
+
+# Required for linux build
+RUN apt-get update \
+&& apt-get install --no-install-recommends --yes \
+libfreetype-dev \
+libgles2-mesa-dev \
+libxext-dev \
+&& rm -rf /var/lib/apt/lists/*

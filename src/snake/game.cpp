@@ -17,7 +17,12 @@ void Game::initSDL(const char * title, int xpos, int ypos, int width, int height
 	int flags = 0;
 	if (fullscreen) flags += SDL_WINDOW_FULLSCREEN;
 
-	isRunning = SDL_Init(SDL_INIT_EVERYTHING) == 0;
+	int errorCode = SDL_Init(SDL_INIT_VIDEO);
+	if (errorCode < 0) {
+		printf("Could not initialize SDL: %s.\n", SDL_GetError());
+		exit(errorCode);
+	}
+	isRunning = errorCode == 0;
 	if (isRunning)
 	{
 		LOG("SDL Subsystems Initialized");
