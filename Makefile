@@ -1,5 +1,7 @@
 ifndef DOCKER
 
+export BUILDKIT_PROGRESS=plain
+
 .PHONY: build
 build: docker-build
 build: docker-run
