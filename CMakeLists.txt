@@ -29,6 +29,7 @@ FetchContent_MakeAvailable(SDL2)
 set(SDL2IMAGE_INSTALL OFF)
 set(SDL2TTF_INSTALL OFF)
 set(BUILD_SHARED_LIBS OFF)
+set(SDL2TTF_VENDORED ON)
 
 # SDL2_image
 FetchContent_Declare(
