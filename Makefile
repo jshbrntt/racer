@@ -16,6 +16,8 @@ docker-run:
 
 else
 
+ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
 .ONESHELL:
 
 ifdef LINUX
@@ -46,13 +48,13 @@ configure: $(if $(CLEAN),clean)
 	mkdir -p build/win32
 	cd build/win32
 	cmake ../.. \
-	-DCMAKE_TOOLCHAIN_FILE=clang_windows_cross.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=$(ROOT_DIR)clang_windows_cross.cmake \
 	-DCMAKE_BUILD_TYPE=Debug \
-	-DCMAKE_AR=llvm-lib-16 \
-	-DCMAKE_RC_COMPILER=llvm-windres-16 \
-	-DCMAKE_C_COMPILER=clang-cl \
-	-DCMAKE_CXX_COMPILER=clang-cl \
-	-DCMAKE_LINKER=lld-link \
+	-DCMAKE_AR=/usr/bin/llvm-lib \
+	-DCMAKE_RC_COMPILER=/usr/bin/llvm-windres \
+	-DCMAKE_C_COMPILER=/usr/bin/clang-cl \
+	-DCMAKE_CXX_COMPILER=/usr/bin/clang-cl \
+	-DCMAKE_LINKER=/usr/bin/lld-link \
 	-DMSVC_BASE=/xwin/crt \
 	-DWINSDK_BASE=/xwin/sdk \
 	-DWINSDK_VER=10.0.22000 \
