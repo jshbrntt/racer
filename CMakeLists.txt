@@ -63,7 +63,14 @@ file(GLOB_RECURSE SNAKE_HDRS src/snake/*.h)
 file(GLOB_RECURSE SNAKE_SRCS src/snake/*.cpp)
 
 add_executable(${PROJECT_NAME} ${SNAKE_HDRS} ${SNAKE_SRCS})
-target_link_libraries(${PROJECT_NAME} EnTT::EnTT SDL2::SDL2main SDL2::SDL2-static SDL2_image::SDL2_image-static SDL2_ttf::SDL2_ttf-static)
+target_link_libraries(
+  ${PROJECT_NAME}
+  EnTT::EnTT
+  SDL2::SDL2main
+  SDL2::SDL2-static
+  SDL2_image::SDL2_image-static
+  SDL2_ttf::SDL2_ttf-static
+)
 
 # Copy assets directory to build path
 add_custom_command(
