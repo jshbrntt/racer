@@ -5,7 +5,7 @@
 SDL_Texture *Menu::menuTexture()
 {
   // IMPORTING SPLASH SCREEN TEXTURE:
-  return loadTexture("../textures/menu/splashscreen.png");
+  return loadTexture("assets/racer/menu/splashscreen.png");
 }
 
 Menu::Menu() : Entity(

@@ -33,7 +33,7 @@ vector<Point> Player::playerShape()
 SDL_Texture *Player::playerTexture()
 {
   // IMPORTING PLAYER TEXTURE:
-  return loadTexture("../textures/cars/red_car.png");
+  return loadTexture("assets/racer/cars/red_car.png");
 }
 
 Player::Player() : Car()

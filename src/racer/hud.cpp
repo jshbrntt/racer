@@ -16,13 +16,13 @@ HUD::HUD()
   vector<Point> pausedBox  = getBox(580, 78,  Point(-290, -39));
 
   // CREATING OBJECTS TO DRAW:
-  entities.push_back(Entity(goBox,      goBox,      center, 0, loadTexture("../textures/text/GO.png")));
-  entities.push_back(Entity(oneBox,     oneBox,     center, 0, loadTexture("../textures/text/1.png")));
-  entities.push_back(Entity(twoBox,     twoBox,     center, 0, loadTexture("../textures/text/2.png")));
-  entities.push_back(Entity(threeBox,   threeBox,   center, 0, loadTexture("../textures/text/3.png")));
-  entities.push_back(Entity(youWinBox,  youWinBox,  center, 0, loadTexture("../textures/text/YOU_WIN.png")));
-  entities.push_back(Entity(youLoseBox, youLoseBox, center, 0, loadTexture("../textures/text/YOU_LOSE.png")));
-  entities.push_back(Entity(pausedBox,  pausedBox,  center, 0, loadTexture("../textures/text/PAUSED.png")));
+  entities.push_back(Entity(goBox,      goBox,      center, 0, loadTexture("assets/racer/text/GO.png")));
+  entities.push_back(Entity(oneBox,     oneBox,     center, 0, loadTexture("assets/racer/text/1.png")));
+  entities.push_back(Entity(twoBox,     twoBox,     center, 0, loadTexture("assets/racer/text/2.png")));
+  entities.push_back(Entity(threeBox,   threeBox,   center, 0, loadTexture("assets/racer/text/3.png")));
+  entities.push_back(Entity(youWinBox,  youWinBox,  center, 0, loadTexture("assets/racer/text/YOU_WIN.png")));
+  entities.push_back(Entity(youLoseBox, youLoseBox, center, 0, loadTexture("assets/racer/text/YOU_LOSE.png")));
+  entities.push_back(Entity(pausedBox,  pausedBox,  center, 0, loadTexture("assets/racer/text/PAUSED.png")));
 
   // ADDITIONAL VARIABLES:
   raceWon = 0;

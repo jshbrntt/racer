@@ -12,19 +12,19 @@ Track::Track(Point position)
   tileSize = 200;
 
   // IMPORTING TILE TEXTURES:
-  textures.push_back(loadTexture("../textures/tiles/universal/track.png"));   // 0:  Track
-  textures.push_back(loadTexture("../textures/tiles/grass/bound.png"));       // 1:  Bound
-  textures.push_back(loadTexture("../textures/tiles/universal/lineh.png"));   // 2:  LineH
-  textures.push_back(loadTexture("../textures/tiles/universal/linev.png"));   // 3:  LineV
-  textures.push_back(loadTexture("../textures/tiles/grass/topleft.png"));     // 4:  Top-Left
-  textures.push_back(loadTexture("../textures/tiles/grass/topright.png"));    // 5:  Top-Right
-  textures.push_back(loadTexture("../textures/tiles/grass/bottomleft.png"));  // 6:  Bottom-Left
-  textures.push_back(loadTexture("../textures/tiles/grass/bottomright.png")); // 7:  Bottom-Right
-  textures.push_back(loadTexture("../textures/tiles/grass/left.png"));        // 8:  Left
-  textures.push_back(loadTexture("../textures/tiles/grass/right.png"));       // 9:  Right
-  textures.push_back(loadTexture("../textures/tiles/grass/bottom.png"));      // 10: Bottom
-  textures.push_back(loadTexture("../textures/tiles/grass/top.png"));         // 11: Top
-  textures.push_back(loadTexture("../textures/tiles/universal/turbo.png"));   // 12: Turbo
+  textures.push_back(loadTexture("assets/racer/tiles/universal/track.png"));   // 0:  Track
+  textures.push_back(loadTexture("assets/racer/tiles/grass/bound.png"));       // 1:  Bound
+  textures.push_back(loadTexture("assets/racer/tiles/universal/lineh.png"));   // 2:  LineH
+  textures.push_back(loadTexture("assets/racer/tiles/universal/linev.png"));   // 3:  LineV
+  textures.push_back(loadTexture("assets/racer/tiles/grass/topleft.png"));     // 4:  Top-Left
+  textures.push_back(loadTexture("assets/racer/tiles/grass/topright.png"));    // 5:  Top-Right
+  textures.push_back(loadTexture("assets/racer/tiles/grass/bottomleft.png"));  // 6:  Bottom-Left
+  textures.push_back(loadTexture("assets/racer/tiles/grass/bottomright.png")); // 7:  Bottom-Right
+  textures.push_back(loadTexture("assets/racer/tiles/grass/left.png"));        // 8:  Left
+  textures.push_back(loadTexture("assets/racer/tiles/grass/right.png"));       // 9:  Right
+  textures.push_back(loadTexture("assets/racer/tiles/grass/bottom.png"));      // 10: Bottom
+  textures.push_back(loadTexture("assets/racer/tiles/grass/top.png"));         // 11: Top
+  textures.push_back(loadTexture("assets/racer/tiles/universal/turbo.png"));   // 12: Turbo
 
   // AI MAP:
   aiMap.push_back(Point(3,  5));

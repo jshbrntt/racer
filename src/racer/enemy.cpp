@@ -39,7 +39,7 @@ vector<Point> Enemy::enemyShape()
 SDL_Texture *Enemy::enemyTexture()
 {
   // IMPORTING PLAYER TEXTURE:
-  return loadTexture("../textures/cars/green_car.png");
+  return loadTexture("assets/racer/cars/green_car.png");
 }
 
 Enemy::Enemy() : Car()

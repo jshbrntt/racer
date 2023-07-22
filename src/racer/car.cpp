@@ -49,7 +49,7 @@ Car::Car(
   vector<Point> flameBox = getBox(28, 28, Point(-14, -14));
   Point flamePosition(position.x + 40 * cos(angle * (M_PI / 180)),
                       position.y + 40 * sin(angle * (M_PI / 180)));
-  SDL_Texture *flameTexture = loadTexture("../textures/fx/flame.png");
+  SDL_Texture *flameTexture = loadTexture("assets/racer/fx/flame.png");
   flame = Entity(flameBox, flameBox, flamePosition, angle, flameTexture);
 }
 
