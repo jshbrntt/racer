@@ -20,7 +20,7 @@ int MOUSE_X = 0;
 int MOUSE_Y = 0;
 
 // KEYBOARD:
-vector<bool> KEYS(256, false);
+unordered_map<SDL_Keycode, bool> KEYS;
 
 // PROTOTYPES FUNCTIONS:
 void gameMenu();
@@ -30,8 +30,6 @@ void checkKeys();
 void reshape(int width, int height);
 bool init();
 void checkCollisions();
-void keyDown(SDL_Keysym keysym);
-void keyUp(SDL_Keysym keysym);
 void mouseMotion(int x, int y);
 void mouse(int button, int state, int x, int y);
 void update();
@@ -85,14 +83,31 @@ int main(int argc, char *args[])
   STUBBED("Start main loop");
   // Main loop flag
   bool quit = false;
-  SDL_Event e;
   // Event handler
+  SDL_Event event;
   // Frame time
   Uint32 frameStart, frameTime;
   while (!quit)
   {
     frameStart = SDL_GetTicks();
 
+    // Event handling
+    while (SDL_PollEvent(&event) != 0)
+    {
+      switch (event.type)
+      {
+      // User requests quit
+      case SDL_QUIT:
+        quit = true;
+        break;
+      case SDL_KEYDOWN:
+        KEYS[event.key.keysym.sym] = true;
+        break;
+      case SDL_KEYUP:
+        KEYS[event.key.keysym.sym] = false;
+        break;
+      }
+    }
 
     // Clear screen
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -112,26 +127,14 @@ int main(int argc, char *args[])
     // Delay the loop to achieve 60 FPS
     if (FRAME_DELAY > frameTime)
     {
-      //User requests quit
-      // if (e.type == SDL_QUIT)
-      // {
-      //   quit = true;
-      // }
-      if (e.type == SDL_KEYDOWN)
-      {
-        keyDown(e.key.keysym);
-        if (e.key.keysym.sym == SDLK_SPACE) {
-          quit = true;
-        }
-      }
-      if (e.type == SDL_KEYUP)
-      {
-        keyUp(e.key.keysym);
-      }
       SDL_Delay(FRAME_DELAY - frameTime);
     }
   }
-  // glutMainLoop();
+  SDL_DestroyWindow(window);
+  SDL_DestroyRenderer(renderer);
+
+  SDL_Quit();
+
   return 0;
 }
 
@@ -190,7 +193,7 @@ void gameStart()
     track = new Track(Point(0, 0));
 
     // PLAYER:
-    player = new Player(Point(50, 150));
+    player = new Player(Point(startPosition.x, 90));
 
     // ENEMY:
     enemy = new Enemy(startPosition - Point(200, 0), 90);
@@ -231,7 +234,7 @@ void checkKeys()
   if (gameRun)
   {
     // P:
-    if (KEYS['p'] || KEYS['P'])
+    if (KEYS[SDLK_p])
     {
       if (!pauseKey)
       {
@@ -250,7 +253,7 @@ void checkKeys()
   else
   {
     // SPACE BAR:
-    if (KEYS[32])
+    if (KEYS[SDLK_SPACE])
     {
       gameStart();
       gameRun = true;
@@ -266,7 +269,7 @@ void display()
   if (gameRun)
   {
     // DRAW TRACK:
-    // track->draw();
+    track->draw();
 
     // DRAW CARS:
     for (int i = 0; i != cars.size(); i++)
@@ -275,24 +278,29 @@ void display()
       Car *car = cars[i];
 
       // DRAW THE CURRENT CAR:
-      car->draw(Point(300, 300));
+      // car->draw(Point(300, 300));
+      car->draw(track->position);
 
       // UPDATE THE CURRENT CAR:
       if (!pause)
+      {
         car->update();
+      }
     }
 
     // UPDATE TRACK:
-    // if (!pause)
-    //   track->update();
+    if (!pause)
+    {
+      track->update();
+    }
 
     // DRAW HUD:
-    // hud->draw();
+    hud->draw();
   }
   else
   {
     // DRAWING MENU:
-    // menu->draw();
+    menu->draw();
   }
 
   // CHECK KEYS:
@@ -327,10 +335,10 @@ void reshape(int width, int height)
 
 bool init()
 {
-  //Initialization flag
+  // Initialization flag
   bool success = true;
 
-  //Initialize SDL
+  // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
     SDL_Log("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
@@ -365,7 +373,7 @@ bool init()
       }
       else
       {
-        //Initialize PNG loading
+        // Initialize PNG loading
         int imgFlags = IMG_INIT_PNG;
         if (!(IMG_Init(imgFlags) & imgFlags))
         {
@@ -377,26 +385,6 @@ bool init()
   }
 
   return success;
-}
-
-void keyDown(SDL_Keysym keysym)
-{
-  // PREVENTING KEYS GETTING LOCKED IN STATE AFTER CASE CHANGE:
-  if (keysym.sym >= 65 && keysym.sym <= 90)
-    KEYS[keysym.sym + 32] = true;
-  if (keysym.sym >= 97 && keysym.sym <= 122)
-    KEYS[keysym.sym - 32] = true;
-  KEYS[keysym.sym] = true;
-}
-
-void keyUp(SDL_Keysym keysym)
-{
-  // PREVENTING KEYS GETTING LOCKED IN STATE AFTER CASE CHANGE:
-  if (keysym.sym >= 65 && keysym.sym <= 90)
-    KEYS[keysym.sym + 32] = false;
-  if (keysym.sym >= 97 && keysym.sym <= 122)
-    KEYS[keysym.sym - 32] = false;
-  KEYS[keysym.sym] = false;
 }
 
 void mouseMotion(int x, int y)

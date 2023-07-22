@@ -20,6 +20,7 @@
 #include <math.h>
 #include <time.h>
 #include <float.h>
+#include <unordered_map>
 // #include <windows.h>
 // #include <GL/gl.h>
 // #include <GL/glu.h>
@@ -45,7 +46,7 @@ extern const float S_HEIGHT;
 extern bool LEFTMOUSE;
 extern int MOUSE_X;
 extern int MOUSE_Y;
-extern vector<bool> KEYS;
+extern unordered_map<SDL_Keycode, bool> KEYS;
 
 // GAME VARIABLES:
 extern Track *track;

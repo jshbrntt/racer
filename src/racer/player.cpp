@@ -60,19 +60,19 @@ void Player::update()
   Car::update();
 
   // CHECKING KEY PRESSES:
-  if (KEYS['w'] || KEYS['W'])
+  if (KEYS[SDLK_w])
   {
     player->accelerate();
   }
-  if (KEYS['s'] || KEYS['S'])
+  if (KEYS[SDLK_s])
   {
     player->reverse();
   }
-  if (KEYS['a'] || KEYS['A'])
+  if (KEYS[SDLK_a])
   {
     player->turnRight();
   }
-  if (KEYS['d'] || KEYS['D'])
+  if (KEYS[SDLK_d])
   {
     player->turnLeft();
   }
