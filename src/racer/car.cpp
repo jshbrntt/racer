@@ -283,13 +283,17 @@ void Car::draw(Point parentPosition)
   SDL_Point* curvePoints = &sdlPoints[0];
   SDL_RenderDrawLines(renderer, curvePoints, sdlPoints.size());
 
-  trail.push_back(SDL_Point{(int)position.x * 2, (int)position.y * 2});
+  trail.push_back(SDL_Point{(int)position.x, (int)position.y});
   if (trail.size() > 500) {
     trail.erase(trail.begin());
   }
-  SDL_Point* trailPoints = &trail[0];
+
+  vector<SDL_Point> screenspaceTrail;
+  auto transformFunction = [&parentPosition](SDL_Point point) { return SDL_Point{point.x + (int)parentPosition.x, point.y + (int)parentPosition.y}; };
+  std::transform(trail.begin(), trail.end(), std::back_inserter(screenspaceTrail), transformFunction);
+
   SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderDrawLines(renderer, trailPoints, trail.size());
+  SDL_RenderDrawLines(renderer, &screenspaceTrail[0], trail.size());
 }
 
 void Car::updateCurrentLap()

@@ -103,22 +103,24 @@ Track::Track(Point position)
   vector<Point> bottomLeft;
   bottomLeft.push_back(Point(0, 0));
   bottomLeft.push_back(Point(0, tileSize));
-  bottomLeft.push_back(Point(tileSize, 0));
+  bottomLeft.push_back(Point(tileSize, tileSize));
 
   vector<Point> topLeft;
   topLeft.push_back(Point(0, 0));
   topLeft.push_back(Point(0, tileSize));
-  topLeft.push_back(Point(tileSize, tileSize));
+  topLeft.push_back(Point(tileSize, 0));
 
   vector<Point> topRight;
-  topRight.push_back(Point(0, tileSize));
+  topRight.push_back(Point(0, 0));
   topRight.push_back(Point(tileSize, tileSize));
   topRight.push_back(Point(tileSize, 0));
 
   vector<Point> bottomRight;
-  bottomRight.push_back(Point(0, 0));
+  bottomRight.push_back(Point(0, tileSize));
   bottomRight.push_back(Point(tileSize, tileSize));
   bottomRight.push_back(Point(tileSize, 0));
+
+  float margin = 10;
 
   // PARSING TILE MAP ARRAY TO A VECTOR:
   for (int i = 0; i < tH; i++)
@@ -138,22 +140,22 @@ Track::Track(Point position)
         // 7:  Bottom-Right
         // 12: Turbo
         default:
-          mapRow.push_back(Entity(square, square, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, square, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
           break;
         case 4:
-          mapRow.push_back(Entity(square, topLeft, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, topLeft, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
           break;
         case 5:
-          mapRow.push_back(Entity(square, topRight, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, topRight, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
           break;
         case 6:
-          mapRow.push_back(Entity(square, bottomLeft, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, bottomLeft, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
           break;
         case 7:
-          mapRow.push_back(Entity(square, bottomRight, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, bottomRight, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
           break;
         case 12:
-          mapRow.push_back(Entity(square, smallOctagon, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, smallOctagon, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
           break;
         }
       }

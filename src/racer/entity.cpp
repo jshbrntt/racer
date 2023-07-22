@@ -94,15 +94,42 @@ void Entity::draw(Point parentPosition)
     //                  (double)angle,
     //                  NULL,
     //                  SDL_FLIP_NONE);
-    
-    SDL_Rect rectangle;
-    rectangle.x = (int)position.x + parentPosition.x;
-    rectangle.y = (int)position.y + parentPosition.y;
-    rectangle.w = (int)width;
-    rectangle.h = (int)height;
-    SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, NULL, SDL_FLIP_NONE);
 
-    vector<Point> orientedShape = this->getOrientedShape();
+    int minX = std::numeric_limits<int>::max();
+    int maxX = std::numeric_limits<int>::min();
+    int minY = std::numeric_limits<int>::max();
+    int maxY = std::numeric_limits<int>::min();
+    for (Point point : verts) {
+      if (point.x < minX) minX = point.x;
+      if (point.x > maxX) maxX = point.x;
+      if (point.y < minY) minY = point.y;
+      if (point.y > maxY) maxY = point.y;
+    }
+    int width = maxX - minX;
+    int height = maxY - minY;
+
+    SDL_Rect rectangle;
+    rectangle.x = minX + position.x + parentPosition.x;
+    rectangle.y = minY + position.y + parentPosition.y;
+    rectangle.w = maxX - minX;
+    rectangle.h = maxY - minY;
+    SDL_Point center{minX * -1, minY * -1};
+    SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, &center, SDL_FLIP_NONE);
+
+    vector<Point> orientedShape = this->getOrientedShape(parentPosition);
+    vector<SDL_Point> wireframe;
+    std::transform(
+        orientedShape.begin(),
+        orientedShape.end(),
+        std::back_inserter(wireframe),
+        [](const Point &point)
+        {
+          return SDL_Point{(int)point.x, (int)point.y};
+        });
+    wireframe.push_back(SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y});
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawLines(renderer, &wireframe[0], wireframe.size());
 
     // Convert to SDL_Point array
     // SDL_Point points[orientedShape.size() + 1];
@@ -210,7 +237,7 @@ void Entity::highlight(Point parentPosition, glRGB color, bool fill)
   // glEnd();
 }
 void Entity::update() {}
-vector<Point> Entity::getOrientedShape()
+vector<Point> Entity::getOrientedShape(Point parentPosition = Point())
 {
   // CONVERTING ANGLE TO RADIANS:
   float radians = angle * (M_PI / 180);
@@ -222,8 +249,8 @@ vector<Point> Entity::getOrientedShape()
   for (int i = 0; i < (int)shape.size(); i++)
   {
     // ROTATING / TRANSLATING VERTICES:
-    orientedShape[i].x = (shape[i].x * cos(radians)) - (shape[i].y * sin(radians)) + position.x;
-    orientedShape[i].y = (shape[i].x * sin(radians)) + (shape[i].y * cos(radians)) + position.y;
+    orientedShape[i].x = (shape[i].x * cos(radians)) - (shape[i].y * sin(radians)) + position.x + parentPosition.x;
+    orientedShape[i].y = (shape[i].x * sin(radians)) + (shape[i].y * cos(radians)) + position.y + parentPosition.y;
   }
   return orientedShape;
 }

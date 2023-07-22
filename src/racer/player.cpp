@@ -17,14 +17,14 @@ vector<Point> Player::playerShape()
   vector<Point> shape;
 
   // SHAPE:
-  shape.push_back(Point(-40, -20));
+  shape.push_back(Point(-40, 20));
+  shape.push_back(Point(-52, 10));
   shape.push_back(Point(-52, -10));
-  shape.push_back(Point(-52,  10));
-  shape.push_back(Point(-40,  20));
-  shape.push_back(Point(20,   20));
-  shape.push_back(Point(32,   10));
-  shape.push_back(Point(32,  -10));
+  shape.push_back(Point(-40, -20));
   shape.push_back(Point(20,  -20));
+  shape.push_back(Point(32,  -10));
+  shape.push_back(Point(32,  10));
+  shape.push_back(Point(20,  20));
 
   // RETURNING SHAPE:
   return shape;

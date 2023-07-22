@@ -21,6 +21,7 @@
 #include <time.h>
 #include <float.h>
 #include <unordered_map>
+#include <limits>
 // #include <windows.h>
 // #include <GL/gl.h>
 // #include <GL/glu.h>
@@ -47,6 +48,7 @@ extern bool LEFTMOUSE;
 extern int MOUSE_X;
 extern int MOUSE_Y;
 extern unordered_map<SDL_Keycode, bool> KEYS;
+extern vector<Entity> entities;
 
 // GAME VARIABLES:
 extern Track *track;

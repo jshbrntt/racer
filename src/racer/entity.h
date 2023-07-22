@@ -30,7 +30,7 @@ public:
                  glRGB color = glRGB(1.0f, 1.0f, 1.0f),
                  bool fill = false);
   virtual void update();
-  vector<Point> getOrientedShape();
+  vector<Point> getOrientedShape(Point parentPosition);
   bool collides(Entity other);
   Point MTV(Entity other);
 };

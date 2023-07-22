@@ -144,6 +144,7 @@ Track *track;
 Player *player;
 Enemy *enemy;
 vector<Car *> cars;
+vector<Entity> entities;
 
 // DECLARING LOCAL GAME VARIABLES:
 int lapLimit;
@@ -186,6 +187,18 @@ void gameStart()
 
   // RESET GAME FLAG:
   resetGame = false;
+
+  // float size = 200;
+  // vector<Point> verts = getBox(size, size);
+  // vector<Point> shape;
+  // shape.push_back(Point(0, 0));
+  // shape.push_back(Point(0, size));
+  // shape.push_back(Point(size, 0));
+  // Point position(0, 0);
+  // float angle = 0;
+  // SDL_Texture* texture = loadTexture("assets/racer/tiles/grass/topleft.png");
+  // Entity entity(verts, shape, position, angle, texture);
+  // entities.push_back(entity);
 
   if (!gameStarted)
   {
@@ -263,6 +276,9 @@ void checkKeys()
 
 void display()
 {
+  for (Entity entity : entities) {
+    entity.draw();
+  }
   // RESET SCREEN TO BACKGROUND COLOR:
   // glClear(GL_COLOR_BUFFER_BIT);
 
@@ -466,10 +482,10 @@ vector<Point> getBox(float width, float height, Point position)
 {
   // GENERATING THE VERTICES OF A BOX:
   vector<Point> box;
-  box.push_back(Point(position.x, position.y));
   box.push_back(Point(position.x, position.y + height));
-  box.push_back(Point(position.x + width, position.y + height));
+  box.push_back(Point(position.x, position.y));
   box.push_back(Point(position.x + width, position.y));
+  box.push_back(Point(position.x + width, position.y + height));
   return box;
 }
 
