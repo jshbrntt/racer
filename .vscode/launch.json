@@ -4,8 +4,20 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug",
+            "name": "Debug: Snake",
             "program": "${workspaceFolder}/build/linux/snake",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build",
+            "sourceMap": {
+                "/root/racer": "${workspaceFolder}"
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug: Racer",
+            "program": "${workspaceFolder}/build/linux/racer",
             "args": [],
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "Build",
