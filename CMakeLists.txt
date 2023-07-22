@@ -75,6 +75,25 @@ target_link_libraries(
   SDL2_ttf::SDL2_ttf-static
 )
 
+# Racer
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project(racer VERSION 1.0)
+
+file(GLOB_RECURSE RACER_HDRS src/racer/*.h)
+file(GLOB_RECURSE RACER_SRCS src/racer/*.cpp)
+
+add_executable(${PROJECT_NAME} ${RACER_HDRS} ${RACER_SRCS})
+target_link_libraries(
+  ${PROJECT_NAME}
+  EnTT::EnTT
+  SDL2::SDL2main
+  SDL2::SDL2-static
+  SDL2_image::SDL2_image-static
+  SDL2_ttf::SDL2_ttf-static
+)
+
 # Copy assets directory to build path
 add_custom_command(
   TARGET ${PROJECT_NAME} PRE_BUILD
