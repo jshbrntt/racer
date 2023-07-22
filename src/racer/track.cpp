@@ -59,30 +59,42 @@ Track::Track(Point position)
   turboMap.push_back(Point(0,  0));
 
   // TRACK LAYOUT:
-  const int tW = 28;
-  const int tH = 18;
+  // const int tW = 28;
+  // const int tH = 18;
+
+  // // TRACK TILE MAP:
+  // int tileMap[tH][tW] = {
+  //     {1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  0
+  //     {1,  1,  1,  1,  1, 11, 11, 11,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  1
+  //     {1,  1,  1,  1,  4,  0, 12,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  2
+  //     {1,  1,  1,  4,  0,  0,  0,  0,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  3
+  //     {1,  1,  4,  0,  0,  7, 10,  6,  0,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  4
+  //     {1,  8,  0,  0,  7,  1,  1,  1,  6,  0,  0,  5,  1,  1,  1,  1, 11, 11, 11, 11, 11, 11, 11,  1,  1,  1,  1,  1},  //  5
+  //     {1,  8,  0,  0,  9,  1,  1,  1,  1,  6,  0,  0,  5, 11, 11,  4,  0,  0,  0,  0,  0,  0,  0,  5,  1,  1,  1,  1},  //  6
+  //     {1,  8,  2,  2,  9,  1,  1,  1,  1,  1,  6,  0,  0,  0,  0,  0,  7, 10, 10, 10, 10, 10,  6,  0,  5,  1,  1,  1},  //  7
+  //     {1,  8,  0,  0,  9,  1,  1,  1,  1,  1,  1, 10, 10, 10, 10, 10,  1,  1,  1,  1,  1,  1,  1,  6,  0,  5,  1,  1},  //  8
+  //     {1,  8,  0,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  6,  0,  9,  1},  //  9
+  //     {1,  1,  6,  0,  0,  9,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  8,  0,  9,  1},  // 10
+  //     {1,  1,  8,  0,  0,  9,  1,  1,  1,  1,  1,  1,  1, 11, 11, 11, 11,  1,  1,  1,  1,  1,  1,  1,  8,  0,  9,  1},  // 11
+  //     {1,  1,  8,  0,  0,  5,  1,  1,  1,  1,  1,  1,  4,  0,  0,  0, 12,  5,  1,  1,  1,  1,  1,  1,  4,  0,  9,  1},  // 12
+  //     {1,  1,  8,  0,  0, 12,  5, 11,  1,  1,  1,  4,  0,  0,  0,  0,  0,  0,  5,  1,  1,  1,  1,  4,  0,  0,  9,  1},  // 13
+  //     {1,  1,  1,  6,  0,  0,  0,  0,  5, 11,  4,  0,  0,  7, 10,  6,  0,  0,  0,  5, 11, 11,  4,  0,  0,  7,  1,  1},  // 14
+  //     {1,  1,  1,  1,  6,  0,  0,  0,  0,  0,  0,  0,  7,  1,  1,  1, 10,  6,  0,  0,  0,  0,  0,  0,  7,  1,  1,  1},  // 15
+  //     {1,  1,  1,  1,  1, 10, 10, 10, 10, 10, 10, 10,  1,  1,  1,  1,  1,  1, 10, 10, 10, 10, 10, 10,  1,  1,  1,  1},  // 16
+  //     {1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1}}; // 17
+  //   /* 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 */
+
+  const int tW = 5;
+  const int tH = 5;
 
   // TRACK TILE MAP:
   int tileMap[tH][tW] = {
-      {1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  0
-      {1,  1,  1,  1,  1, 11, 11, 11,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  1
-      {1,  1,  1,  1,  4,  0, 12,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  2
-      {1,  1,  1,  4,  0,  0,  0,  0,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  3
-      {1,  1,  4,  0,  0,  7, 10,  6,  0,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  4
-      {1,  8,  0,  0,  7,  1,  1,  1,  6,  0,  0,  5,  1,  1,  1,  1, 11, 11, 11, 11, 11, 11, 11,  1,  1,  1,  1,  1},  //  5
-      {1,  8,  0,  0,  9,  1,  1,  1,  1,  6,  0,  0,  5, 11, 11,  4,  0,  0,  0,  0,  0,  0,  0,  5,  1,  1,  1,  1},  //  6
-      {1,  8,  2,  2,  9,  1,  1,  1,  1,  1,  6,  0,  0,  0,  0,  0,  7, 10, 10, 10, 10, 10,  6,  0,  5,  1,  1,  1},  //  7
-      {1,  8,  0,  0,  9,  1,  1,  1,  1,  1,  1, 10, 10, 10, 10, 10,  1,  1,  1,  1,  1,  1,  1,  6,  0,  5,  1,  1},  //  8
-      {1,  8,  0,  0,  5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  6,  0,  9,  1},  //  9
-      {1,  1,  6,  0,  0,  9,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  8,  0,  9,  1},  // 10
-      {1,  1,  8,  0,  0,  9,  1,  1,  1,  1,  1,  1,  1, 11, 11, 11, 11,  1,  1,  1,  1,  1,  1,  1,  8,  0,  9,  1},  // 11
-      {1,  1,  8,  0,  0,  5,  1,  1,  1,  1,  1,  1,  4,  0,  0,  0, 12,  5,  1,  1,  1,  1,  1,  1,  4,  0,  9,  1},  // 12
-      {1,  1,  8,  0,  0, 12,  5, 11,  1,  1,  1,  4,  0,  0,  0,  0,  0,  0,  5,  1,  1,  1,  1,  4,  0,  0,  9,  1},  // 13
-      {1,  1,  1,  6,  0,  0,  0,  0,  5, 11,  4,  0,  0,  7, 10,  6,  0,  0,  0,  5, 11, 11,  4,  0,  0,  7,  1,  1},  // 14
-      {1,  1,  1,  1,  6,  0,  0,  0,  0,  0,  0,  0,  7,  1,  1,  1, 10,  6,  0,  0,  0,  0,  0,  0,  7,  1,  1,  1},  // 15
-      {1,  1,  1,  1,  1, 10, 10, 10, 10, 10, 10, 10,  1,  1,  1,  1,  1,  1, 10, 10, 10, 10, 10, 10,  1,  1,  1,  1},  // 16
-      {1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1}}; // 17
-    /* 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 */
+      {1,  1,  11, 1,  1}, //  0
+      {1,  4,  0,  5,  1}, //  1
+      {8,  0,  0,  0,  9}, //  2
+      {1,  6,  0,  7,  1}, //  3
+      {1,  1,  10, 1, 1}}; //  4
+    /* 0,  1,  2,  3,  4 */
 
   // TILE SHAPES:
   vector<Point> square = getBox(tileSize, tileSize);
@@ -126,22 +138,22 @@ Track::Track(Point position)
         // 7:  Bottom-Right
         // 12: Turbo
         default:
-          mapRow.push_back(Entity(square, square, Point(position.x + (j * tileSize), position.y + (((tH - 1) - i) * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, square, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
           break;
         case 4:
-          mapRow.push_back(Entity(square, topLeft, Point(position.x + (j * tileSize), position.y + (((tH - 1) - i) * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, topLeft, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
           break;
         case 5:
-          mapRow.push_back(Entity(square, topRight, Point(position.x + (j * tileSize), position.y + (((tH - 1) - i) * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, topRight, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
           break;
         case 6:
-          mapRow.push_back(Entity(square, bottomLeft, Point(position.x + (j * tileSize), position.y + (((tH - 1) - i) * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, bottomLeft, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
           break;
         case 7:
-          mapRow.push_back(Entity(square, bottomRight, Point(position.x + (j * tileSize), position.y + (((tH - 1) - i) * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, bottomRight, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
           break;
         case 12:
-          mapRow.push_back(Entity(square, smallOctagon, Point(position.x + (j * tileSize), position.y + (((tH - 1) - i) * tileSize)), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(Entity(square, smallOctagon, Point(position.x + (j * tileSize), position.y + (i * tileSize)), 0, textures[tileMap[i][j]]));
           break;
         }
       }
@@ -156,7 +168,7 @@ Track::Track(Point position)
     map.push_back(mapRow);
   }
 #if DEBUG == 1
-  printAIMap();
+  // printAIMap();
 #endif
 }
 
@@ -178,11 +190,11 @@ void Track::draw()
       int offset = 0;
 
       // CLIPPING TILES OUT OF VIEWPORT:
-      if ((relative.x + tileSize >= offset && relative.x <= S_WIDTH - offset) &&
-          (relative.y + tileSize >= offset && relative.y <= S_HEIGHT - offset))
-      {
-        row[j].draw(position);
-      }
+      // if ((relative.x + tileSize >= offset && relative.x <= S_WIDTH - offset) &&
+      //     (relative.y + tileSize >= offset && relative.y <= S_HEIGHT - offset))
+      // {
+      row[j].draw(position);
+      // }
     }
   }
 }
@@ -191,7 +203,8 @@ void Track::update()
 {
   // UPDATE TRACK POSITION RELATIVE TO THE PLAYER'S POSITION:
   track->position = Point(player->position.x - (S_WIDTH / 2), player->position.y - (S_HEIGHT / 2)) * -1;
-  //track->position = Point(enemy->position.x - (S_WIDTH / 2), enemy->position.y - (S_HEIGHT / 2)) * -1;
+  // SDL_Log("Track: %f,%f\n", track->position.x, track->position.y);
+  // track->position = Point(enemy->position.x - (S_WIDTH / 2), enemy->position.y - (S_HEIGHT / 2)) * -1;
 }
 
 Point previousIndex = Point(0, 0);
@@ -221,7 +234,7 @@ Point Track::getTileIndex(Point position)
 void Track::printAIMap()
 {
   // CLEAR COMMAND PROMPT WINDOW:
-  system("CLS");
+  // system("CLS");
 
   // -1: Target
   //  0: Track
