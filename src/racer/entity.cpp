@@ -94,6 +94,13 @@ void Entity::draw(Point parentPosition)
     //                  (double)angle,
     //                  NULL,
     //                  SDL_FLIP_NONE);
+    
+    SDL_Rect rectangle;
+    rectangle.x = (int)position.x + parentPosition.x;
+    rectangle.y = (int)position.y + parentPosition.y;
+    rectangle.w = (int)width;
+    rectangle.h = (int)height;
+    SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, NULL, SDL_FLIP_NONE);
 
     vector<Point> orientedShape = this->getOrientedShape();
 
