@@ -20,9 +20,9 @@
 #include <math.h>
 #include <time.h>
 #include <float.h>
-#include <windows.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+// #include <windows.h>
+// #include <GL/gl.h>
+// #include <GL/glu.h>
 #include <SDL.h>
 #include <SDL_image.h>
 
