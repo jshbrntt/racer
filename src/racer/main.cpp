@@ -36,8 +36,8 @@ void mouse(int button, int state, int x, int y);
 void update();
 
 Menu *menu;
-SDL_Window *gWindow = NULL;
-SDL_Renderer *gRenderer = NULL;
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
 
 // MAIN FUNCTION:
 int main(int argc, char *args[])
@@ -89,15 +89,14 @@ int main(int argc, char *args[])
   while (!quit)
   {
     Uint64 start = SDL_GetPerformanceCounter();
-    //Clear screen
-    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(gRenderer);
 
-    //Render texture to screen
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
+
     display();
 
-    //Update screen
-    SDL_RenderPresent(gRenderer);
+    // Update screen
+    SDL_RenderPresent(renderer);
 
     Uint64 end = SDL_GetPerformanceCounter();
 
@@ -332,27 +331,27 @@ bool init()
   }
   else
   {
-    //Create window
-    gWindow = SDL_CreateWindow("Topdown Racing",
-                               SDL_WINDOWPOS_UNDEFINED,
-                               SDL_WINDOWPOS_UNDEFINED,
-                               S_WIDTH,
-                               S_HEIGHT,
-                               SDL_WINDOW_SHOWN);
-    if (gWindow == NULL)
+    // Create window
+    window = SDL_CreateWindow("Topdown Racing",
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              S_WIDTH,
+                              S_HEIGHT,
+                              SDL_WINDOW_SHOWN);
+    if (window == NULL)
     {
       SDL_Log("Window could not be created! SDL Error: %s\n",
-             SDL_GetError());
+              SDL_GetError());
       success = false;
     }
     else
     {
-      //Create renderer for window
-      gRenderer = SDL_CreateRenderer(
-          gWindow,
+      // Create renderer for window
+      renderer = SDL_CreateRenderer(
+          window,
           -1,
           SDL_RENDERER_ACCELERATED);
-      if (gRenderer == NULL)
+      if (renderer == NULL)
       {
         SDL_Log("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
         success = false;
@@ -445,7 +444,7 @@ SDL_Texture *loadTexture(std::string path)
   {
     //Create texture from surface pixels
     newTexture = SDL_CreateTextureFromSurface(
-        gRenderer,
+        renderer,
         loadedSurface);
     if (newTexture == NULL)
     {

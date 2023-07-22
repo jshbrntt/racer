@@ -87,7 +87,7 @@ void Entity::draw(Point parentPosition)
     // fillRect.y = 0;
     // fillRect.w = (int)width;
     // fillRect.h = (int)height;
-    // SDL_RenderCopyEx(gRenderer,
+    // SDL_RenderCopyEx(renderer,
     //                  texture,
     //                  NULL,
     //                  &fillRect,
@@ -119,8 +119,8 @@ void Entity::draw(Point parentPosition)
     // }
 
     // // Draw oriented shape.
-    // SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    // SDL_RenderDrawLines(gRenderer, points, shape.size() + 1);
+    // SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+    // SDL_RenderDrawLines(renderer, points, shape.size() + 1);
 
     // // TRANSLATE
     // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);

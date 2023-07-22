@@ -270,7 +270,7 @@ void Car::draw(Point parentPosition)
   // DRAWING CAR:
   Entity::draw(parentPosition);
 
-  SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
   vector<SDL_Point> sdlPoints;
   for (float t = 0; t <= 1; t += 0.01)
   {
@@ -281,15 +281,15 @@ void Car::draw(Point parentPosition)
     sdlPoints.push_back(SDL_Point{(int)curvePoint.x, (int)curvePoint.y});
   }
   SDL_Point* curvePoints = &sdlPoints[0];
-  SDL_RenderDrawLines(gRenderer, curvePoints, sdlPoints.size());
+  SDL_RenderDrawLines(renderer, curvePoints, sdlPoints.size());
 
   trail.push_back(SDL_Point{(int)position.x * 2, (int)position.y * 2});
   if (trail.size() > 500) {
     trail.erase(trail.begin());
   }
   SDL_Point* trailPoints = &trail[0];
-  SDL_SetRenderDrawColor(gRenderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderDrawLines(gRenderer, trailPoints, trail.size());
+  SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderDrawLines(renderer, trailPoints, trail.size());
 }
 
 void Car::updateCurrentLap()

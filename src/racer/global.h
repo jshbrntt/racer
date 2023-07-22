@@ -57,8 +57,8 @@ extern bool raceStarted;
 extern bool resetGame;
 extern bool gameRun;
 extern bool pause;
-extern SDL_Window *gWindow;
-extern SDL_Renderer *gRenderer;
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
 
 // GLOBAL FUNCTIONS:
 SDL_Texture *loadTexture(std::string path);
