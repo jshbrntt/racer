@@ -199,7 +199,7 @@ void Car::update()
     steer = 1.0f;
   }
 
-  SDL_Log("Speed: %f\nSteer: %f\n\n", speed, steer);
+  // SDL_Log("Speed: %f\nSteer: %f\n\n", speed, steer);
 
   // PASSIVE DECELERATION
   speed *= speedDeceleration;
