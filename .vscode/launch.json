@@ -2,25 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/linux/snake",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
-            "environment": [],
-            "sourceFileMap": {
-                "/root/racer": "${workspaceFolder}"
-            }
-        },
-        {
             "type": "lldb",
             "request": "launch",
-            "name": "Launch",
+            "name": "Debug",
             "program": "${workspaceFolder}/build/linux/snake",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build",
+            "sourceMap": {
+                "/root/racer": "${workspaceFolder}"
+            }
         }
     ]
 }

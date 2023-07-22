@@ -3,17 +3,10 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "conan build",
-            "command": "conan.exe",
+            "label": "Build",
+            "command": "make",
             "args": [
-                "build",
-                ".."
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
-            "problemMatcher": [
-                "$msCompile"
+                "build"
             ],
             "group": {
                 "kind": "build",

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.26.4)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+# Set to ON to debug the build
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 include(FetchContent)
 
@@ -43,6 +44,7 @@ FetchContent_MakeAvailable(SDL2_image)
 
 # SDL2_ttf
 set(SDL2TTF_INSTALL OFF)
+set(SDL2TTF_VENDORED ON)
 
 FetchContent_Declare(
   SDL2_ttf

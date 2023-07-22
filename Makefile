@@ -1,26 +1,53 @@
+export CWD := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
+
 ifndef DOCKER
 
-export BUILDKIT_PROGRESS=plain
+IMAGE := ghcr.io/jshbrntt/racer/devcontainer:latest
+DOCKER := docker
+WORKDIR := /root/racer
+
+export BUILDKIT_PROGRESS = plain
 
 .PHONY: build
-build: docker-build
-build: docker-run
+build: COMMAND := make $(if $(CLEAN),CLEAN=1) LINUX=1
+build: docker-command
+
+.PHONY: shell
+shell: COMMAND := bash
+shell: docker-command
+
+.PHONY: debug
+debug:
+	printenv
+
+.PHONY: docker-command
+docker-command: docker-build
+docker-command: docker-run
 
 .PHONY: docker-build
 docker-build:
-	docker build -t racer .
+	$(DOCKER) build \
+	--tag $(IMAGE) \
+	.
 
 .PHONY: docker-run
 docker-run:
-	docker run -it --rm -e DOCKER=1 -v `pwd`:/root/racer -w /root/racer racer bash
+	docker run \
+	--interactive \
+	--tty \
+	--rm \
+	--env DOCKER=1 \
+	--volume $(CWD):$(WORKDIR) \
+	--workdir $(WORKDIR) \
+	$(IMAGE) \
+	$(COMMAND)
 
 else
-
-ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 .ONESHELL:
 
 ifdef LINUX
+
 .PHONY: build
 build: configure
 	cd build/linux
@@ -30,14 +57,17 @@ build: configure
 configure: $(if $(CLEAN),clean)
 	mkdir -p build/linux
 	cd build/linux
-	cmake ../..
+	cmake ../.. \
+	-DCMAKE_BUILD_TYPE=Debug
 
 .PHONY: clean
 clean:
 	rm -rf build/linux
+
 endif
 
 ifdef WIN32
+
 .PHONY: build
 build: configure
 	cd build/win32
@@ -48,7 +78,7 @@ configure: $(if $(CLEAN),clean)
 	mkdir -p build/win32
 	cd build/win32
 	cmake ../.. \
-	-DCMAKE_TOOLCHAIN_FILE=$(ROOT_DIR)clang_windows_cross.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=$(CWD)clang_windows_cross.cmake \
 	-DCMAKE_BUILD_TYPE=Debug \
 	-DCMAKE_AR=/usr/bin/llvm-lib \
 	-DCMAKE_RC_COMPILER=/usr/bin/llvm-windres \
@@ -65,6 +95,7 @@ configure: $(if $(CLEAN),clean)
 .PHONY: clean
 clean:
 	rm -rf build/win32
+
 endif
 
 ifdef MACOS
@@ -83,11 +114,13 @@ configure: $(if $(CLEAN),clean)
 	OSXCROSS_TARGET_DIR=/osxcross/target \
 	OSXCROSS_SDK=/osxcross/target/SDK/MacOSX12.3.sdk \
 	cmake ../.. \
+	-DCMAKE_BUILD_TYPE=Debug \
 	-DCMAKE_TOOLCHAIN_FILE=/osxcross/tools/toolchain.cmake
 
 .PHONY: clean
 clean:
 	rm -rf build/macos
+
 endif
 
 endif

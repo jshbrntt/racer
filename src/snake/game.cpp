@@ -210,11 +210,11 @@ void Game::cleanEntt(entt::registry& registry)
 
 void Game::cleanSDL()
 {
-	// SDL_DestroyWindow(window);
-	// SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer);
 
-	// TTF_Quit();
-	// SDL_Quit();
+	TTF_Quit();
+	SDL_Quit();
 
 	LOG("SDL Cleaned");
 }
