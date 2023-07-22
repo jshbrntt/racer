@@ -10,8 +10,9 @@ using namespace std;
 const float S_WIDTH = 800;
 const float S_HEIGHT = 600;
 
-const int FRAMES_PER_SECOND = 20;
 // The frames per second
+const int FPS = 60;
+const int FRAME_DELAY = 1000 / FPS;
 
 // MOUSE:
 bool LEFTMOUSE = false;
@@ -87,25 +88,29 @@ int main(int argc, char *args[])
   SDL_Event e;
   // Event handler
   // Frame time
+  Uint32 frameStart, frameTime;
   while (!quit)
   {
-    Uint64 start = SDL_GetPerformanceCounter();
+    frameStart = SDL_GetTicks();
 
+
+    // Clear screen
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
 
+    // Render texture to screen
     display();
 
     // Update screen
     SDL_RenderPresent(renderer);
 
+    // Calculate the time taken for this frame
+    frameTime = SDL_GetTicks() - frameStart;
+
     Uint64 end = SDL_GetPerformanceCounter();
 
-    float elapsed = (end - start) / (float)SDL_GetPerformanceFrequency();
-    float elapsedMS = elapsed * 1000.0f;
-    // SDL_Log("Current FPS: %f\n", 1.0f / elapsed);
-    SDL_Delay(floor(16.666f - elapsedMS));
-    while (SDL_PollEvent(&e) != 0)
+    // Delay the loop to achieve 60 FPS
+    if (FRAME_DELAY > frameTime)
     {
       //User requests quit
       // if (e.type == SDL_QUIT)
@@ -123,6 +128,7 @@ int main(int argc, char *args[])
       {
         keyUp(e.key.keysym);
       }
+      SDL_Delay(FRAME_DELAY - frameTime);
     }
   }
   // glutMainLoop();
