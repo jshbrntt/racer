@@ -10,8 +10,8 @@ using namespace std;
 const float S_WIDTH = 800;
 const float S_HEIGHT = 600;
 
-//The frames per second
 const int FRAMES_PER_SECOND = 20;
+// The frames per second
 
 // MOUSE:
 bool LEFTMOUSE = false;
@@ -82,10 +82,11 @@ int main(int argc, char *args[])
 
   // START MAIN LOOP:
   STUBBED("Start main loop");
-  //Main loop flag
+  // Main loop flag
   bool quit = false;
-  //Event handler
   SDL_Event e;
+  // Event handler
+  // Frame time
   while (!quit)
   {
     Uint64 start = SDL_GetPerformanceCounter();
@@ -430,10 +431,10 @@ void update()
 
 SDL_Texture *loadTexture(std::string path)
 {
-  //The final texture
+  // The final texture
   SDL_Texture *newTexture = NULL;
 
-  //Load image at specified path
+  // Load image at specified path
   SDL_Surface *loadedSurface = IMG_Load(
       path.c_str());
   if (loadedSurface == NULL)
@@ -442,7 +443,7 @@ SDL_Texture *loadTexture(std::string path)
   }
   else
   {
-    //Create texture from surface pixels
+    // Create texture from surface pixels
     newTexture = SDL_CreateTextureFromSurface(
         renderer,
         loadedSurface);
@@ -451,7 +452,7 @@ SDL_Texture *loadTexture(std::string path)
       SDL_Log("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
     }
 
-    //Get rid of old loaded surface
+    // Get rid of old loaded surface
     SDL_FreeSurface(loadedSurface);
   }
 
