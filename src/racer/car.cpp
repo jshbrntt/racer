@@ -270,30 +270,30 @@ void Car::draw(Point parentPosition)
   // DRAWING CAR:
   Entity::draw(parentPosition);
 
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-  vector<SDL_Point> sdlPoints;
-  for (float t = 0; t <= 1; t += 0.01)
-  {
-    Point curvePoint = bezier(turningCurve, t);
-    curvePoint.x *= 300;
-    curvePoint.y *= 300;
-    // SDL_Log("%f %f %f", t, curvePoint.x, curvePoint.y);
-    sdlPoints.push_back(SDL_Point{(int)curvePoint.x, (int)curvePoint.y});
-  }
-  SDL_Point* curvePoints = &sdlPoints[0];
-  SDL_RenderDrawLines(renderer, curvePoints, sdlPoints.size());
+  // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+  // vector<SDL_Point> sdlPoints;
+  // for (float t = 0; t <= 1; t += 0.01)
+  // {
+  //   Point curvePoint = bezier(turningCurve, t);
+  //   curvePoint.x *= 300;
+  //   curvePoint.y *= 300;
+  //   // SDL_Log("%f %f %f", t, curvePoint.x, curvePoint.y);
+  //   sdlPoints.push_back(SDL_Point{(int)curvePoint.x, (int)curvePoint.y});
+  // }
+  // SDL_Point* curvePoints = &sdlPoints[0];
+  // SDL_RenderDrawLines(renderer, curvePoints, sdlPoints.size());
 
-  trail.push_back(SDL_Point{(int)position.x, (int)position.y});
-  if (trail.size() > 500) {
-    trail.erase(trail.begin());
-  }
+  // trail.push_back(SDL_Point{(int)position.x, (int)position.y});
+  // if (trail.size() > 500) {
+  //   trail.erase(trail.begin());
+  // }
 
-  vector<SDL_Point> screenspaceTrail;
-  auto transformFunction = [&parentPosition](SDL_Point point) { return SDL_Point{point.x + (int)parentPosition.x, point.y + (int)parentPosition.y}; };
-  std::transform(trail.begin(), trail.end(), std::back_inserter(screenspaceTrail), transformFunction);
+  // vector<SDL_Point> screenspaceTrail;
+  // auto transformFunction = [&parentPosition](SDL_Point point) { return SDL_Point{point.x + (int)parentPosition.x, point.y + (int)parentPosition.y}; };
+  // std::transform(trail.begin(), trail.end(), std::back_inserter(screenspaceTrail), transformFunction);
 
-  SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderDrawLines(renderer, &screenspaceTrail[0], trail.size());
+  // SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+  // SDL_RenderDrawLines(renderer, &screenspaceTrail[0], trail.size());
 }
 
 void Car::updateCurrentLap()

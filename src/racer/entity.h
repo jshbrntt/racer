@@ -9,16 +9,15 @@ using namespace std;
 
 class Entity
 {
-protected:
+public:
   vector<Point> verts;
   vector<Point> shape;
   SDL_Texture *texture;
-
-public:
   float width;
   float height;
   Point position;
   float angle;
+  bool highlighted;
   Entity();
   Entity(vector<Point> verts,
          vector<Point> shape,

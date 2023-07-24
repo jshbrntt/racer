@@ -144,7 +144,7 @@ Track *track;
 Player *player;
 Enemy *enemy;
 vector<Car *> cars;
-vector<Entity> entities;
+vector<Entity *> entities;
 
 // DECLARING LOCAL GAME VARIABLES:
 int lapLimit;
@@ -177,6 +177,27 @@ void gameMenu()
   }
 }
 
+vector<Point> calculatePolygonVertices(float radius, int corners)
+{
+  if (corners < 3)
+  {
+    cerr << "A polygon must have at least 3 corners." << endl;
+    return {};
+  }
+
+  vector<Point> vertices;
+  double angleIncrement = 2 * M_PI / corners; // Angle between consecutive vertices
+
+  for (int i = 0; i < corners; ++i)
+  {
+    double x = radius * cos(i * angleIncrement);
+    double y = radius * sin(i * angleIncrement);
+    vertices.push_back(Point(x, y));
+  }
+
+  return vertices;
+}
+
 void gameStart()
 {
   // LAP LIMIT:
@@ -188,17 +209,19 @@ void gameStart()
   // RESET GAME FLAG:
   resetGame = false;
 
-  // float size = 200;
-  // vector<Point> verts = getBox(size, size);
-  // vector<Point> shape;
-  // shape.push_back(Point(0, 0));
-  // shape.push_back(Point(0, size));
-  // shape.push_back(Point(size, 0));
-  // Point position(0, 0);
-  // float angle = 0;
-  // SDL_Texture* texture = loadTexture("assets/racer/tiles/grass/topleft.png");
-  // Entity entity(verts, shape, position, angle, texture);
-  // entities.push_back(entity);
+  vector<Point> verts;
+
+  // vector<Point> triangleShape = calculatePolygonVertices(100, 4);
+  // Entity *triangle = new Entity(verts, triangleShape, Point(S_WIDTH / 2 - 160, S_HEIGHT / 2), 30, NULL);
+  // entities.push_back(triangle);
+
+  // vector<Point> squareShape = calculatePolygonVertices(100, 3);
+  // Entity *square = new Entity(verts, squareShape, Point(S_WIDTH / 2, S_HEIGHT / 2), 60, NULL);
+  // entities.push_back(square);
+
+  // vector<Point> pentagonShape = calculatePolygonVertices(100, 5);
+  // Entity *pentagon = new Entity(verts, pentagonShape, Point(S_WIDTH / 2 + 160, S_HEIGHT / 2), 10, NULL);
+  // entities.push_back(pentagon);
 
   if (!gameStarted)
   {
@@ -276,11 +299,27 @@ void checkKeys()
 
 void display()
 {
-  for (Entity entity : entities) {
-    entity.draw();
+  for (size_t i = 0; i < entities.size(); ++i)
+  {
+    for (size_t j = i + 1; j < entities.size(); ++j)
+    {
+      if (entities[i]->collides(*entities[j]))
+      {
+        entities[i]->highlighted = true;
+        entities[j]->highlighted = true;
+      }
+    }
   }
-  // RESET SCREEN TO BACKGROUND COLOR:
-  // glClear(GL_COLOR_BUFFER_BIT);
+
+  for (Entity *entity : entities)
+  {
+    entity->angle += (float)entity->shape.size() / 2;
+    entity->position.y = sin(entity->angle * (M_PI / 180)) * ((S_HEIGHT / 2) - 100) + (S_HEIGHT / 2) + 50;
+    entity->draw();
+    entity->highlighted = false;
+  }
+  // // RESET SCREEN TO BACKGROUND COLOR:
+  // // glClear(GL_COLOR_BUFFER_BIT);
 
   if (gameRun)
   {

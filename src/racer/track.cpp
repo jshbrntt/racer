@@ -132,6 +132,8 @@ Track::Track(Point position)
       if ((tileMap[i][j] < int(textures.size())) && (tileMap[i][j] >= 0))
       {
         tileRow.push_back(tileMap[i][j]);
+        // SDL_Texture* texture = textures[tileMap[i][j]];
+        SDL_Texture* texture = NULL;
         switch (tileMap[i][j])
         {
         // 4:  Top-Left
@@ -140,22 +142,76 @@ Track::Track(Point position)
         // 7:  Bottom-Right
         // 12: Turbo
         default:
-          mapRow.push_back(Entity(square, square, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(
+            Entity(
+              square,
+              square,
+              Point(position.x + (j * (tileSize + margin)),
+              position.y + (i * (tileSize + margin))),
+              0,
+              texture
+            )
+          );
           break;
         case 4:
-          mapRow.push_back(Entity(square, topLeft, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(
+            Entity(
+              square,
+              topLeft,
+              Point(position.x + (j * (tileSize + margin)),
+              position.y + (i * (tileSize + margin))),
+              0,
+              texture
+            )
+          );
           break;
         case 5:
-          mapRow.push_back(Entity(square, topRight, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(
+            Entity(
+              square,
+              topRight,
+              Point(position.x + (j * (tileSize + margin)),
+              position.y + (i * (tileSize + margin))),
+              0,
+              texture
+            )
+          );
           break;
         case 6:
-          mapRow.push_back(Entity(square, bottomLeft, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(
+            Entity(
+              square,
+              bottomLeft,
+              Point(position.x + (j * (tileSize + margin)),
+              position.y + (i * (tileSize + margin))),
+              0,
+              texture
+            )
+          );
           break;
         case 7:
-          mapRow.push_back(Entity(square, bottomRight, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(
+            Entity(
+              square,
+              bottomRight,
+              Point(position.x + (j * (tileSize + margin)),
+              position.y + (i * (tileSize + margin))),
+              0,
+              texture
+            )
+          );
           break;
         case 12:
-          mapRow.push_back(Entity(square, smallOctagon, Point(position.x + (j * (tileSize + margin)), position.y + (i * (tileSize + margin))), 0, textures[tileMap[i][j]]));
+          mapRow.push_back(
+            Entity(
+              square,
+              smallOctagon,
+              Point(position.x + (j * (tileSize + margin)),
+              position.y + (i * (tileSize + margin))),
+              0,
+              texture
+            )
+          );
           break;
         }
       }

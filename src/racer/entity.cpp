@@ -23,6 +23,7 @@ Entity::Entity(vector<Point> verts,
   this->position = position;
   this->angle = angle;
   this->texture = texture;
+  this->highlighted = false;
 
   // INITIALIZING PROJECTION OBJECTS:
   Point xProj(FLT_MAX, -FLT_MAX);
@@ -73,8 +74,8 @@ void Entity::draw(Point parentPosition)
   // glLoadIdentity();
 
   // IF TEXTURE EXISTS ENABLE TEXTURING:
-  if (texture != NULL)
-  {
+  // if (texture != NULL)
+  // {
     // glEnable(GL_BLEND);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // glEnable(GL_TEXTURE_2D);
@@ -114,7 +115,10 @@ void Entity::draw(Point parentPosition)
     rectangle.w = maxX - minX;
     rectangle.h = maxY - minY;
     SDL_Point center{minX * -1, minY * -1};
-    SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, &center, SDL_FLIP_NONE);
+
+    if (texture) {
+      SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, &center, SDL_FLIP_NONE);
+    }
 
     vector<Point> orientedShape = this->getOrientedShape(parentPosition);
     vector<SDL_Point> wireframe;
@@ -128,7 +132,11 @@ void Entity::draw(Point parentPosition)
         });
     wireframe.push_back(SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y});
 
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+    // if (highlighted) {
+    //   SDL_Log("Highlighted");
+    // }
+
+    SDL_SetRenderDrawColor(renderer, highlighted ? 255 : 0, highlighted ? 0 : 255, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawLines(renderer, &wireframe[0], wireframe.size());
 
     // Convert to SDL_Point array
@@ -197,11 +205,12 @@ void Entity::draw(Point parentPosition)
     //   glDisable(GL_TEXTURE_2D);
     //   glDisable(GL_BLEND);
     // }
-  }
+  // }
 }
 
 void Entity::highlight(Point parentPosition, glRGB color, bool fill)
 {
+  highlighted = fill;
   // // LOAD IDENTITY MATRIX:
   // glLoadIdentity();
 

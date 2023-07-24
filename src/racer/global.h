@@ -6,7 +6,7 @@
 // DEBUG MACROS:
 #define DEBUG 1
 #define COLLISION 1
-#define RESPONSE 1
+#define RESPONSE 0
 #define AI 1
 
 // SYSTEM MACROS:
@@ -48,7 +48,7 @@ extern bool LEFTMOUSE;
 extern int MOUSE_X;
 extern int MOUSE_Y;
 extern unordered_map<SDL_Keycode, bool> KEYS;
-extern vector<Entity> entities;
+extern vector<Entity*> entities;
 
 // GAME VARIABLES:
 extern Track *track;

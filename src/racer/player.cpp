@@ -130,7 +130,7 @@ void Player::checkCollisions()
 #endif
 #if DEBUG == 1
     // HIGHLIGHT TILE ENEMY IS ON:
-    track->map[enemy->currentTileIndex.y][enemy->currentTileIndex.x].highlight(track->position, color, false);
+    // track->map[enemy->currentTileIndex.y][enemy->currentTileIndex.x].highlight(track->position, color, false);
 #endif
   }
 }
