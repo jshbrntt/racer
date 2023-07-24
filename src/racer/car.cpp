@@ -328,79 +328,85 @@ void Car::checkCollisions()
   int mapWidth = track->map[0].size();
   int mapHeight = track->map.size();
 
-  // STORING CURRENT TILE INDEX:
-  Point tileIndex;
-
-  // STORING CURRENT TILE TYPE:
-  int tileType;
-
-  // STORING CURRENT TILE ENTITY:
-  Entity tileEntity;
-
-  // ITERATE THROUGH PROXIMITY TILES:
-  for (int i = 0; i != proximityTiles.size(); i++)
-  {
-    // CURRENT TILE INDEX:
-    tileIndex = proximityTiles[i];
-
-    // EXCLUDE IRRELEVANT INDEXES:
-    if (tileIndex.x < 0)
-      continue;
-    if (tileIndex.x > mapWidth - 1)
-      continue;
-    if (tileIndex.y < 0)
-      continue;
-    if (tileIndex.y > mapHeight - 1)
-      continue;
-
-    // CURRENT TILE TYPE:
-    tileType = track->tiles[tileIndex.y][tileIndex.x];
-
-    // EXCLUDE IRRELEVANT TILES:
-    if (tileType < 3)
-      continue;
-
-    // CURRENT TILE ENTITY:
-    tileEntity = track->map[tileIndex.y][tileIndex.x];
-
-#if COLLISION == 1
-    // CHECKING FOR A COLLISION:
-    collision = this->collides(tileEntity) && tileEntity.collides(*this);
-#if RESPONSE == 1
-    // IF A COLLISION OCCURS:
-    if (collision)
-    {
-      switch (tileType)
-      {
-      // TURBO TILE:
-      case 12:
-        // TRIGGER TURBO:
-        turbo();
-        break;
-      // EVERY OTHER TILE:
-      default:
-        // GETTING MINIMUM TRANSLATION VECTOR:
-        Point MTV = tileEntity.MTV(*this);
-
-        // SEPARATE THE CAR FROM THE TILE USING THE MINIMUM TRANSLATION VECTOR::
-        this->position += MTV;
-
-        // MAKE CAR BOUNCE OFF THE WALL:
-        this->linearVelocity += MTV * 2;
-
-        // SLOW CAR DOWN BY APPLYING FRICTION:
-        this->linearVelocity *= this->linearFriction;
-        break;
-      }
+  for (int i = 0; i != track->map.size(); i++) {
+    for (int j = 0; j != track->map[0].size(); j++) {
+      this->highlighted = this->collides(track->map[i][j]) && track->map[i][j].collides(*this);
     }
-#endif
-#endif
-#if DEBUG == 1
-    // HIGHLIGHTING COLLISION POLYGONS:
-    collision ? tileEntity.highlight(track->position, color, true) : tileEntity.highlight(track->position, color, false);
-    collision ? this->highlight(track->position, color, true) : this->highlight(track->position, color, false);
-#endif
   }
+
+
+//   // STORING CURRENT TILE INDEX:
+//   Point tileIndex;
+
+//   // STORING CURRENT TILE TYPE:
+//   int tileType;
+
+//   // STORING CURRENT TILE ENTITY:
+//   Entity tileEntity;
+
+//   // ITERATE THROUGH PROXIMITY TILES:
+//   for (int i = 0; i != proximityTiles.size(); i++)
+//   {
+//     // CURRENT TILE INDEX:
+//     tileIndex = proximityTiles[i];
+
+//     // EXCLUDE IRRELEVANT INDEXES:
+//     if (tileIndex.x < 0)
+//       continue;
+//     if (tileIndex.x > mapWidth - 1)
+//       continue;
+//     if (tileIndex.y < 0)
+//       continue;
+//     if (tileIndex.y > mapHeight - 1)
+//       continue;
+
+//     // CURRENT TILE TYPE:
+//     tileType = track->tiles[tileIndex.y][tileIndex.x];
+
+//     // EXCLUDE IRRELEVANT TILES:
+//     if (tileType < 3)
+//       continue;
+
+//     // CURRENT TILE ENTITY:
+//     tileEntity = track->map[tileIndex.y][tileIndex.x];
+
+// #if COLLISION == 1
+//     // CHECKING FOR A COLLISION:
+//     collision = this->collides(tileEntity);
+// #if RESPONSE == 1
+//     // IF A COLLISION OCCURS:
+//     if (collision)
+//     {
+//       switch (tileType)
+//       {
+//       // TURBO TILE:
+//       case 12:
+//         // TRIGGER TURBO:
+//         turbo();
+//         break;
+//       // EVERY OTHER TILE:
+//       default:
+//         // GETTING MINIMUM TRANSLATION VECTOR:
+//         Point MTV = tileEntity.MTV(*this);
+
+//         // SEPARATE THE CAR FROM THE TILE USING THE MINIMUM TRANSLATION VECTOR::
+//         this->position += MTV;
+
+//         // MAKE CAR BOUNCE OFF THE WALL:
+//         this->linearVelocity += MTV * 2;
+
+//         // SLOW CAR DOWN BY APPLYING FRICTION:
+//         this->linearVelocity *= this->linearFriction;
+//         break;
+//       }
+//     }
+// #endif
+// #endif
+// #if DEBUG == 1
+//     // HIGHLIGHTING COLLISION POLYGONS:
+//     tileEntity.highlighted = this->highlighted = collision;
+// #endif
+//   }
 }
 
 float Car::getAverageSpeed()

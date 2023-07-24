@@ -104,7 +104,7 @@ void Player::checkCollisions()
   {
 #if COLLISION == 1
     // CHECKING FOR A COLLISION:
-    collision = this->collides(*enemy) && enemy->collides(*this);
+    // collision = this->collides(*enemy) && enemy->collides(*this);
 #if RESPONSE == 1
     // OBB VS OBB COLLISIONS:
     if (collision)

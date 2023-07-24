@@ -68,6 +68,57 @@ Point rotatePoint(
   return rotatedPoint;
 }
 
+SDL_Color HSVtoRGB(double h, double s, double v)
+{
+  double c = v * s;
+  double x = c * (1 - std::abs(std::fmod(h / 60.0, 2) - 1));
+  double m = v - c;
+
+  double r, g, b;
+  if (h >= 0 && h < 60)
+  {
+    r = c;
+    g = x;
+    b = 0;
+  }
+  else if (h >= 60 && h < 120)
+  {
+    r = x;
+    g = c;
+    b = 0;
+  }
+  else if (h >= 120 && h < 180)
+  {
+    r = 0;
+    g = c;
+    b = x;
+  }
+  else if (h >= 180 && h < 240)
+  {
+    r = 0;
+    g = x;
+    b = c;
+  }
+  else if (h >= 240 && h < 300)
+  {
+    r = x;
+    g = 0;
+    b = c;
+  }
+  else
+  {
+    r = c;
+    g = 0;
+    b = x;
+  }
+
+  return {
+      static_cast<Uint8>((r + m) * 255),
+      static_cast<Uint8>((g + m) * 255),
+      static_cast<Uint8>((b + m) * 255),
+      SDL_ALPHA_OPAQUE};
+}
+
 void Entity::draw(Point parentPosition)
 {
   // LOAD IDENTITY MATRIX:
@@ -76,135 +127,163 @@ void Entity::draw(Point parentPosition)
   // IF TEXTURE EXISTS ENABLE TEXTURING:
   // if (texture != NULL)
   // {
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // glEnable(GL_TEXTURE_2D);
-    // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    // glBindTexture(GL_TEXTURE_2D, texture);
-    // SDL_Rect fillRect;
-    // fillRect.x = 0;
-    // fillRect.y = 0;
-    // fillRect.w = (int)width;
-    // fillRect.h = (int)height;
-    // SDL_RenderCopyEx(renderer,
-    //                  texture,
-    //                  NULL,
-    //                  &fillRect,
-    //                  (double)angle,
-    //                  NULL,
-    //                  SDL_FLIP_NONE);
+  // glEnable(GL_BLEND);
+  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  // glEnable(GL_TEXTURE_2D);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  // glBindTexture(GL_TEXTURE_2D, texture);
+  // SDL_Rect fillRect;
+  // fillRect.x = 0;
+  // fillRect.y = 0;
+  // fillRect.w = (int)width;
+  // fillRect.h = (int)height;
+  // SDL_RenderCopyEx(renderer,
+  //                  texture,
+  //                  NULL,
+  //                  &fillRect,
+  //                  (double)angle,
+  //                  NULL,
+  //                  SDL_FLIP_NONE);
 
-    int minX = std::numeric_limits<int>::max();
-    int maxX = std::numeric_limits<int>::min();
-    int minY = std::numeric_limits<int>::max();
-    int maxY = std::numeric_limits<int>::min();
-    for (Point point : verts) {
-      if (point.x < minX) minX = point.x;
-      if (point.x > maxX) maxX = point.x;
-      if (point.y < minY) minY = point.y;
-      if (point.y > maxY) maxY = point.y;
-    }
-    int width = maxX - minX;
-    int height = maxY - minY;
+  int minX = std::numeric_limits<int>::max();
+  int maxX = std::numeric_limits<int>::min();
+  int minY = std::numeric_limits<int>::max();
+  int maxY = std::numeric_limits<int>::min();
+  for (Point point : verts)
+  {
+    if (point.x < minX)
+      minX = point.x;
+    if (point.x > maxX)
+      maxX = point.x;
+    if (point.y < minY)
+      minY = point.y;
+    if (point.y > maxY)
+      maxY = point.y;
+  }
+  int width = maxX - minX;
+  int height = maxY - minY;
 
-    SDL_Rect rectangle;
-    rectangle.x = minX + position.x + parentPosition.x;
-    rectangle.y = minY + position.y + parentPosition.y;
-    rectangle.w = maxX - minX;
-    rectangle.h = maxY - minY;
-    SDL_Point center{minX * -1, minY * -1};
+  SDL_Rect rectangle;
+  rectangle.x = minX + position.x + parentPosition.x;
+  rectangle.y = minY + position.y + parentPosition.y;
+  rectangle.w = maxX - minX;
+  rectangle.h = maxY - minY;
+  SDL_Point center{minX * -1, minY * -1};
 
-    if (texture) {
-      SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, &center, SDL_FLIP_NONE);
-    }
+  if (texture)
+  {
+    SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, &center, SDL_FLIP_NONE);
+  }
 
-    vector<Point> orientedShape = this->getOrientedShape(parentPosition);
-    vector<SDL_Point> wireframe;
-    std::transform(
-        orientedShape.begin(),
-        orientedShape.end(),
-        std::back_inserter(wireframe),
-        [](const Point &point)
-        {
-          return SDL_Point{(int)point.x, (int)point.y};
-        });
-    wireframe.push_back(SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y});
+  vector<Point> orientedShape = this->getOrientedShape(parentPosition);
+  vector<SDL_Point> wireframe;
+  std::transform(
+      orientedShape.begin(),
+      orientedShape.end(),
+      std::back_inserter(wireframe),
+      [](const Point &point)
+      {
+        return SDL_Point{(int)point.x, (int)point.y};
+      });
+  wireframe.push_back(SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y});
 
-    // if (highlighted) {
-    //   SDL_Log("Highlighted");
-    // }
+  // Define the starting and ending colors for the gradient (green and red)
+  SDL_Color startColor = {0, 255, 0, SDL_ALPHA_OPAQUE};
+  SDL_Color endColor = {255, 0, 0, SDL_ALPHA_OPAQUE};
 
-    SDL_SetRenderDrawColor(renderer, highlighted ? 255 : 0, highlighted ? 0 : 255, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderDrawLines(renderer, &wireframe[0], wireframe.size());
+  // Calculate the color step for each line segment
+  int numSegments = 10;
+  double stepR = static_cast<double>(endColor.r - startColor.r) / numSegments;
+  double stepG = static_cast<double>(endColor.g - startColor.g) / numSegments;
+  double stepB = static_cast<double>(endColor.b - startColor.b) / numSegments;
 
-    // Convert to SDL_Point array
-    // SDL_Point points[orientedShape.size() + 1];
-    // transform(orientedShape.begin(),
-    //           orientedShape.end(),
-    //           points,
-    //           [](const auto &point) {
-    //             const int x = (int)point.x;
-    //             const int y = (int)point.y;
-    //             return SDL_Point{x, y};
-    //           });
+  // int numSegments = wireframe.size() - 1;
+  double stepH = 360.0 / numSegments; // Distribute the hues evenly across the color spectrum
 
-    // Add first point as also the final point
-    // points[orientedShape.size()] = SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y};
+  // Iterate through the wireframe points and draw each line segment with rainbow colors
+  for (size_t i = 0; i < wireframe.size() - 1; ++i)
+  {
+    // Calculate the hue for the current line segment
+    double currentHue = stepH * i;
 
-    // // Offset points by entity position
-    // for (int i = 0; i < orientedShape.size() + 1; i++)
-    // {
-    //   points[i].x += (int)position.x;
-    //   points[i].y += (int)position.y;
-    // }
+    // Get the RGB color for the current hue in the HSV color space
+    SDL_Color currentColor = HSVtoRGB(highlighted ? 1 : currentHue, 1.0, 1.0);
 
-    // // Draw oriented shape.
-    // SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-    // SDL_RenderDrawLines(renderer, points, shape.size() + 1);
+    // Set the color for the current line segment
+    SDL_SetRenderDrawColor(renderer, currentColor.r, currentColor.g, currentColor.b, currentColor.a);
 
-    // // TRANSLATE
-    // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
+    // Draw the current line segment
+    SDL_RenderDrawLine(renderer, wireframe[i].x, wireframe[i].y, wireframe[i + 1].x, wireframe[i + 1].y);
+  }
 
-    // // ROTATE:
-    // glRotatef(angle, 0.0f, 0.0f, 1.0f);
+  // Convert to SDL_Point array
+  // SDL_Point points[orientedShape.size() + 1];
+  // transform(orientedShape.begin(),
+  //           orientedShape.end(),
+  //           points,
+  //           [](const auto &point) {
+  //             const int x = (int)point.x;
+  //             const int y = (int)point.y;
+  //             return SDL_Point{x, y};
+  //           });
 
-    // // DRAW POLYGON FROM VERTS:
-    // if (verts.size() >= 3)
-    // {
-    //   // BEGIN DRAWING POLYGON:
-    //   glBegin(GL_POLYGON);
-    //   for (int i = 0; i != verts.size(); i++)
-    //   {
-    //     // GETTING CURRENT VERT:
-    //     Point vert = verts[i];
+  // Add first point as also the final point
+  // points[orientedShape.size()] = SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y};
 
-    //     // MAP TEXTURE IF IT EXISTS:
-    //     if (texture != 0)
-    //     {
-    //       // MAP TEXTURE RELATIVE TO VERTS:
-    //       Point texturePosition = Point(0, 0);
-    //       if (vert.x > 0)
-    //         texturePosition.x = 1;
-    //       if (vert.y > 0)
-    //         texturePosition.y = 1;
+  // // Offset points by entity position
+  // for (int i = 0; i < orientedShape.size() + 1; i++)
+  // {
+  //   points[i].x += (int)position.x;
+  //   points[i].y += (int)position.y;
+  // }
 
-    //       // APPLYING POSITION:
-    //       glTexCoord2f(texturePosition.x, texturePosition.y);
-    //     }
-    //     // DRAW CURRENT VERT:
-    //     glVertex2f(vert.x, vert.y);
-    //   }
-    //   glEnd();
-    // }
+  // // Draw oriented shape.
+  // SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+  // SDL_RenderDrawLines(renderer, points, shape.size() + 1);
 
-    // // IF TEXTURE EXISTS DISABLE TEXTURING:
-    // if (texture != 0)
-    // {
-    //   glDisable(GL_TEXTURE_2D);
-    //   glDisable(GL_BLEND);
-    // }
+  // // TRANSLATE
+  // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
+
+  // // ROTATE:
+  // glRotatef(angle, 0.0f, 0.0f, 1.0f);
+
+  // // DRAW POLYGON FROM VERTS:
+  // if (verts.size() >= 3)
+  // {
+  //   // BEGIN DRAWING POLYGON:
+  //   glBegin(GL_POLYGON);
+  //   for (int i = 0; i != verts.size(); i++)
+  //   {
+  //     // GETTING CURRENT VERT:
+  //     Point vert = verts[i];
+
+  //     // MAP TEXTURE IF IT EXISTS:
+  //     if (texture != 0)
+  //     {
+  //       // MAP TEXTURE RELATIVE TO VERTS:
+  //       Point texturePosition = Point(0, 0);
+  //       if (vert.x > 0)
+  //         texturePosition.x = 1;
+  //       if (vert.y > 0)
+  //         texturePosition.y = 1;
+
+  //       // APPLYING POSITION:
+  //       glTexCoord2f(texturePosition.x, texturePosition.y);
+  //     }
+  //     // DRAW CURRENT VERT:
+  //     glVertex2f(vert.x, vert.y);
+  //   }
+  //   glEnd();
+  // }
+
+  // // IF TEXTURE EXISTS DISABLE TEXTURING:
+  // if (texture != 0)
+  // {
+  //   glDisable(GL_TEXTURE_2D);
+  //   glDisable(GL_BLEND);
+  // }
   // }
 }
 
@@ -306,6 +385,7 @@ bool Entity::collides(Entity other)
     }
 
     // EXIT IF THE PROJECTIONS DO NOT OVERLAP:
+    SDL_Log("%d: %f > %f || %f < %f\n", i, overlap1.x, overlap2.y, overlap1.y, overlap2.x);
     if (overlap1.x > overlap2.y || overlap1.y < overlap2.x)
     {
       return false;
