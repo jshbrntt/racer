@@ -28,7 +28,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug: Racer",
+            "name": "Debug: Racer (macOS)",
             "program": "${workspaceFolder}/build/macos/racer",
             "args": [],
             "cwd": "${workspaceFolder}",
