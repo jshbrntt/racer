@@ -16,9 +16,9 @@
         {
             "type": "shell",
             "label": "Build: Win32",
-            "command": "make win32",
+            "command": "make",
             "args": [
-                "build-linux"
+                "build-win32"
             ],
             "group": {
                 "kind": "build",
