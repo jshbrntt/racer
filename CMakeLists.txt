@@ -95,7 +95,8 @@ target_link_libraries(
 )
 
 # Copy executable to root directory
-if(MACOS OR LINUX)
+message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
+if(CMAKE_SYSTEM_NAME MATCHES Linux OR CMAKE_SYSTEM_NAME MATCHES Darwin)
   add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
@@ -103,7 +104,7 @@ if(MACOS OR LINUX)
     ${CMAKE_SOURCE_DIR}/racer
   )
 endif()
-if(WIN32)
+if(CMAKE_SYSTEM_NAME MATCHES Windows)
   add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
