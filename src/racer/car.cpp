@@ -18,22 +18,23 @@ Car::Car(
   // INITIALIZING CAR PROPERTIES:
   speed = 0;
   speedAcceleration = 0.01f;
-  speedDeceleration = 0.99f;
+  turboSpeedAcceleration = 0.02f;
+  speedDeceleration = 0.986f;
   steer = 0;
   steerAcceleration = 0.1f;
   steerDeceleration = 0.9f;
 
-  angularVelocity = 0;
-  angularMagnitude = 0.4;
-  angularFriction = 0.86;
-  linearVelocity = Point(0, 0);
-  linearMagnitude = 0.2;
-  linearFriction = 0.98;
+  // angularVelocity = 0;
+  // angularMagnitude = 0.4;
+  // angularFriction = 0.86;
+  // linearVelocity = Point(0, 0);
+  // linearMagnitude = 0.2;
+  // linearFriction = 0.98;
   lapState = 0;
   immobilized = true;
   currentLap = 0;
   color = glRGB();
-  turboMagnitude = 1.5;
+  // turboMagnitude = 4;
   turboOn = false;
   turboTimer = 0;
   turboTimeOut = 3000;
@@ -87,26 +88,26 @@ void Car::accelerate()
 {
   if (!immobilized)
   {
-    speed += speedAcceleration;
+    speed += turboOn ? turboSpeedAcceleration : speedAcceleration;
     // SELECT MAGNITUDE:
-    float magnitude = turboOn ? turboMagnitude : linearMagnitude;
+    // float magnitude = turboOn ? turboMagnitude : linearMagnitude;
 
     // MOVING CAR IN DIRECTION OF THE ANGLE:
-    linearVelocity.x += cos(angle * (M_PI / 180)) * magnitude;
-    linearVelocity.y += sin(angle * (M_PI / 180)) * magnitude;
+    // linearVelocity.x += cos(angle * (M_PI / 180)) * magnitude;
+    // linearVelocity.y += sin(angle * (M_PI / 180)) * magnitude;
   }
 }
 void Car::reverse()
 {
   if (!immobilized)
   {
-    speed -= speedAcceleration;
+    speed -= turboOn ? turboSpeedAcceleration : speedAcceleration;
     // SELECT MAGNITUDE:
-    float magnitude = turboOn ? turboMagnitude : linearMagnitude;
+    // float magnitude = turboOn ? turboMagnitude : linearMagnitude;
 
     // MOVING CAR IN THE OPPOSITE DIRECTION OF THE ANGLE:
-    linearVelocity.x -= cos(angle * (M_PI / 180)) * magnitude;
-    linearVelocity.y -= sin(angle * (M_PI / 180)) * magnitude;
+    // linearVelocity.x -= cos(angle * (M_PI / 180)) * magnitude;
+    // linearVelocity.y -= sin(angle * (M_PI / 180)) * magnitude;
   }
 }
 void Car::turnLeft()
@@ -118,7 +119,7 @@ void Car::turnLeft()
     // if (getAverageSpeed() >= 2)
     // {
     // TURNING THE CAR TO THE LEFT:
-    angularVelocity += angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
+    // angularVelocity += angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
     // SDL_Log("Speed: %f\n", getAverageSpeed());
     // }
   }
@@ -132,7 +133,7 @@ void Car::turnRight()
     // if (getAverageSpeed() >= 2)
     // {
     // TURNING THE CAR TO THE RIGHT:
-    angularVelocity -= angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
+    // angularVelocity -= angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
     // }
   }
 }
@@ -143,7 +144,7 @@ void Car::turbo()
     // IF TURBO ISN'T ALREADY ON:
     if (!turboOn)
     {
-      turboTimer = clock();
+      turboTimer = SDL_GetTicks();
       turboOn = true;
     }
   }
@@ -173,33 +174,19 @@ void Car::update()
     // UPDATE PROXIMITY TILE INDEXES:
     proximityTiles.clear();
     proximityTiles.push_back(currentTileIndex);                                      // CENTER
-    proximityTiles.push_back(Point(currentTileIndex.x - 1, currentTileIndex.y - 1)); // BOTTOM-LEFT
+    proximityTiles.push_back(Point(currentTileIndex.x - 1, currentTileIndex.y - 1)); // TOP-LEFT
     proximityTiles.push_back(Point(currentTileIndex.x - 1, currentTileIndex.y));     // LEFT
-    proximityTiles.push_back(Point(currentTileIndex.x - 1, currentTileIndex.y + 1)); // TOP-LEFT
-    proximityTiles.push_back(Point(currentTileIndex.x, currentTileIndex.y + 1));     // TOP
-    proximityTiles.push_back(Point(currentTileIndex.x + 1, currentTileIndex.y + 1)); // TOP-RIGHT
+    proximityTiles.push_back(Point(currentTileIndex.x - 1, currentTileIndex.y + 1)); // BOTTOM-LEFT
+    proximityTiles.push_back(Point(currentTileIndex.x, currentTileIndex.y + 1));     // BOTTOM
+    proximityTiles.push_back(Point(currentTileIndex.x + 1, currentTileIndex.y + 1)); // BOTTOM-RIGHT
     proximityTiles.push_back(Point(currentTileIndex.x + 1, currentTileIndex.y));     // RIGHT
-    proximityTiles.push_back(Point(currentTileIndex.x + 1, currentTileIndex.y - 1)); // BOTTOM-RIGHT
-    proximityTiles.push_back(Point(currentTileIndex.x, currentTileIndex.y - 1));     // BOTTOM
+    proximityTiles.push_back(Point(currentTileIndex.x + 1, currentTileIndex.y - 1)); // TOP-RIGHT
+    proximityTiles.push_back(Point(currentTileIndex.x, currentTileIndex.y - 1));     // TOP
   }
 
   // CLAMP
-  // speed = clamp(speed, -1.0f, 1.0f);
-  // steer = clamp(steer, -1.0f, 1.0f);
-  if (speed < -1.0f) {
-    speed = -1.0f;
-  }
-  if (speed > 1.0f) {
-    speed = 1.0f;
-  }
-  if (steer < -1.0f) {
-    steer = -1.0f;
-  }
-  if (steer > 1.0f) {
-    steer = 1.0f;
-  }
-
-  // SDL_Log("Speed: %f\nSteer: %f\n\n", speed, steer);
+  speed = clamp(speed, -1.0f, 1.0f);
+  steer = clamp(steer, -1.0f, 1.0f);
 
   // PASSIVE DECELERATION
   speed *= speedDeceleration;
@@ -208,8 +195,8 @@ void Car::update()
   // SDL_Log("Speed: %f\nSteer: %f\n\n", speed, steer);
 
   // APPLYING LINEAR VELOCITY / FRICTION:
-  position.x += (speed * cos(angle * (M_PI / 180))) * 6;
-  position.y += (speed * sin(angle * (M_PI / 180))) * 6;
+  position.x += (speed * cos(angle * (M_PI / 180))) * 10;
+  position.y += (speed * sin(angle * (M_PI / 180))) * 10;
   angle += steer * 3;
 
   // APPLYING ANGULAR VELOCITY / FRICTION:
@@ -221,54 +208,54 @@ void Car::update()
                                                            : angle;
 
   // IF TURBO IS ON:
-  // if (turboOn)
-  // {
-  //   // HEADING:
-  //   float heading = atan2(linearVelocity.y, linearVelocity.x) * (180 / M_PI);
-  //   bool forward = (heading / abs(heading)) == (angle / abs(angle));
+  if (turboOn)
+  {
+    // HEADING:
+    float turboLeft = 1 - ((SDL_GetTicks() - turboTimer) / turboTimeOut);
 
-  //   // IF THE CAR IS TRAVELLING FORWARDS:
-  //   if (forward)
-  //     flameDist += ((abs(linearVelocity.x) + abs(linearVelocity.y)) / 6);
+    // IF THE CAR IS TRAVELLING FORWARDS:w
+    flameDist = (20 * speed) * turboLeft;
 
-  //   // APPLY DECAY TO FLAME DISTANCE:
-  //   flameDist *= linearFriction;
+    // IF CAR TRAVELLING FORWARD:
+    flame.angle = angle;
 
-  //   // IF CAR TRAVELLING FORWARD:
-  //   flame.angle = angle;
+    // UPDATE FLAME ANGLE / POSITION:
+    // flame.position = Point(position.x, position.y);
+    flame.position = Point(position.x - (flameOffset + flameDist) * cos(flame.angle * (M_PI / 180)),
+                           position.y - (flameOffset + flameDist) * sin(flame.angle * (M_PI / 180)));
 
-  //   // UPDATE FLAME ANGLE / POSITION:
-  //   flame.position = Point(position.x - (flameDist + flameOffset) * cos(flame.angle * (M_PI / 180)),
-  //                          position.y - (flameDist + flameOffset) * sin(flame.angle * (M_PI / 180)));
+    // CHECK IF TURBO HAS TIMED OUT:
+    if ((SDL_GetTicks() - turboTimer) >= turboTimeOut)
+    {
+      turboOn = false;
+    }
+  }
 
-  //   // CHECK IF TURBO HAS TIMED OUT:
-  //   if ((clock() - turboTimer) >= turboTimeOut)
-  //   {
-  //     turboOn = false;
-  //   }
-  // }
+  // SDL_Log("\nSPEED: %f\nSTEER: %f\n\n", speed, steer);
 }
 
 vector<SDL_Point> trail;
 
 void Car::draw(Point parentPosition)
 {
-  // // CHECKING CAR IS ONSCREEN:
-  // Point relative = position + track->position;
+  // CHECKING CAR IS ONSCREEN:
+  Point relative = position + track->position;
 
-  // //USE TO DEMONSTRATE CLIPPING WORKS:
-  // int offset = 0;
+  //USE TO DEMONSTRATE CLIPPING WORKS:
+  int offset = 0;
 
-  // // CLIPPING CAR IF OUTSIDE VIEWPORT:
-  // if ((relative.x >= offset - track->tileSize && relative.x <= S_WIDTH + track->tileSize - offset) &&
-  //     (relative.y >= offset - track->tileSize && relative.y <= S_HEIGHT + track->tileSize - offset))
-  // {
-  //   // IF TURBO IS ON, DRAWING FLAME UNDER CAR:
-  //   if (turboOn)
-  //     flame.draw(parentPosition);
+  // CLIPPING CAR IF OUTSIDE VIEWPORT:
+  if ((relative.x >= offset - track->tileSize && relative.x <= S_WIDTH + track->tileSize - offset) &&
+      (relative.y >= offset - track->tileSize && relative.y <= S_HEIGHT + track->tileSize - offset))
+  {
+    // IF TURBO IS ON, DRAWING FLAME UNDER CAR:
+    if (turboOn) {
+      flame.draw(parentPosition);
+    }
 
-  // DRAWING CAR:
-  Entity::draw(parentPosition);
+    // DRAWING CAR:
+    Entity::draw(parentPosition);
+  }
 
   // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
   // vector<SDL_Point> sdlPoints;
@@ -328,88 +315,81 @@ void Car::checkCollisions()
   int mapWidth = track->map[0].size();
   int mapHeight = track->map.size();
 
-  for (int i = 0; i != track->map.size(); i++) {
-    for (int j = 0; j != track->map[0].size(); j++) {
-      this->highlighted = this->collides(track->map[i][j]) && track->map[i][j].collides(*this);
+  // STORING CURRENT TILE INDEX:
+  Point tileIndex;
+
+  // STORING CURRENT TILE TYPE:
+  int tileType;
+
+  // STORING CURRENT TILE ENTITY:
+  Entity tileEntity;
+
+  // ITERATE THROUGH PROXIMITY TILES:
+  for (int i = 0; i != proximityTiles.size(); i++)
+  {
+    // CURRENT TILE INDEX:
+    tileIndex = proximityTiles[i];
+
+    // EXCLUDE IRRELEVANT INDEXES:
+    if (tileIndex.x < 0)
+      continue;
+    if (tileIndex.x > mapWidth - 1)
+      continue;
+    if (tileIndex.y < 0)
+      continue;
+    if (tileIndex.y > mapHeight - 1)
+      continue;
+
+    // CURRENT TILE TYPE:
+    tileType = track->tiles[tileIndex.y][tileIndex.x];
+
+    // EXCLUDE IRRELEVANT TILES:
+    if (tileType < 3)
+      continue;
+
+    // CURRENT TILE ENTITY:
+    tileEntity = track->map[tileIndex.y][tileIndex.x];
+
+#if COLLISION == 1
+    // CHECKING FOR A COLLISION:
+    collision = this->collides(tileEntity) && tileEntity.collides(*this);
+#if RESPONSE == 1
+    // IF A COLLISION OCCURS:
+    if (collision)
+    {
+      switch (tileType)
+      {
+      // TURBO TILE:
+      case 12:
+        // TRIGGER TURBO:
+        turbo();
+        break;
+      // EVERY OTHER TILE:
+      default:
+        // GETTING MINIMUM TRANSLATION VECTOR:
+        Point MTV = tileEntity.MTV(*this);
+
+        // SEPARATE THE CAR FROM THE TILE USING THE MINIMUM TRANSLATION VECTOR::
+        this->position += MTV;
+
+        // MAKE CAR BOUNCE OFF THE WALL:
+        // this->linearVelocity += MTV * 2;
+
+        // SLOW CAR DOWN BY APPLYING FRICTION:
+        // this->linearVelocity *= this->linearFriction;
+        break;
+      }
     }
+#endif
+#endif
+#if DEBUG == 1
+    // HIGHLIGHTING COLLISION POLYGONS:
+    tileEntity.highlighted = this->highlighted = collision;
+#endif
   }
-
-
-//   // STORING CURRENT TILE INDEX:
-//   Point tileIndex;
-
-//   // STORING CURRENT TILE TYPE:
-//   int tileType;
-
-//   // STORING CURRENT TILE ENTITY:
-//   Entity tileEntity;
-
-//   // ITERATE THROUGH PROXIMITY TILES:
-//   for (int i = 0; i != proximityTiles.size(); i++)
-//   {
-//     // CURRENT TILE INDEX:
-//     tileIndex = proximityTiles[i];
-
-//     // EXCLUDE IRRELEVANT INDEXES:
-//     if (tileIndex.x < 0)
-//       continue;
-//     if (tileIndex.x > mapWidth - 1)
-//       continue;
-//     if (tileIndex.y < 0)
-//       continue;
-//     if (tileIndex.y > mapHeight - 1)
-//       continue;
-
-//     // CURRENT TILE TYPE:
-//     tileType = track->tiles[tileIndex.y][tileIndex.x];
-
-//     // EXCLUDE IRRELEVANT TILES:
-//     if (tileType < 3)
-//       continue;
-
-//     // CURRENT TILE ENTITY:
-//     tileEntity = track->map[tileIndex.y][tileIndex.x];
-
-// #if COLLISION == 1
-//     // CHECKING FOR A COLLISION:
-//     collision = this->collides(tileEntity);
-// #if RESPONSE == 1
-//     // IF A COLLISION OCCURS:
-//     if (collision)
-//     {
-//       switch (tileType)
-//       {
-//       // TURBO TILE:
-//       case 12:
-//         // TRIGGER TURBO:
-//         turbo();
-//         break;
-//       // EVERY OTHER TILE:
-//       default:
-//         // GETTING MINIMUM TRANSLATION VECTOR:
-//         Point MTV = tileEntity.MTV(*this);
-
-//         // SEPARATE THE CAR FROM THE TILE USING THE MINIMUM TRANSLATION VECTOR::
-//         this->position += MTV;
-
-//         // MAKE CAR BOUNCE OFF THE WALL:
-//         this->linearVelocity += MTV * 2;
-
-//         // SLOW CAR DOWN BY APPLYING FRICTION:
-//         this->linearVelocity *= this->linearFriction;
-//         break;
-//       }
-//     }
-// #endif
-// #endif
-// #if DEBUG == 1
-//     // HIGHLIGHTING COLLISION POLYGONS:
-//     tileEntity.highlighted = this->highlighted = collision;
-// #endif
-//   }
 }
 
-float Car::getAverageSpeed()
-{
-  return ((abs(linearVelocity.x) + abs(linearVelocity.y)) / 2);
-}
+// float Car::getAverageSpeed()
+// {
+//   return ((abs(linearVelocity.x) + abs(linearVelocity.y)) / 2);
+// }

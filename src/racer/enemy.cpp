@@ -93,8 +93,8 @@ void Enemy::runAI()
   {
     nodeIndex = trackNodeIndex;
 #if DEBUG == 1
-    SDL_Log("CURRENT: %i, PREVIOUS: %i\n", currentNode, previousNode);
-    SDL_Log("TRACK: %.f, %.f, TURBO: %.f, %.f\n", trackNodeIndex.x, trackNodeIndex.y, turboNodeIndex.x, turboNodeIndex.y);
+    // SDL_Log("CURRENT: %i, PREVIOUS: %i\n", currentNode, previousNode);
+    // SDL_Log("TRACK: %.f, %.f, TURBO: %.f, %.f\n", trackNodeIndex.x, trackNodeIndex.y, turboNodeIndex.x, turboNodeIndex.y);
 #endif
     if (track->tiles[turboNodeIndex.y][turboNodeIndex.x] == 12)
     {
@@ -109,7 +109,7 @@ void Enemy::runAI()
       }
     }
 #if DEBUG == 1
-    SDL_Log("NODE: %.f, %.f, \n\n", nodeIndex.x, nodeIndex.y);
+    // SDL_Log("NODE: %.f, %.f, \n\n", nodeIndex.x, nodeIndex.y);
 #endif
   }
 

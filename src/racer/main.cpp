@@ -154,7 +154,7 @@ bool resetGame;
 bool gameRun;
 bool pause;
 bool pauseKey;
-Point startPosition(700, 2100);
+Point startPosition(700, 1500);
 
 void gameMenu()
 {
@@ -229,17 +229,17 @@ void gameStart()
     track = new Track(Point(0, 0));
 
     // PLAYER:
-    player = new Player(Point(startPosition.x, 90));
+    player = new Player(Point(startPosition.x, startPosition.y), -90);
 
     // ENEMY:
-    enemy = new Enemy(startPosition - Point(200, 0), 90);
+    enemy = new Enemy(startPosition - Point(200, 0), -90);
 
     // HUD:
     hud = new HUD();
 
     // STORING POINTERS IN A VECTOR:
     cars.push_back(player);
-    // cars.push_back(enemy);
+    cars.push_back(enemy);
 
     // GAME STARTED FLAG:
     gameStarted = true;
@@ -255,10 +255,10 @@ void gameStart()
     *track = Track(Point(0, 0));
 
     // PLAYER:
-    *player = Player(startPosition, 90);
+    *player = Player(startPosition, -90);
 
     // ENEMY:
-    *enemy = Enemy(startPosition - Point(200, 0), 90);
+    *enemy = Enemy(startPosition - Point(200, 0), -90);
 
     // HUD:
     *hud = HUD();

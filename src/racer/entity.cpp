@@ -125,8 +125,6 @@ void Entity::draw(Point parentPosition)
   // glLoadIdentity();
 
   // IF TEXTURE EXISTS ENABLE TEXTURING:
-  // if (texture != NULL)
-  // {
   // glEnable(GL_BLEND);
   // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   // glEnable(GL_TEXTURE_2D);
@@ -134,18 +132,6 @@ void Entity::draw(Point parentPosition)
   // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
   // glBindTexture(GL_TEXTURE_2D, texture);
-  // SDL_Rect fillRect;
-  // fillRect.x = 0;
-  // fillRect.y = 0;
-  // fillRect.w = (int)width;
-  // fillRect.h = (int)height;
-  // SDL_RenderCopyEx(renderer,
-  //                  texture,
-  //                  NULL,
-  //                  &fillRect,
-  //                  (double)angle,
-  //                  NULL,
-  //                  SDL_FLIP_NONE);
 
   int minX = std::numeric_limits<int>::max();
   int maxX = std::numeric_limits<int>::min();
@@ -189,34 +175,37 @@ void Entity::draw(Point parentPosition)
       });
   wireframe.push_back(SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y});
 
-  // Define the starting and ending colors for the gradient (green and red)
-  SDL_Color startColor = {0, 255, 0, SDL_ALPHA_OPAQUE};
-  SDL_Color endColor = {255, 0, 0, SDL_ALPHA_OPAQUE};
+  SDL_SetRenderDrawColor(renderer, highlighted ? 255 : 0, highlighted ? 0 : 255, 0, SDL_ALPHA_OPAQUE);
+  SDL_RenderDrawLines(renderer, &wireframe[0], wireframe.size());
 
-  // Calculate the color step for each line segment
-  int numSegments = 10;
-  double stepR = static_cast<double>(endColor.r - startColor.r) / numSegments;
-  double stepG = static_cast<double>(endColor.g - startColor.g) / numSegments;
-  double stepB = static_cast<double>(endColor.b - startColor.b) / numSegments;
+  // // Define the starting and ending colors for the gradient (green and red)
+  // SDL_Color startColor = {0, 255, 0, SDL_ALPHA_OPAQUE};
+  // SDL_Color endColor = {255, 0, 0, SDL_ALPHA_OPAQUE};
 
-  // int numSegments = wireframe.size() - 1;
-  double stepH = 360.0 / numSegments; // Distribute the hues evenly across the color spectrum
+  // // Calculate the color step for each line segment
+  // int numSegments = 10;
+  // double stepR = static_cast<double>(endColor.r - startColor.r) / numSegments;
+  // double stepG = static_cast<double>(endColor.g - startColor.g) / numSegments;
+  // double stepB = static_cast<double>(endColor.b - startColor.b) / numSegments;
 
-  // Iterate through the wireframe points and draw each line segment with rainbow colors
-  for (size_t i = 0; i < wireframe.size() - 1; ++i)
-  {
-    // Calculate the hue for the current line segment
-    double currentHue = stepH * i;
+  // // int numSegments = wireframe.size() - 1;
+  // double stepH = 360.0 / numSegments; // Distribute the hues evenly across the color spectrum
 
-    // Get the RGB color for the current hue in the HSV color space
-    SDL_Color currentColor = HSVtoRGB(highlighted ? 1 : currentHue, 1.0, 1.0);
+  // // Iterate through the wireframe points and draw each line segment with rainbow colors
+  // for (size_t i = 0; i < wireframe.size() - 1; ++i)
+  // {
+  //   // Calculate the hue for the current line segment
+  //   double currentHue = stepH * i;
 
-    // Set the color for the current line segment
-    SDL_SetRenderDrawColor(renderer, currentColor.r, currentColor.g, currentColor.b, currentColor.a);
+  //   // Get the RGB color for the current hue in the HSV color space
+  //   SDL_Color currentColor = HSVtoRGB(highlighted ? 1 : currentHue, 1.0, 1.0);
 
-    // Draw the current line segment
-    SDL_RenderDrawLine(renderer, wireframe[i].x, wireframe[i].y, wireframe[i + 1].x, wireframe[i + 1].y);
-  }
+  //   // Set the color for the current line segment
+  //   SDL_SetRenderDrawColor(renderer, currentColor.r, currentColor.g, currentColor.b, currentColor.a);
+
+  //   // Draw the current line segment
+  //   SDL_RenderDrawLine(renderer, wireframe[i].x, wireframe[i].y, wireframe[i + 1].x, wireframe[i + 1].y);
+  // }
 
   // Convert to SDL_Point array
   // SDL_Point points[orientedShape.size() + 1];
@@ -385,7 +374,6 @@ bool Entity::collides(Entity other)
     }
 
     // EXIT IF THE PROJECTIONS DO NOT OVERLAP:
-    SDL_Log("%d: %f > %f || %f < %f\n", i, overlap1.x, overlap2.y, overlap1.y, overlap2.x);
     if (overlap1.x > overlap2.y || overlap1.y < overlap2.x)
     {
       return false;

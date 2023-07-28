@@ -104,7 +104,7 @@ void Player::checkCollisions()
   {
 #if COLLISION == 1
     // CHECKING FOR A COLLISION:
-    // collision = this->collides(*enemy) && enemy->collides(*this);
+    collision = this->collides(*enemy) && enemy->collides(*this);
 #if RESPONSE == 1
     // OBB VS OBB COLLISIONS:
     if (collision)
@@ -130,7 +130,7 @@ void Player::checkCollisions()
 #endif
 #if DEBUG == 1
     // HIGHLIGHT TILE ENEMY IS ON:
-    // track->map[enemy->currentTileIndex.y][enemy->currentTileIndex.x].highlight(track->position, color, false);
+    track->map[enemy->currentTileIndex.y][enemy->currentTileIndex.x].highlight(track->position, color, false);
 #endif
   }
 }

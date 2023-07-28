@@ -6,7 +6,7 @@
 // DEBUG MACROS:
 #define DEBUG 1
 #define COLLISION 1
-#define RESPONSE 0
+#define RESPONSE 1
 #define AI 1
 
 // SYSTEM MACROS:
