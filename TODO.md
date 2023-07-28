@@ -1,4 +1,6 @@
 # TODO
+- [ ] Draw lap counter with SDL_ttf.
+- [ ] Enable splash screen and game restart.
 - [ ] Split Docker image into multiple targets for each OS target.
 - [ ] Figure out how to get audio working on WSLg.
 - [x] Attempt to compile for Apple M1/2 processors.
