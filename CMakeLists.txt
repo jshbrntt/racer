@@ -57,23 +57,23 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(SDL2_ttf)
 
 # Snake
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(snake VERSION 1.0)
+# project(snake VERSION 1.0)
 
-file(GLOB_RECURSE SNAKE_HDRS src/snake/*.h)
-file(GLOB_RECURSE SNAKE_SRCS src/snake/*.cpp)
+# file(GLOB_RECURSE SNAKE_HDRS src/snake/*.h)
+# file(GLOB_RECURSE SNAKE_SRCS src/snake/*.cpp)
 
-add_executable(${PROJECT_NAME} ${SNAKE_HDRS} ${SNAKE_SRCS})
-target_link_libraries(
-  ${PROJECT_NAME}
-  EnTT::EnTT
-  SDL2::SDL2main
-  SDL2::SDL2-static
-  SDL2_image::SDL2_image-static
-  SDL2_ttf::SDL2_ttf-static
-)
+# add_executable(${PROJECT_NAME} ${SNAKE_HDRS} ${SNAKE_SRCS})
+# target_link_libraries(
+#   ${PROJECT_NAME}
+#   EnTT::EnTT
+#   SDL2::SDL2main
+#   SDL2::SDL2-static
+#   SDL2_image::SDL2_image-static
+#   SDL2_ttf::SDL2_ttf-static
+# )
 
 # Racer
 set(CMAKE_CXX_STANDARD 17)
@@ -95,27 +95,19 @@ target_link_libraries(
 )
 
 # Copy executable to root directory
-if(LINUX)
+if(MACOS OR LINUX)
   add_custom_command(
-    TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/linux/snake
-      ${CMAKE_SOURCE_DIR}/snake
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/racer
+    ${CMAKE_SOURCE_DIR}/racer
   )
 endif()
 if(WIN32)
   add_custom_command(
-    TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/win32/snake.exe
-      ${CMAKE_SOURCE_DIR}/snake.exe
-  )
-endif()
-if(MACOS)
-  add_custom_command(
-    TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/macos/snake
-      ${CMAKE_SOURCE_DIR}/snake
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/racer.exe
+    ${CMAKE_SOURCE_DIR}/racer.exe
   )
 endif()
