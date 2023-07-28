@@ -94,10 +94,28 @@ target_link_libraries(
   SDL2_ttf::SDL2_ttf-static
 )
 
-# Copy assets directory to build path
-add_custom_command(
-  TARGET ${PROJECT_NAME} PRE_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/assets
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
-)
+# Copy executable to root directory
+if(LINUX)
+  add_custom_command(
+    TARGET ${PROJECT_NAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/linux/snake
+      ${CMAKE_SOURCE_DIR}/snake
+  )
+endif()
+if(WIN32)
+  add_custom_command(
+    TARGET ${PROJECT_NAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/win32/snake.exe
+      ${CMAKE_SOURCE_DIR}/snake.exe
+  )
+endif()
+if(MACOS)
+  add_custom_command(
+    TARGET ${PROJECT_NAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/macos/snake
+      ${CMAKE_SOURCE_DIR}/snake
+  )
+endif()
