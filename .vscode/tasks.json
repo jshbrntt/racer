@@ -3,10 +3,34 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Build",
+            "label": "Build: Linux",
             "command": "make",
             "args": [
-                "build"
+                "build-linux"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Build: Win32",
+            "command": "make win32",
+            "args": [
+                "build-linux"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Build: macOS",
+            "command": "make",
+            "args": [
+                "build-macos"
             ],
             "group": {
                 "kind": "build",

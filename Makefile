@@ -8,9 +8,17 @@ WORKDIR := /root/racer
 
 export BUILDKIT_PROGRESS = plain
 
-.PHONY: build
-build: COMMAND := make $(if $(CLEAN),CLEAN=1) LINUX=1
-build: docker-command
+.PHONY: build-linux
+build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1) LINUX=1
+build-linux: docker-command
+
+.PHONY: build-win32
+build-win32: COMMAND := make $(if $(CLEAN),CLEAN=1) WIN32=1
+build-win32: docker-command
+
+.PHONY: build-macos
+build-macos: COMMAND := make $(if $(CLEAN),CLEAN=1) MACOS=1
+build-macos: docker-command
 
 .PHONY: shell
 shell: COMMAND := bash
@@ -78,7 +86,7 @@ configure: $(if $(CLEAN),clean)
 	mkdir -p build/win32
 	cd build/win32
 	cmake ../.. \
-	-DCMAKE_TOOLCHAIN_FILE=$(CWD)clang_windows_cross.cmake \
+	-DCMAKE_TOOLCHAIN_FILE=$(CWD)/clang_windows_cross.cmake \
 	-DCMAKE_BUILD_TYPE=Debug \
 	-DCMAKE_AR=/usr/bin/llvm-lib \
 	-DCMAKE_RC_COMPILER=/usr/bin/llvm-windres \

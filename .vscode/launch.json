@@ -4,11 +4,23 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug: Snake",
-            "program": "${workspaceFolder}/build/linux/snake",
+            "name": "Debug: Racer (Linux)",
+            "program": "${workspaceFolder}/build/linux/racer",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "Build",
+            "preLaunchTask": "Build: Linux",
+            "sourceMap": {
+                "/root/racer": "${workspaceFolder}"
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug: Racer (Win32)",
+            "program": "${workspaceFolder}/build/win32/racer.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build: Win32",
             "sourceMap": {
                 "/root/racer": "${workspaceFolder}"
             }
@@ -17,10 +29,10 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug: Racer",
-            "program": "${workspaceFolder}/build/linux/racer",
+            "program": "${workspaceFolder}/build/macos/racer",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "Build",
+            "preLaunchTask": "Build: macOS",
             "sourceMap": {
                 "/root/racer": "${workspaceFolder}"
             }
