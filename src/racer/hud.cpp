@@ -118,10 +118,20 @@ void HUD::draw()
   }
 
   // DRAWING CURRENT LAP:
-  // glLoadIdentity();
-  // stringstream hud;
-  // hud << "LAP: " << player->currentLap << "/" << lapLimit << endl;
-  // glColor3f(1.0f, 0.0f, 0.0f);
-  // STUBBED("RENDER LAP COUNTER");
-  // renderBitmapString(6, S_HEIGHT - 20, GLUT_BITMAP_HELVETICA_18, hud.str().c_str());
+  stringstream hud;
+  hud << "LAP: " << player->currentLap << "/" << lapLimit;
+  SDL_Surface* surface = TTF_RenderText_Solid(font, hud.str().c_str(), fontColor);
+  SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+  int texW = 0;
+  int texH = 0;
+  SDL_QueryTexture(texture, NULL, NULL, &texW, &texH);
+
+  int centerX = (S_WIDTH - texW) / 2;
+  int centerY = (S_HEIGHT - texH) / 2;
+  SDL_Rect dstRect = { 0, 0, texW, texH };
+  SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+
+  SDL_FreeSurface(surface);
+  SDL_DestroyTexture(texture);
 }
