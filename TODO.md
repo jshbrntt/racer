@@ -1,6 +1,7 @@
 # TODO
 - [ ] Create build pipeline to build different targets and publish to GH/Releases page.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
+- [ ] Merge CMake toolchains?
 - [ ] Split Docker image into multiple targets for each OS target.
 - [ ] Figure out how to get audio working on WSLg.
 - [ ] Install project dependencies as Git submodules instead of using CMake to fetch them?
