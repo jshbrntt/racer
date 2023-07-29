@@ -1,10 +1,11 @@
 # TODO
-- [ ] Draw lap counter with SDL_ttf.
-- [ ] Enable splash screen and game restart.
+- [ ] Create build pipeline to build different targets and publish to GH/Releases page.
+- [ ] Tidy up the Git history of `feature/sdl-port`.
 - [ ] Split Docker image into multiple targets for each OS target.
 - [ ] Figure out how to get audio working on WSLg.
-- [x] Attempt to compile for Apple M1/2 processors.
-- [ ] Create build pipeline to build different targets and publish to GH/Releases page.
-- [x] Install `osxcross` in Docker image without Git submodule?
 - [ ] Install project dependencies as Git submodules instead of using CMake to fetch them?
 - [ ] Get Wayland working on WSLg.
+- [x] Enable splash screen and game restart.
+- [x] Attempt to compile for Apple M1/2 processors.
+- [x] Install `osxcross` in Docker image without Git submodule?
+- [x] Draw lap counter with SDL_ttf.
