@@ -28,7 +28,7 @@ HUD::HUD()
   raceWon = 0;
 
   // FINALLY START RECORDING TIME:
-  // start = clock();
+  start = SDL_GetTicks();
   timer = 0;
   seconds = 0;
 }
@@ -36,7 +36,7 @@ HUD::HUD()
 void HUD::draw()
 {
   // UPDATE TIMER:
-  timer = clock() - start;
+  timer = SDL_GetTicks() - start;
 
   // GETTING CURRENT TIME IN SECONDS:
   seconds = (roundUp(timer, 1000) / 1000);
