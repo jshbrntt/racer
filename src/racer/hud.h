@@ -11,6 +11,8 @@ class HUD
 {
 private:
   vector<Entity> entities;
+  TTF_Font *font;
+  SDL_Color fontColor;
   int raceWon;
   float start;
   float timer;

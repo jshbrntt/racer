@@ -24,6 +24,10 @@ HUD::HUD()
   entities.push_back(Entity(youLoseBox, youLoseBox, center, 0, loadTexture("assets/racer/text/YOU_LOSE.png")));
   entities.push_back(Entity(pausedBox,  pausedBox,  center, 0, loadTexture("assets/racer/text/PAUSED.png")));
 
+  // LOAD FONT:
+  font = loadFont("assets/racer/fonts/open_sans.ttf", 24);
+  fontColor = SDL_Color{255, 0, 0, 255};
+
   // ADDITIONAL VARIABLES:
   raceWon = 0;
 
