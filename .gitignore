@@ -116,5 +116,5 @@ $RECYCLE.BIN/
 
 build*/
 !Makefile
-racer
-racer.exe
+./racer
+./racer.exe
