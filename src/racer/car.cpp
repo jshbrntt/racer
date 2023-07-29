@@ -289,16 +289,16 @@ void Car::updateCurrentLap()
   switch (lapState)
   {
   case 0:
-    lapState = ((position.x >= 2800) && (position.y >= 800)) ? 1 : 0;
+    lapState = ((position.x > 2600) && (position.y > 1400)) ? 1 : 0;
     break;
   case 1:
-    lapState = ((position.x >= 2800) && (position.y <= 800)) ? 2 : 1;
+    lapState = ((position.x > 5000) && (position.y > 2000)) ? 2 : 1;
     break;
   case 2:
-    lapState = ((position.x <= 2600) && (position.y <= 800)) ? 3 : 2;
+    lapState = ((position.x < 3000) && (position.y < 2800)) ? 3 : 2;
     break;
   case 3:
-    lapState = ((position.x <= 2600) && (position.y >= 2100)) ? 4 : 3;
+    lapState = ((position.x < 800) && (position.y < 1500)) ? 4 : 3;
     break;
   case 4:
     currentLap++;
