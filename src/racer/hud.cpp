@@ -100,7 +100,7 @@ void HUD::draw()
     // SET UP TIMER FOR RESET:
     if (raceWon != 0 && !resetGame)
     {
-      start = clock();
+      start = SDL_GetTicks();
       resetGame = true;
     }
 
