@@ -435,6 +435,14 @@ bool init()
           SDL_Log("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
           success = false;
         }
+        else
+        {
+          if (!TTF_Init())
+          {
+            SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+            success = false;
+          }
+        }
       }
     }
   }
@@ -506,6 +514,16 @@ SDL_Texture *loadTexture(std::string path)
   }
 
   return newTexture;
+}
+
+TTF_Font *loadFont(std::string path, int ptSize)
+{
+  TTF_Font *font = TTF_OpenFont(path.c_str(), ptSize);
+  if (font == NULL)
+  {
+    SDL_Log("Unable to font file %s! SDL_ttf Error: %s\n", path.c_str(), TTF_GetError());
+  }
+  return font;
 }
 
 int roundUp(int num, int multiple)

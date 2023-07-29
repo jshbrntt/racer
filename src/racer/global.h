@@ -27,6 +27,7 @@
 // #include <GL/glu.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 #define STUBBED(x) SDL_Log("STUBBED: %s\n", x)
 
@@ -65,6 +66,7 @@ extern SDL_Renderer *renderer;
 
 // GLOBAL FUNCTIONS:
 SDL_Texture *loadTexture(std::string path);
+TTF_Font *loadFont(std::string path, int ptSize);
 int roundUp(int numToRound, int multiple);
 vector<Point> getBox(float width, float height, Point position = Point(0, 0));
 vector<Point> getPoly(int sides, float radius, Point position = Point(0, 0));
