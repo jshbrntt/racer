@@ -74,10 +74,7 @@ int main(int argc, char *args[])
   // glutKeyboardUpFunc(keyUp);
 
   // INITIALIZING GAME MENU:
-  // gameMenu();
-
-  gameStart();
-  gameRun = true;
+  gameMenu();
 
   // START MAIN LOOP:
   STUBBED("Start main loop");
@@ -243,11 +240,6 @@ void gameStart()
 
     // GAME STARTED FLAG:
     gameStarted = true;
-
-    // START
-    player->immobilized = false;
-    enemy->immobilized = false;
-    // raceStarted = true;
   }
   else
   {
