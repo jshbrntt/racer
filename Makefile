@@ -10,18 +10,30 @@ export BUILDKIT_PROGRESS = plain
 
 .PHONY: build-linux
 build-linux: TARGET := linux
-build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1) LINUX=1
+build-linux: COMMAND := printenv
 build-linux: docker-command
 
 .PHONY: build-windows
 build-windows: TARGET := windows
-build-windows: COMMAND := make $(if $(CLEAN),CLEAN=1) WINDOWS=1
+build-windows: COMMAND := printenv
 build-windows: docker-command
 
 .PHONY: build-macosx
 build-macosx: TARGET := macosx
-build-macosx: COMMAND := make $(if $(CLEAN),CLEAN=1) MACOSX=1
+build-macosx: COMMAND := printenv
 build-macosx: docker-command
+
+.PHONY: push-linux
+push-linux: TARGET := linux
+push-linux: docker-push
+
+.PHONY: push-windows
+push-windows: TARGET := windows
+push-windows: docker-push
+
+.PHONY: push-macosx
+push-macosx: TARGET := macosx
+push-macosx: docker-push
 
 .PHONY: shell
 shell: COMMAND := bash
@@ -38,6 +50,7 @@ docker-command: docker-run
 .PHONY: docker-build
 docker-build:
 	$(DOCKER) build \
+	--pull \
 	--target $(TARGET) \
 	--tag $(IMAGE)/$(TARGET) \
 	.
@@ -54,6 +67,11 @@ docker-run:
 	--workdir $(WORKDIR) \
 	$(IMAGE)/$(TARGET) \
 	$(COMMAND)
+
+.PHONY: docker-push
+docker-push:
+	docker push \
+	$(IMAGE)/$(TARGET)
 
 else
 

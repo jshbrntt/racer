@@ -1,0 +1,19 @@
+name: build
+on: [push]
+jobs:
+  example_matrix:
+    strategy:
+      matrix:
+        target:
+          - windows
+          - linux
+          - macosx
+        include:
+          - os: windows-latest
+            node: 16
+            npm: 6
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make build-${{ matrix.target }}
+      - run: make push-${{ matrix.target }}
