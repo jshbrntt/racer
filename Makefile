@@ -6,6 +6,7 @@ IMAGE := ghcr.io/jshbrntt/racer/devcontainer
 DOCKER := docker
 WORKDIR := /root/racer
 
+export DOCKER_BUILDKIT = 1
 export BUILDKIT_PROGRESS = plain
 
 .PHONY: build-linux
