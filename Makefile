@@ -52,6 +52,9 @@ docker-command: docker-run
 docker-build:
 	$(DOCKER) build \
 	--pull \
+	--cache-from type=registry,ref=$(IMAGE)/$(TARGET) \
+	--cache-to type=inline \
+	--push \
 	--target $(TARGET) \
 	--tag $(IMAGE)/$(TARGET) \
 	.
