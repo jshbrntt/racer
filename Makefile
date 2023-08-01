@@ -10,17 +10,17 @@ export BUILDKIT_PROGRESS = plain
 
 .PHONY: build-linux
 build-linux: TARGET := linux
-build-linux: COMMAND := printenv
+build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1 )LINUX=1
 build-linux: docker-command
 
 .PHONY: build-windows
 build-windows: TARGET := windows
-build-windows: COMMAND := printenv
+build-windows: COMMAND := make $(if $(CLEAN),CLEAN=1 )WINDOWS=1
 build-windows: docker-command
 
 .PHONY: build-macosx
 build-macosx: TARGET := macosx
-build-macosx: COMMAND := printenv
+build-macosx: COMMAND := make $(if $(CLEAN),CLEAN=1 )MACOSX=1
 build-macosx: docker-command
 
 .PHONY: push-linux
@@ -58,6 +58,7 @@ docker-build:
 .PHONY: docker-run
 docker-run:
 	docker run \
+	$(if $(CI),,--interactive \)
 	--tty \
 	--rm \
 	--env DOCKER=1 \
