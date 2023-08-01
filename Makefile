@@ -2,23 +2,26 @@ export CWD := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 ifndef DOCKER
 
-IMAGE := ghcr.io/jshbrntt/racer/devcontainer:latest
+IMAGE := ghcr.io/jshbrntt/racer/devcontainer
 DOCKER := docker
 WORKDIR := /root/racer
 
 export BUILDKIT_PROGRESS = plain
 
 .PHONY: build-linux
+build-linux: TARGET := linux
 build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1) LINUX=1
 build-linux: docker-command
 
-.PHONY: build-win32
-build-win32: COMMAND := make $(if $(CLEAN),CLEAN=1) WIN32=1
-build-win32: docker-command
+.PHONY: build-windows
+build-windows: TARGET := windows
+build-windows: COMMAND := make $(if $(CLEAN),CLEAN=1) WINDOWS=1
+build-windows: docker-command
 
-.PHONY: build-macos
-build-macos: COMMAND := make $(if $(CLEAN),CLEAN=1) MACOS=1
-build-macos: docker-command
+.PHONY: build-macosx
+build-macosx: TARGET := macosx
+build-macosx: COMMAND := make $(if $(CLEAN),CLEAN=1) MACOSX=1
+build-macosx: docker-command
 
 .PHONY: shell
 shell: COMMAND := bash
@@ -35,7 +38,8 @@ docker-command: docker-run
 .PHONY: docker-build
 docker-build:
 	$(DOCKER) build \
-	--tag $(IMAGE) \
+	--target $(TARGET) \
+	--tag $(IMAGE)/$(TARGET) \
 	.
 
 .PHONY: docker-run
@@ -48,7 +52,7 @@ docker-run:
 	--volume racer_build:$(WORKDIR)/build \
 	--volume $(CWD):$(WORKDIR) \
 	--workdir $(WORKDIR) \
-	$(IMAGE) \
+	$(IMAGE)/$(TARGET) \
 	$(COMMAND)
 
 else
@@ -75,17 +79,17 @@ clean:
 
 endif
 
-ifdef WIN32
+ifdef WINDOWS
 
 .PHONY: build
 build: configure
-	cd build/win32
+	cd build/windows
 	cmake --build .
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
-	mkdir -p build/win32
-	cd build/win32
+	mkdir -p build/windows
+	cd build/windows
 	cmake ../.. \
 	-DCMAKE_TOOLCHAIN_FILE=$(CWD)/clang_windows_cross.cmake \
 	-DCMAKE_BUILD_TYPE=Debug \
@@ -103,21 +107,21 @@ configure: $(if $(CLEAN),clean)
 
 .PHONY: clean
 clean:
-	rm -rf build/win32
+	rm -rf build/windows
 
 endif
 
-ifdef MACOS
+ifdef MACOSX
 
 .PHONY: build
 build: configure
-	cd build/macos
+	cd build/macosx
 	cmake --build .
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
-	mkdir -p build/macos
-	cd build/macos
+	mkdir -p build/macosx
+	cd build/macosx
 	OSXCROSS_TARGET=darwin21.4 \
 	OSXCROSS_HOST=x86_64-apple-darwin21.4 \
 	OSXCROSS_TARGET_DIR=/osxcross/target \
@@ -128,7 +132,7 @@ configure: $(if $(CLEAN),clean)
 
 .PHONY: clean
 clean:
-	rm -rf build/macos
+	rm -rf build/macosx
 
 endif
 
