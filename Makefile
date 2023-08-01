@@ -58,7 +58,6 @@ docker-build:
 .PHONY: docker-run
 docker-run:
 	docker run \
-	$(if $(CI),,--interactive \)
 	--tty \
 	--rm \
 	--env DOCKER=1 \
