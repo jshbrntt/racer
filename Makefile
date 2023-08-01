@@ -62,7 +62,7 @@ docker-run:
 	--tty \
 	--rm \
 	--env DOCKER=1 \
-	--volume racer_build:$(WORKDIR)/build \
+	--volume $(if $(CI),$(CWD)/build,racer_build):$(WORKDIR)/build \
 	--volume $(CWD):$(WORKDIR) \
 	--workdir $(WORKDIR) \
 	$(IMAGE)/$(TARGET) \
