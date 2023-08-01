@@ -54,7 +54,6 @@ docker-build:
 	--pull \
 	--cache-from $(IMAGE)/$(TARGET) \
 	--build-arg BUILDKIT_INLINE_CACHE=1 \
-	--push \
 	--target $(TARGET) \
 	--tag $(IMAGE)/$(TARGET) \
 	.

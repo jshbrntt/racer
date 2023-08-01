@@ -16,6 +16,7 @@ jobs:
           path: build/${{ matrix.target }}
           key: ${{ matrix.target }}
       - run: make build-${{ matrix.target }}
+      - run: make push-${{ matrix.target }}
       - uses: docker/login-action@v1
         with:
           registry: ghcr.io
