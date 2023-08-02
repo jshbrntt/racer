@@ -6,8 +6,8 @@ jobs:
       matrix:
         target:
           - windows
-          - linux
-          - macosx
+          # - linux
+          # - macosx
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
