@@ -1,6 +1,8 @@
 # TODO
+- [ ] Make a proper "package" target in CMake instead of using `POST_BUILD` which will not trigger if there are no changes.
 - [ ] Create build pipeline to build different targets and publish to GH/Releases page.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
+- [ ] Explore using CPack for distributing project builds.
 - [ ] Merge CMake toolchains?
 - [ ] Split Docker image into multiple targets for each OS target.
 - [ ] Figure out how to get audio working on WSLg.

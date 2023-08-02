@@ -23,18 +23,10 @@ Car::Car(
   steer = 0;
   steerAcceleration = 0.1f;
   steerDeceleration = 0.9f;
-
-  // angularVelocity = 0;
-  // angularMagnitude = 0.4;
-  // angularFriction = 0.86;
-  // linearVelocity = Point(0, 0);
-  // linearMagnitude = 0.2;
-  // linearFriction = 0.98;
   lapState = 0;
   immobilized = true;
   currentLap = 0;
   color = glRGB();
-  // turboMagnitude = 4;
   turboOn = false;
   turboTimer = 0;
   turboTimeOut = 3000;
@@ -50,7 +42,7 @@ Car::Car(
   vector<Point> flameBox = getBox(28, 28, Point(-14, -14));
   Point flamePosition(position.x + 40 * cos(angle * (M_PI / 180)),
                       position.y + 40 * sin(angle * (M_PI / 180)));
-  SDL_Texture *flameTexture = loadTexture("assets/racer/fx/flame.png");
+  SDL_Texture *flameTexture = loadTexture("assets/fx/flame.png");
   flame = Entity(flameBox, flameBox, flamePosition, angle, flameTexture);
 }
 
@@ -89,12 +81,6 @@ void Car::accelerate()
   if (!immobilized)
   {
     speed += turboOn ? turboSpeedAcceleration : speedAcceleration;
-    // SELECT MAGNITUDE:
-    // float magnitude = turboOn ? turboMagnitude : linearMagnitude;
-
-    // MOVING CAR IN DIRECTION OF THE ANGLE:
-    // linearVelocity.x += cos(angle * (M_PI / 180)) * magnitude;
-    // linearVelocity.y += sin(angle * (M_PI / 180)) * magnitude;
   }
 }
 void Car::reverse()
@@ -102,12 +88,6 @@ void Car::reverse()
   if (!immobilized)
   {
     speed -= turboOn ? turboSpeedAcceleration : speedAcceleration;
-    // SELECT MAGNITUDE:
-    // float magnitude = turboOn ? turboMagnitude : linearMagnitude;
-
-    // MOVING CAR IN THE OPPOSITE DIRECTION OF THE ANGLE:
-    // linearVelocity.x -= cos(angle * (M_PI / 180)) * magnitude;
-    // linearVelocity.y -= sin(angle * (M_PI / 180)) * magnitude;
   }
 }
 void Car::turnLeft()
@@ -115,13 +95,6 @@ void Car::turnLeft()
   if (!immobilized)
   {
     steer += steerAcceleration * bezier(turningCurve, abs(speed)).y;
-    // CHECK THE CAR IS MOVING BEFORE IT'S ALLOWED TO TURN:
-    // if (getAverageSpeed() >= 2)
-    // {
-    // TURNING THE CAR TO THE LEFT:
-    // angularVelocity += angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
-    // SDL_Log("Speed: %f\n", getAverageSpeed());
-    // }
   }
 }
 void Car::turnRight()
@@ -129,12 +102,6 @@ void Car::turnRight()
   if (!immobilized)
   {
     steer -= steerAcceleration * bezier(turningCurve, abs(speed)).y;
-    // CHECK THE CAR IS MOVING BEFORE IT'S ALLOWED TO TURN:
-    // if (getAverageSpeed() >= 2)
-    // {
-    // TURNING THE CAR TO THE RIGHT:
-    // angularVelocity -= angularMagnitude * ((getAverageSpeed() * 1.4) - getAverageSpeed());
-    // }
   }
 }
 void Car::turbo()
@@ -192,16 +159,10 @@ void Car::update()
   speed *= speedDeceleration;
   steer *= steerDeceleration;
 
-  // SDL_Log("Speed: %f\nSteer: %f\n\n", speed, steer);
-
   // APPLYING LINEAR VELOCITY / FRICTION:
   position.x += (speed * cos(angle * (M_PI / 180))) * 10;
   position.y += (speed * sin(angle * (M_PI / 180))) * 10;
   angle += steer * 3;
-
-  // APPLYING ANGULAR VELOCITY / FRICTION:
-  // angle += angularVelocity;
-  // angularVelocity *= angularFriction;
 
   // CLAMPING ANGLE BETWEEN 180 AND -180:
   angle = (angle >= 180) ? (angle - 360) : (angle <= -180) ? (angle + 360)
@@ -230,8 +191,6 @@ void Car::update()
       turboOn = false;
     }
   }
-
-  // SDL_Log("\nSPEED: %f\nSTEER: %f\n\n", speed, steer);
 }
 
 vector<SDL_Point> trail;
@@ -256,31 +215,6 @@ void Car::draw(Point parentPosition)
     // DRAWING CAR:
     Entity::draw(parentPosition);
   }
-
-  // SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-  // vector<SDL_Point> sdlPoints;
-  // for (float t = 0; t <= 1; t += 0.01)
-  // {
-  //   Point curvePoint = bezier(turningCurve, t);
-  //   curvePoint.x *= 300;
-  //   curvePoint.y *= 300;
-  //   // SDL_Log("%f %f %f", t, curvePoint.x, curvePoint.y);
-  //   sdlPoints.push_back(SDL_Point{(int)curvePoint.x, (int)curvePoint.y});
-  // }
-  // SDL_Point* curvePoints = &sdlPoints[0];
-  // SDL_RenderDrawLines(renderer, curvePoints, sdlPoints.size());
-
-  // trail.push_back(SDL_Point{(int)position.x, (int)position.y});
-  // if (trail.size() > 500) {
-  //   trail.erase(trail.begin());
-  // }
-
-  // vector<SDL_Point> screenspaceTrail;
-  // auto transformFunction = [&parentPosition](SDL_Point point) { return SDL_Point{point.x + (int)parentPosition.x, point.y + (int)parentPosition.y}; };
-  // std::transform(trail.begin(), trail.end(), std::back_inserter(screenspaceTrail), transformFunction);
-
-  // SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-  // SDL_RenderDrawLines(renderer, &screenspaceTrail[0], trail.size());
 }
 
 void Car::updateCurrentLap()
@@ -382,10 +316,10 @@ void Car::checkCollisions()
     }
 #endif
 #endif
-#if DEBUG == 1
-    // HIGHLIGHTING COLLISION POLYGONS:
-    tileEntity.highlighted = this->highlighted = collision;
-#endif
+    if (debug) {
+      // HIGHLIGHTING COLLISION POLYGONS:
+      tileEntity.highlighted = this->highlighted = collision;
+    }
   }
 }
 

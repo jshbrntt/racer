@@ -27,57 +27,22 @@ void gameMenu();
 void gameStart();
 void display();
 void checkKeys();
-void reshape(int width, int height);
 bool init();
 void checkCollisions();
-void mouseMotion(int x, int y);
-void mouse(int button, int state, int x, int y);
-void update();
 
 Menu *menu;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
+bool debug = false;
 
 // MAIN FUNCTION:
 int main(int argc, char *args[])
 {
-  STUBBED("Create window");
-  // PARSING COMMAND LINE ARGUMENTS TO GLUT:
-  // glutInit(&argc, argv);
-
-  // SETUP GLUT DISPLAY MODE AND WINDOW:
-  // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
-  // glutInitWindowSize(S_WIDTH, S_HEIGHT);
-
-  // WINDOW TITLE:
-  STUBBED("Set window title");
-  // glutCreateWindow("Topdown Racing");
   init();
-
-  // GLUT FUNCTIONS:
-  STUBBED("Set update function");
-  // glutDisplayFunc(display);
-  STUBBED("Set window resize function");
-  // glutReshapeFunc(reshape);
-  STUBBED("Set mouse button function");
-  // glutMouseFunc(mouse);
-  STUBBED("Set mouse move function");
-  // glutPassiveMotionFunc(mouseMotion);
-  STUBBED("Set render function");
-  // glutIdleFunc(update);
-
-  // GLUT KEYBOARD:
-  // glutIgnoreKeyRepeat(GLUT_DEVICE_IGNORE_KEY_REPEAT);
-  STUBBED("Set key down function");
-  // glutKeyboardFunc(keyDown);
-  STUBBED("Set key up function");
-  // glutKeyboardUpFunc(keyUp);
 
   // INITIALIZING GAME MENU:
   gameMenu();
 
-  // START MAIN LOOP:
-  STUBBED("Start main loop");
   // Main loop flag
   bool quit = false;
   // Event handler
@@ -141,7 +106,6 @@ Track *track;
 Player *player;
 Enemy *enemy;
 vector<Car *> cars;
-vector<Entity *> entities;
 
 // DECLARING LOCAL GAME VARIABLES:
 int lapLimit;
@@ -208,18 +172,6 @@ void gameStart()
 
   vector<Point> verts;
 
-  // vector<Point> triangleShape = calculatePolygonVertices(100, 4);
-  // Entity *triangle = new Entity(verts, triangleShape, Point(S_WIDTH / 2 - 160, S_HEIGHT / 2), 0, NULL);
-  // entities.push_back(triangle);
-
-  // vector<Point> squareShape = calculatePolygonVertices(100, 3);
-  // Entity *square = new Entity(verts, squareShape, Point(S_WIDTH / 2, S_HEIGHT / 2), 0, NULL);
-  // entities.push_back(square);
-
-  // vector<Point> pentagonShape = calculatePolygonVertices(100, 5);
-  // Entity *pentagon = new Entity(verts, pentagonShape, Point(S_WIDTH / 2 + 160, S_HEIGHT / 2), 0, NULL);
-  // entities.push_back(pentagon);
-
   if (!gameStarted)
   {
     // TRACK:
@@ -259,6 +211,7 @@ void gameStart()
 
 void checkKeys()
 {
+  debug = KEYS[SDLK_TAB];
   if (gameRun)
   {
     // P:
@@ -291,28 +244,6 @@ void checkKeys()
 
 void display()
 {
-  // for (size_t i = 0; i < entities.size(); ++i)
-  // {
-  //   for (size_t j = i + 1; j < entities.size(); ++j)
-  //   {
-  //     if (entities[i]->collides(*entities[j]))
-  //     {
-  //       entities[i]->highlighted = true;
-  //       entities[j]->highlighted = true;
-  //     }
-  //   }
-  // }
-
-  for (Entity *entity : entities)
-  {
-    // entity->angle += (float)entity->shape.size() / 2;
-    // entity->position.y = sin(entity->angle * (M_PI / 180)) * ((S_HEIGHT / 2) - 100) + (S_HEIGHT / 2) + 50;
-    entity->draw();
-    entity->highlighted = false;
-  }
-  // // RESET SCREEN TO BACKGROUND COLOR:
-  // // glClear(GL_COLOR_BUFFER_BIT);
-
   if (gameRun)
   {
     // DRAW TRACK:
@@ -325,7 +256,6 @@ void display()
       Car *car = cars[i];
 
       // DRAW THE CURRENT CAR:
-      // car->draw(Point(300, 300));
       car->draw(track->position);
 
       // UPDATE THE CURRENT CAR:
@@ -352,32 +282,6 @@ void display()
 
   // CHECK KEYS:
   checkKeys();
-
-  // FLUSH AND SWAP BUFFERS:
-  // glFlush();
-  // STUBBED("Swap buffers");
-  // glutSwapBuffers();
-}
-
-void reshape(int width, int height)
-{
-  // SETUP VIEWPORT:
-  // glViewport(0, 0, width, height);
-
-  // // SELECT PROJECTION MATRIX:
-  // glMatrixMode(GL_PROJECTION);
-
-  // // RESET SELECTED MATRIX:
-  // glLoadIdentity();
-
-  // // SETUP COORDINATE SYSTEM;
-  // gluOrtho2D(0, S_WIDTH, 0, S_HEIGHT);
-
-  // // SELECT MODELVIEW MATRIX:
-  // glMatrixMode(GL_MODELVIEW);
-
-  // // RESET SELECTED MATRIX:
-  // glLoadIdentity();
 }
 
 bool init()
@@ -429,7 +333,7 @@ bool init()
         }
         else
         {
-          if (!TTF_Init())
+          if (TTF_Init() < 0)
           {
             SDL_Log("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
             success = false;
@@ -440,42 +344,6 @@ bool init()
   }
 
   return success;
-}
-
-void mouseMotion(int x, int y)
-{
-  // CURRENT MOUSE POSITION:
-  MOUSE_Y = S_HEIGHT - y;
-  MOUSE_X = x;
-}
-
-void mouse(int button, int state, int x, int y)
-{
-  // DETECTING MOUSE BUTTON PRESSES:
-  STUBBED("Check mouse button state");
-  // switch (button)
-  // {
-  // case GLUT_LEFT_BUTTON:
-  //   if (state == GLUT_DOWN)
-  //   {
-  //     LEFTMOUSE = true;
-  //   }
-  //   else
-  //   {
-  //     LEFTMOUSE = false;
-  //   }
-  //   break;
-  // case GLUT_RIGHT_BUTTON:
-  //   break;
-  // default:
-  //   break;
-  // }
-}
-
-void update()
-{
-  STUBBED("Redisplay required");
-  // glutPostRedisplay();
 }
 
 SDL_Texture *loadTexture(std::string path)
@@ -551,17 +419,4 @@ vector<Point> getPoly(int sides, float radius, Point position)
     verts.push_back(Point(x, y));
   }
   return verts;
-}
-
-void renderBitmapString(float x, float y, void *font, const char *string)
-{
-  // RENDERING STRING TO OPENGL:
-  // const char *c;
-  // glLoadIdentity();
-  // glRasterPos2f(x, y);
-  // for (c = string; *c != '\0'; c++)
-  // {
-  //   STUBBED("Render character");
-  //   glutBitmapCharacter(font, *c);
-  // }
 }

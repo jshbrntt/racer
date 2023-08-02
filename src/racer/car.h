@@ -18,15 +18,10 @@ protected:
   float steer;
   float steerAcceleration;
   float steerDeceleration;
-  // float angularVelocity;
-  // float angularMagnitude;
-  // float angularFriction;
   Entity flame;
   Point flamePosition;
   float flameDist;
   float flameOffset;
-  // float linearMagnitude;
-  // float turboMagnitude;
   float turboTimer;
   float turboTimeOut;
   bool turboOn;
@@ -42,7 +37,6 @@ protected:
   void turbo();
   void updateCurrentLap();
   virtual void checkCollisions();
-  // float getAverageSpeed();
 
 public:
   // PUBLIC CONSTRUCTORS:

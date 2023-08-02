@@ -6,7 +6,8 @@
             "label": "Build: Linux",
             "command": "make",
             "args": [
-                "build-linux"
+                "build-linux",
+                "DEBUG=1"
             ],
             "group": {
                 "kind": "build",
@@ -15,10 +16,11 @@
         },
         {
             "type": "shell",
-            "label": "Build: Win32",
+            "label": "Build: Windows",
             "command": "make",
             "args": [
-                "build-win32"
+                "build-windows",
+                "DEBUG=1"
             ],
             "group": {
                 "kind": "build",
@@ -27,10 +29,11 @@
         },
         {
             "type": "shell",
-            "label": "Build: macOS",
+            "label": "Build: Mac OS X",
             "command": "make",
             "args": [
-                "build-macos"
+                "build-macosx",
+                "DEBUG=1"
             ],
             "group": {
                 "kind": "build",

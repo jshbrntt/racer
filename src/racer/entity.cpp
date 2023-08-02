@@ -121,18 +121,6 @@ SDL_Color HSVtoRGB(double h, double s, double v)
 
 void Entity::draw(Point parentPosition)
 {
-  // LOAD IDENTITY MATRIX:
-  // glLoadIdentity();
-
-  // IF TEXTURE EXISTS ENABLE TEXTURING:
-  // glEnable(GL_BLEND);
-  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  // glEnable(GL_TEXTURE_2D);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-  // glBindTexture(GL_TEXTURE_2D, texture);
-
   int minX = std::numeric_limits<int>::max();
   int maxX = std::numeric_limits<int>::min();
   int minY = std::numeric_limits<int>::max();
@@ -163,157 +151,30 @@ void Entity::draw(Point parentPosition)
     SDL_RenderCopyEx(renderer, this->texture, NULL, &rectangle, angle, &center, SDL_FLIP_NONE);
   }
 
-  vector<Point> orientedShape = this->getOrientedShape(parentPosition);
-  vector<SDL_Point> wireframe;
-  std::transform(
-      orientedShape.begin(),
-      orientedShape.end(),
-      std::back_inserter(wireframe),
-      [](const Point &point)
-      {
-        return SDL_Point{(int)point.x, (int)point.y};
-      });
-  wireframe.push_back(SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y});
-
-  SDL_SetRenderDrawColor(renderer, highlighted ? 255 : 0, highlighted ? 0 : 255, 0, SDL_ALPHA_OPAQUE);
-  SDL_RenderDrawLines(renderer, &wireframe[0], wireframe.size());
-
-  // // Define the starting and ending colors for the gradient (green and red)
-  // SDL_Color startColor = {0, 255, 0, SDL_ALPHA_OPAQUE};
-  // SDL_Color endColor = {255, 0, 0, SDL_ALPHA_OPAQUE};
-
-  // // Calculate the color step for each line segment
-  // int numSegments = 10;
-  // double stepR = static_cast<double>(endColor.r - startColor.r) / numSegments;
-  // double stepG = static_cast<double>(endColor.g - startColor.g) / numSegments;
-  // double stepB = static_cast<double>(endColor.b - startColor.b) / numSegments;
-
-  // // int numSegments = wireframe.size() - 1;
-  // double stepH = 360.0 / numSegments; // Distribute the hues evenly across the color spectrum
-
-  // // Iterate through the wireframe points and draw each line segment with rainbow colors
-  // for (size_t i = 0; i < wireframe.size() - 1; ++i)
-  // {
-  //   // Calculate the hue for the current line segment
-  //   double currentHue = stepH * i;
-
-  //   // Get the RGB color for the current hue in the HSV color space
-  //   SDL_Color currentColor = HSVtoRGB(highlighted ? 1 : currentHue, 1.0, 1.0);
-
-  //   // Set the color for the current line segment
-  //   SDL_SetRenderDrawColor(renderer, currentColor.r, currentColor.g, currentColor.b, currentColor.a);
-
-  //   // Draw the current line segment
-  //   SDL_RenderDrawLine(renderer, wireframe[i].x, wireframe[i].y, wireframe[i + 1].x, wireframe[i + 1].y);
-  // }
-
-  // Convert to SDL_Point array
-  // SDL_Point points[orientedShape.size() + 1];
-  // transform(orientedShape.begin(),
-  //           orientedShape.end(),
-  //           points,
-  //           [](const auto &point) {
-  //             const int x = (int)point.x;
-  //             const int y = (int)point.y;
-  //             return SDL_Point{x, y};
-  //           });
-
-  // Add first point as also the final point
-  // points[orientedShape.size()] = SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y};
-
-  // // Offset points by entity position
-  // for (int i = 0; i < orientedShape.size() + 1; i++)
-  // {
-  //   points[i].x += (int)position.x;
-  //   points[i].y += (int)position.y;
-  // }
-
-  // // Draw oriented shape.
-  // SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-  // SDL_RenderDrawLines(renderer, points, shape.size() + 1);
-
-  // // TRANSLATE
-  // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
-
-  // // ROTATE:
-  // glRotatef(angle, 0.0f, 0.0f, 1.0f);
-
-  // // DRAW POLYGON FROM VERTS:
-  // if (verts.size() >= 3)
-  // {
-  //   // BEGIN DRAWING POLYGON:
-  //   glBegin(GL_POLYGON);
-  //   for (int i = 0; i != verts.size(); i++)
-  //   {
-  //     // GETTING CURRENT VERT:
-  //     Point vert = verts[i];
-
-  //     // MAP TEXTURE IF IT EXISTS:
-  //     if (texture != 0)
-  //     {
-  //       // MAP TEXTURE RELATIVE TO VERTS:
-  //       Point texturePosition = Point(0, 0);
-  //       if (vert.x > 0)
-  //         texturePosition.x = 1;
-  //       if (vert.y > 0)
-  //         texturePosition.y = 1;
-
-  //       // APPLYING POSITION:
-  //       glTexCoord2f(texturePosition.x, texturePosition.y);
-  //     }
-  //     // DRAW CURRENT VERT:
-  //     glVertex2f(vert.x, vert.y);
-  //   }
-  //   glEnd();
-  // }
-
-  // // IF TEXTURE EXISTS DISABLE TEXTURING:
-  // if (texture != 0)
-  // {
-  //   glDisable(GL_TEXTURE_2D);
-  //   glDisable(GL_BLEND);
-  // }
-  // }
+  if (debug) {
+    vector<Point> orientedShape = this->getOrientedShape(parentPosition);
+    vector<SDL_Point> wireframe;
+    std::transform(
+        orientedShape.begin(),
+        orientedShape.end(),
+        std::back_inserter(wireframe),
+        [](const Point &point)
+        {
+          return SDL_Point{(int)point.x, (int)point.y};
+        });
+    wireframe.push_back(SDL_Point{(int)orientedShape[0].x, (int)orientedShape[0].y});
+    SDL_SetRenderDrawColor(renderer, highlighted ? 255 : 0, highlighted ? 0 : 255, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderDrawLines(renderer, &wireframe[0], wireframe.size());
+  }
 }
 
 void Entity::highlight(Point parentPosition, glRGB color, bool fill)
 {
   highlighted = fill;
-  // // LOAD IDENTITY MATRIX:
-  // glLoadIdentity();
-
-  // // TRANSLATE:
-  // glTranslatef(parentPosition.x + position.x, parentPosition.y + position.y, 0.0f);
-
-  // // ROTATE:
-  // glRotatef(angle, 0.0f, 0.0f, 1.0f);
-
-  // // DRAW POLYGON FROM VERTS:
-  // if (verts.size() >= 3)
-  // {
-  //   // HIGHLIGHT IN RED:
-  //   glColor3f(color.red, color.blue, color.green);
-
-  //   // BEGIN DRAWING POLYGON / LINE_LOOP:
-  //   fill ? glBegin(GL_POLYGON) : glBegin(GL_LINE_LOOP);
-  //   for (int i = 0; i != shape.size(); i++)
-  //   {
-  //     // GETTING CURRENT VERT:
-  //     Point vert = shape[i];
-
-  //     // DRAW CURRENT VERT:
-  //     glVertex2f(vert.x, vert.y);
-  //   }
-  //   glEnd();
-  // }
-
-  // // DRAW ORIGIN OF THE SHAPE:
-  // glPointSize(10.0f);
-  // glBegin(GL_POINTS);
-  // glVertex2f(0, 0);
-  // glEnd();
 }
+
 void Entity::update() {}
+
 vector<Point> Entity::getOrientedShape(Point parentPosition = Point())
 {
   // CONVERTING ANGLE TO RADIANS:

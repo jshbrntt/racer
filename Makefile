@@ -4,24 +4,24 @@ ifndef DOCKER
 
 IMAGE := ghcr.io/jshbrntt/racer/devcontainer
 DOCKER := docker
-WORKDIR := /root/racer
+WORKDIR := /home/ubuntu/racer
 
 export DOCKER_BUILDKIT = 1
 export BUILDKIT_PROGRESS = plain
 
 .PHONY: build-linux
 build-linux: TARGET := linux
-build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1 )LINUX=1
+build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )LINUX=1
 build-linux: docker-command
 
 .PHONY: build-windows
 build-windows: TARGET := windows
-build-windows: COMMAND := make $(if $(CLEAN),CLEAN=1 )WINDOWS=1
+build-windows: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )WINDOWS=1
 build-windows: docker-command
 
 .PHONY: build-macosx
 build-macosx: TARGET := macosx
-build-macosx: COMMAND := make $(if $(CLEAN),CLEAN=1 )MACOSX=1
+build-macosx: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )MACOSX=1
 build-macosx: docker-command
 
 .PHONY: push-linux
@@ -61,10 +61,9 @@ docker-build:
 .PHONY: docker-run
 docker-run:
 	docker run \
-	--tty \
+	$(if $(CI),,--interactive )--tty \
 	--rm \
 	--env DOCKER=1 \
-	--volume $(if $(CI),$(CWD)/build,racer_build):$(WORKDIR)/build \
 	--volume $(CWD):$(WORKDIR) \
 	--workdir $(WORKDIR) \
 	$(IMAGE)/$(TARGET) \
@@ -91,7 +90,7 @@ configure: $(if $(CLEAN),clean)
 	mkdir -p build/linux
 	cd build/linux
 	cmake ../.. \
-	-DCMAKE_BUILD_TYPE=Debug
+	-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release)
 
 .PHONY: clean
 clean:
@@ -111,8 +110,8 @@ configure: $(if $(CLEAN),clean)
 	mkdir -p build/windows
 	cd build/windows
 	cmake ../.. \
-	-DCMAKE_TOOLCHAIN_FILE=$(CWD)/clang_windows_cross.cmake \
-	-DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
+	-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
 	-DCMAKE_AR=/usr/bin/llvm-lib \
 	-DCMAKE_RC_COMPILER=/usr/bin/llvm-windres \
 	-DCMAKE_C_COMPILER=/usr/bin/clang-cl \
@@ -147,7 +146,7 @@ configure: $(if $(CLEAN),clean)
 	OSXCROSS_TARGET_DIR=/osxcross/target \
 	OSXCROSS_SDK=/osxcross/target/SDK/MacOSX12.3.sdk \
 	cmake ../.. \
-	-DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
 	-DCMAKE_TOOLCHAIN_FILE=/osxcross/tools/toolchain.cmake
 
 .PHONY: clean

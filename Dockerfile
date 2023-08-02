@@ -78,6 +78,8 @@ ENV PATH="${PATH}:/osxcross/target/bin"
 FROM llvm-cmake AS windows
 COPY --from=windows-sdk /xwin /xwin
 
+USER ubuntu
+
 FROM llvm-cmake AS macosx
 COPY --from=macosx-toolchain /osxcross/target/bin /osxcross/target/bin
 COPY --from=macosx-toolchain /osxcross/target/lib /osxcross/target/lib
@@ -87,6 +89,8 @@ ARG MACOSX_DEPLOYMENT_TARGET="12.3"
 ENV MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 ENV PATH="${PATH}:/osxcross/target/bin"
 
+USER ubuntu
+
 FROM llvm-cmake AS linux
 # Required for linux build
 RUN apt-get update \
@@ -94,3 +98,5 @@ RUN apt-get update \
 libgles2-mesa-dev=23.0.4-0ubuntu1~23.04.1 \
 libxext-dev=2:1.3.4-1build1 \
 && rm -rf /var/lib/apt/lists/*
+
+USER ubuntu

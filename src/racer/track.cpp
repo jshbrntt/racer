@@ -12,19 +12,19 @@ Track::Track(Point position)
   tileSize = 200;
 
   // IMPORTING TILE TEXTURES:
-  textures.push_back(loadTexture("assets/racer/tiles/universal/track.png"));   // 0:  Track
-  textures.push_back(loadTexture("assets/racer/tiles/grass/bound.png"));       // 1:  Bound
-  textures.push_back(loadTexture("assets/racer/tiles/universal/lineh.png"));   // 2:  LineH
-  textures.push_back(loadTexture("assets/racer/tiles/universal/linev.png"));   // 3:  LineV
-  textures.push_back(loadTexture("assets/racer/tiles/grass/topleft.png"));     // 4:  Top-Left
-  textures.push_back(loadTexture("assets/racer/tiles/grass/topright.png"));    // 5:  Top-Right
-  textures.push_back(loadTexture("assets/racer/tiles/grass/bottomleft.png"));  // 6:  Bottom-Left
-  textures.push_back(loadTexture("assets/racer/tiles/grass/bottomright.png")); // 7:  Bottom-Right
-  textures.push_back(loadTexture("assets/racer/tiles/grass/left.png"));        // 8:  Left
-  textures.push_back(loadTexture("assets/racer/tiles/grass/right.png"));       // 9:  Right
-  textures.push_back(loadTexture("assets/racer/tiles/grass/bottom.png"));      // 10: Bottom
-  textures.push_back(loadTexture("assets/racer/tiles/grass/top.png"));         // 11: Top
-  textures.push_back(loadTexture("assets/racer/tiles/universal/turbo.png"));   // 12: Turbo
+  textures.push_back(loadTexture("assets/tiles/universal/track.png"));   // 0:  Track
+  textures.push_back(loadTexture("assets/tiles/grass/bound.png"));       // 1:  Bound
+  textures.push_back(loadTexture("assets/tiles/universal/lineh.png"));   // 2:  LineH
+  textures.push_back(loadTexture("assets/tiles/universal/linev.png"));   // 3:  LineV
+  textures.push_back(loadTexture("assets/tiles/grass/topleft.png"));     // 4:  Top-Left
+  textures.push_back(loadTexture("assets/tiles/grass/topright.png"));    // 5:  Top-Right
+  textures.push_back(loadTexture("assets/tiles/grass/bottomleft.png"));  // 6:  Bottom-Left
+  textures.push_back(loadTexture("assets/tiles/grass/bottomright.png")); // 7:  Bottom-Right
+  textures.push_back(loadTexture("assets/tiles/grass/left.png"));        // 8:  Left
+  textures.push_back(loadTexture("assets/tiles/grass/right.png"));       // 9:  Right
+  textures.push_back(loadTexture("assets/tiles/grass/bottom.png"));      // 10: Bottom
+  textures.push_back(loadTexture("assets/tiles/grass/top.png"));         // 11: Top
+  textures.push_back(loadTexture("assets/tiles/universal/turbo.png"));   // 12: Turbo
 
   // AI MAP:
   aiMap.push_back(Point(3,  5));
@@ -62,7 +62,7 @@ Track::Track(Point position)
   const int tW = 28;
   const int tH = 18;
 
-  // // TRACK TILE MAP:
+  // TRACK TILE MAP:
   int tileMap[tH][tW] = {
       {1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  0
       {1,  1,  1,  1,  1, 11, 11, 11,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1},  //  1
@@ -83,26 +83,6 @@ Track::Track(Point position)
       {1,  1,  1,  1,  1, 10, 10, 10, 10, 10, 10, 10,  1,  1,  1,  1,  1,  1, 10, 10, 10, 10, 10, 10,  1,  1,  1,  1},  // 16
       {1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1}}; // 17
     /* 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 */
-
-  // const int tW = 5;
-  // const int tH = 5;
-
-  // // TRACK TILE MAP:
-  // int tileMap[tH][tW] = {
-  //     {7,  7,  11, 7,  7}, //  0
-  //     {7,  4,  0,  5,  7}, //  1
-  //     {8,  0,  0,  0,  9}, //  2
-  //     {7,  6,  0,  7,  7}, //  3
-  //     {7,  7,  10, 7,  7}}; //  4
-  //   /* 0,  1,  2,  3,  4 */
-
-  // const int tW = 1;
-  // const int tH = 1;
-
-  // // TRACK TILE MAP:
-  // int tileMap[tH][tW] = {
-  //     {4}}; //  0
-  //   /* 0,  1,  2,  3,  4 */
 
   // TILE SHAPES:
   vector<Point> square = getBox(tileSize, tileSize);
@@ -232,9 +212,9 @@ Track::Track(Point position)
     tiles.push_back(tileRow);
     map.push_back(mapRow);
   }
-#if DEBUG == 1
-  // printAIMap();
-#endif
+  if (debug) {
+    printAIMap();
+  }
 }
 
 void Track::draw()
@@ -268,8 +248,6 @@ void Track::update()
 {
   // UPDATE TRACK POSITION RELATIVE TO THE PLAYER'S POSITION:
   track->position = Point(player->position.x - (S_WIDTH / 2), player->position.y - (S_HEIGHT / 2)) * -1;
-  // SDL_Log("Track: %f,%f\n", track->position.x, track->position.y);
-  // track->position = Point(enemy->position.x - (S_WIDTH / 2), enemy->position.y - (S_HEIGHT / 2)) * -1;
 }
 
 Point previousIndex = Point(0, 0);
@@ -298,9 +276,6 @@ Point Track::getTileIndex(Point position)
 
 void Track::printAIMap()
 {
-  // CLEAR COMMAND PROMPT WINDOW:
-  // system("CLS");
-
   // -1: Target
   //  0: Track
   //  1: Bound

@@ -56,30 +56,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL2_ttf)
 
-# Snake
-# set(CMAKE_CXX_STANDARD 17)
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# project(snake VERSION 1.0)
-
-# file(GLOB_RECURSE SNAKE_HDRS src/snake/*.h)
-# file(GLOB_RECURSE SNAKE_SRCS src/snake/*.cpp)
-
-# add_executable(${PROJECT_NAME} ${SNAKE_HDRS} ${SNAKE_SRCS})
-# target_link_libraries(
-#   ${PROJECT_NAME}
-#   EnTT::EnTT
-#   SDL2::SDL2main
-#   SDL2::SDL2-static
-#   SDL2_image::SDL2_image-static
-#   SDL2_ttf::SDL2_ttf-static
-# )
-
 # Racer
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(racer VERSION 1.0)
+project(racer VERSION 1.0.0)
 
 file(GLOB_RECURSE RACER_HDRS src/racer/*.h)
 file(GLOB_RECURSE RACER_SRCS src/racer/*.cpp)
@@ -94,21 +75,68 @@ target_link_libraries(
   SDL2_ttf::SDL2_ttf-static
 )
 
-# Copy executable to root directory
-message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
-if(CMAKE_SYSTEM_NAME MATCHES Linux OR CMAKE_SYSTEM_NAME MATCHES Darwin)
-  add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/racer
-    ${CMAKE_SOURCE_DIR}/racer
-  )
+# Create release directory
+function(get_target_triple TARGET_TRIPLE)
+  set(TARGET_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+  set(TARGET_VENDOR ${CMAKE_SYSTEM_VENDOR})
+  set(TARGET_SYS ${CMAKE_SYSTEM_NAME})
+
+  if(TARGET_SYS STREQUAL "Linux")
+    if(NOT TARGET_VENDOR)
+      set(TARGET_VENDOR "unknown")
+    endif()
+    set(TARGET_ENV "gnu")
+  endif()
+
+  if(TARGET_SYS STREQUAL "Windows")
+    if(TARGET_ARCH STREQUAL "AMD64")
+      set(TARGET_ARCH "x86_64")
+    endif()
+    if(NOT TARGET_VENDOR)
+      set(TARGET_VENDOR "pc")
+    endif()
+    # TODO: Support gnu ABI in future.
+    set(TARGET_ENV "msvc")
+  endif()
+
+  if(TARGET_SYS STREQUAL "Darwin")
+    if(NOT TARGET_VENDOR)
+      set(TARGET_VENDOR "apple")
+    endif()
+  endif()
+
+  set(TARGET_COMPONENTS ${TARGET_ARCH} ${TARGET_VENDOR} ${TARGET_SYS} ${TARGET_ENV})
+  string(JOIN "-" TARGET_COMPONENTS ${TARGET_COMPONENTS})
+  string(TOLOWER ${TARGET_COMPONENTS} TARGET_COMPONENTS)
+  set(${TARGET_TRIPLE} ${TARGET_COMPONENTS} PARENT_SCOPE)
+endfunction()
+
+get_target_triple(TARGET_TRIPLE)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(TARGET_EXECUTABLE "${PROJECT_NAME}.exe")
+else()
+  set(TARGET_EXECUTABLE "${PROJECT_NAME}")
 endif()
-if(CMAKE_SYSTEM_NAME MATCHES Windows)
-  add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/racer.exe
-    ${CMAKE_SOURCE_DIR}/racer.exe
-  )
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+set(OUTPUT_DIRECTORY "target/${BUILD_TYPE}")
+if(BUILD_TYPE STREQUAL "debug")
+  set(TARGET_BASENAME "${PROJECT_NAME}-${TARGET_TRIPLE}")
+elseif(BUILD_TYPE STREQUAL "release")
+  set(TARGET_BASENAME "${PROJECT_NAME}-${PROJECT_VERSION}-${TARGET_TRIPLE}")
 endif()
+set(TARGET_DIRECTORY "${OUTPUT_DIRECTORY}/${TARGET_BASENAME}")
+
+set(TARGET_ARCHIVE "${TARGET_BASENAME}.tar.gz")
+set(TARGET_SHA256 "${TARGET_ARCHIVE}.sha256")
+
+# Create release post build
+add_custom_command(
+  TARGET ${PROJECT_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE} ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/${TARGET_EXECUTABLE}
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/racer/assets ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/assets
+  COMMAND tar -czvf ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_ARCHIVE} -C ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY} ${TARGET_BASENAME}
+  COMMAND sha256sum ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_ARCHIVE} > ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_SHA256}
+)

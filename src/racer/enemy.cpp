@@ -39,7 +39,7 @@ vector<Point> Enemy::enemyShape()
 SDL_Texture *Enemy::enemyTexture()
 {
   // IMPORTING PLAYER TEXTURE:
-  return loadTexture("assets/racer/cars/green_car.png");
+  return loadTexture("assets/cars/green_car.png");
 }
 
 Enemy::Enemy() : Car()
@@ -92,25 +92,25 @@ void Enemy::runAI()
   if (currentNode != previousNode)
   {
     nodeIndex = trackNodeIndex;
-#if DEBUG == 1
-    // SDL_Log("CURRENT: %i, PREVIOUS: %i\n", currentNode, previousNode);
-    // SDL_Log("TRACK: %.f, %.f, TURBO: %.f, %.f\n", trackNodeIndex.x, trackNodeIndex.y, turboNodeIndex.x, turboNodeIndex.y);
-#endif
+    if (debug) {
+      SDL_Log("CURRENT: %i, PREVIOUS: %i\n", currentNode, previousNode);
+      SDL_Log("TRACK: %.f, %.f, TURBO: %.f, %.f\n", trackNodeIndex.x, trackNodeIndex.y, turboNodeIndex.x, turboNodeIndex.y);
+    }
     if (track->tiles[turboNodeIndex.y][turboNodeIndex.x] == 12)
     {
       // RANDOM 1 / 0:
       int targetTurboTile = (rand() % 2);
-#if DEBUG == 1
-      SDL_Log("RAND: %i\n", targetTurboTile);
-#endif
+      if (debug) {
+        SDL_Log("RAND: %i\n", targetTurboTile);
+      }
       if (targetTurboTile == 1)
       {
         nodeIndex = turboNodeIndex;
       }
     }
-#if DEBUG == 1
-    // SDL_Log("NODE: %.f, %.f, \n\n", nodeIndex.x, nodeIndex.y);
-#endif
+    if (debug) {
+      SDL_Log("NODE: %.f, %.f, \n\n", nodeIndex.x, nodeIndex.y);
+    }
   }
 
   // UPDATE PREVIOUS NODE INDEX:

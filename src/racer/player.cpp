@@ -33,7 +33,7 @@ vector<Point> Player::playerShape()
 SDL_Texture *Player::playerTexture()
 {
   // IMPORTING PLAYER TEXTURE:
-  return loadTexture("assets/racer/cars/red_car.png");
+  return loadTexture("assets/cars/red_car.png");
 }
 
 Player::Player() : Car()
@@ -128,9 +128,9 @@ void Player::checkCollisions()
     }
 #endif
 #endif
-#if DEBUG == 1
-    // HIGHLIGHT TILE ENEMY IS ON:
-    track->map[enemy->currentTileIndex.y][enemy->currentTileIndex.x].highlight(track->position, color, false);
-#endif
+    if (debug) {
+      // HIGHLIGHT TILE ENEMY IS ON:
+      track->map[enemy->currentTileIndex.y][enemy->currentTileIndex.x].highlight(track->position, color, false);
+    }
   }
 }

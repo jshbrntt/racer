@@ -21,7 +21,7 @@ entt::entity makePickup(entt::registry & registry)
 
 	const entt::entity e = registry.create();
 	registry.assign<Pickup>(e);
-	registry.assign<Sprite>(e, "assets/snake/pickup.png");
+	registry.assign<Sprite>(e, "assets/pickup.png");
 	registry.assign<Transform>(e);
 	registry.assign<Collider>(e, ColliderLayer::CL_pickup);
 	return e;
@@ -31,11 +31,11 @@ entt::entity makeGameOverText(entt::registry & registry, int ptSize, SDL_Color c
 {
 	const entt::entity e1 = registry.create();
 	registry.assign<GameOverMainText>(e1);
-	registry.assign<Text>(e1, "assets/snake/open_sans.ttf", ptSize, color, 0, 0);
+	registry.assign<Text>(e1, "assets/open_sans.ttf", ptSize, color, 0, 0);
 
 	const entt::entity e2 = registry.create();
 	registry.assign<GameOverSubText>(e2);
-	registry.assign<Text>(e2, "assets/snake/open_sans.ttf", (2 * ptSize) / 3, color, 0, 50);
+	registry.assign<Text>(e2, "assets/open_sans.ttf", (2 * ptSize) / 3, color, 0, 50);
 
 	return e1;
 }
@@ -44,7 +44,7 @@ entt::entity makeScoreText(entt::registry & registry, int ptSize, SDL_Color colo
 {
 	const entt::entity e = registry.create();
 	registry.assign<ScoreText>(e);
-	registry.assign<Text>(e, "assets/snake/open_sans.ttf", ptSize, color, -SNAKE_SCREEN_WIDTH / 2 + 24, -SNAKE_SCREEN_HEIGHT / 2 + 24);
+	registry.assign<Text>(e, "assets/open_sans.ttf", ptSize, color, -SNAKE_SCREEN_WIDTH / 2 + 24, -SNAKE_SCREEN_HEIGHT / 2 + 24);
 	return e;
 }
 
@@ -53,7 +53,7 @@ entt::entity makeSnakeHead(entt::registry& registry, float xPos, float yPos, flo
 	const entt::entity e = registry.create();
 	registry.assign<SnakeHead>(e);
 	registry.assign<SnakePart>(e);
-	registry.assign<Sprite>(e, "assets/snake/snake_head.png");
+	registry.assign<Sprite>(e, "assets/snake_head.png");
 	registry.assign<Transform>(e, xPos, yPos, xScl, yScl, Direction::up);
 	registry.assign<Collider>(e, ColliderLayer::CL_snakehead);
 	return e;
@@ -64,7 +64,7 @@ entt::entity makeSnakeTail(entt::registry& registry, float xPos, float yPos, flo
 	const entt::entity e = registry.create();
 	registry.assign<SnakeTail>(e);
 	registry.assign<SnakePart>(e);
-	registry.assign<Sprite>(e, "assets/snake/snake_tail.png");
+	registry.assign<Sprite>(e, "assets/snake_tail.png");
 	registry.assign<Transform>(e, xPos, yPos, xScl, yScl, Direction::up);
 	registry.assign<Collider>(e, ColliderLayer::CL_snakebody);
 	return e;
@@ -75,7 +75,7 @@ entt::entity makeSnakeBody(entt::registry& registry, float xPos, float yPos, flo
 	const entt::entity e = registry.create();
 	registry.assign<SnakeBody>(e);
 	registry.assign<SnakePart>(e);
-	registry.assign<Sprite>(e, "assets/snake/snake_body.png");
+	registry.assign<Sprite>(e, "assets/snake_body.png");
 	registry.assign<Transform>(e, xPos, yPos, xScl, yScl, Direction::up);
 	registry.assign<Collider>(e, ColliderLayer::CL_snakebody);
 	return e;
