@@ -2,12 +2,33 @@ export CWD := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 ifndef DOCKER
 
-IMAGE := ghcr.io/jshbrntt/racer/devcontainer
+DOCKER_REGISTRY_URL := ghcr.io
+
+ifdef CI
+DOCKER_REGISTRY_USERNAME := $(GITHUB_ACTOR)
+DOCKER_REGISTRY_PASSWORD := $(GITHUB_TOKEN)
+endif
+
+IMAGE := $(DOCKER_REGISTRY_URL)/jshbrntt/racer/devcontainer
 DOCKER := docker
 WORKDIR := /home/ubuntu/racer
 
 export DOCKER_BUILDKIT = 1
 export BUILDKIT_PROGRESS = plain
+
+.PHONY: require-%
+require-%:
+	@#$(or ${$*}, $(error $* is not set))
+
+.PHONY: required-login-variables
+required-login-variables: require-DOCKER_REGISTRY_URL
+required-login-variables: require-DOCKER_REGISTRY_USERNAME
+required-login-variables: require-DOCKER_REGISTRY_PASSWORD
+
+.PHONY: docker-login
+docker-login: required-login-variables
+docker-login:
+	echo $(DOCKER_REGISTRY_PASSWORD) | $(DOCKER) login --password-stdin --username $(DOCKER_REGISTRY_USERNAME) $(DOCKER_REGISTRY_URL)
 
 .PHONY: build-linux
 build-linux: TARGET := linux
@@ -47,10 +68,11 @@ debug:
 
 .PHONY: docker-command
 docker-command: docker-build
+docker-command: docker-push
 docker-command: docker-run
 
 .PHONY: docker-build
-docker-build:
+docker-build: $(if $(CI),docker-login)
 	$(DOCKER) build \
 	--pull \
 	--cache-from $(IMAGE)/$(TARGET) \
@@ -71,7 +93,7 @@ docker-run:
 	$(COMMAND)
 
 .PHONY: docker-push
-docker-push:
+docker-push: $(if $(CI),docker-login)
 	docker push \
 	$(IMAGE)/$(TARGET)
 
