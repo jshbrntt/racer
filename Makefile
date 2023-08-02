@@ -16,7 +16,7 @@ build-linux: docker-command
 
 .PHONY: build-windows
 build-windows: TARGET := windows
-build-windows: COMMAND := ls -lah; mkdir -p build/linux/CMakeFiles/pkgRedirects
+build-windows: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )WINDOWS=1
 build-windows: docker-command
 
 .PHONY: build-macosx
