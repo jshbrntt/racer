@@ -20,16 +20,6 @@ export BUILDKIT_PROGRESS = plain
 require-%:
 	@#$(or ${$*}, $(error $* is not set))
 
-.PHONY: required-login-variables
-required-login-variables: require-DOCKER_REGISTRY_URL
-required-login-variables: require-DOCKER_REGISTRY_USERNAME
-required-login-variables: require-DOCKER_REGISTRY_PASSWORD
-
-.PHONY: docker-login
-docker-login: required-login-variables
-docker-login:
-	echo $(DOCKER_REGISTRY_PASSWORD) | $(DOCKER) login --password-stdin --username $(DOCKER_REGISTRY_USERNAME) $(DOCKER_REGISTRY_URL)
-
 .PHONY: build-linux
 build-linux: TARGET := linux
 build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )LINUX=1
@@ -66,10 +56,20 @@ shell: docker-command
 debug:
 	printenv
 
-.PHONY: docker-command
-docker-command: docker-build
-docker-command: docker-push
-docker-command: docker-run
+.PHONY: required-login-variables
+required-login-variables: require-DOCKER_REGISTRY_URL
+required-login-variables: require-DOCKER_REGISTRY_USERNAME
+required-login-variables: require-DOCKER_REGISTRY_PASSWORD
+
+.PHONY: docker-login
+docker-login: required-login-variables
+docker-login:
+	echo $(DOCKER_REGISTRY_PASSWORD) | $(DOCKER) login --password-stdin --username $(DOCKER_REGISTRY_USERNAME) $(DOCKER_REGISTRY_URL)
+
+.PHONY: docker-push
+docker-push: $(if $(CI),docker-login)
+	docker push \
+	$(IMAGE)/$(TARGET)
 
 .PHONY: docker-build
 docker-build: $(if $(CI),docker-login)
@@ -92,10 +92,10 @@ docker-run:
 	$(IMAGE)/$(TARGET) \
 	$(COMMAND)
 
-.PHONY: docker-push
-docker-push: $(if $(CI),docker-login)
-	docker push \
-	$(IMAGE)/$(TARGET)
+.PHONY: docker-command
+docker-command: docker-build
+docker-command: docker-push
+docker-command: docker-run
 
 else
 
