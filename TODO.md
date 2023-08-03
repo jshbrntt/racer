@@ -1,13 +1,17 @@
 # TODO
-- [ ] Make a proper "package" target in CMake instead of using `POST_BUILD` which will not trigger if there are no changes.
-- [ ] Create build pipeline to build different targets and publish to GH/Releases page.
+- [ ] Disable console in `Release` build.
+- [ ] Install project dependencies as Git submodules instead of using CMake to fetch them?
+  - [  ] This will reduce CI cache sizes (but might increase checkout).
+- [ ] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
+- [ ] Calculate release sha without checkout in `release` job.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
 - [ ] Explore using CPack for distributing project builds.
 - [ ] Merge CMake toolchains?
-- [ ] Split Docker image into multiple targets for each OS target.
 - [ ] Figure out how to get audio working on WSLg.
-- [ ] Install project dependencies as Git submodules instead of using CMake to fetch them?
 - [ ] Get Wayland working on WSLg.
+- [x] Split Docker image into multiple targets for each OS target.
+- [x] Make a proper "package" target in CMake instead of using `POST_BUILD` which will not trigger if there are no changes.
+- [x] Create build pipeline to build different targets and publish to GH/Releases page.
 - [x] Enable splash screen and game restart.
 - [x] Attempt to compile for Apple M1/2 processors.
 - [x] Install `osxcross` in Docker image without Git submodule?
