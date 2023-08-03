@@ -94,7 +94,7 @@ docker-run:
 
 .PHONY: docker-command
 docker-command: docker-build
-docker-command: docker-push
+docker-command: $(if $(CI),docker-push)
 docker-command: docker-run
 
 else
