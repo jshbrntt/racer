@@ -115,14 +115,12 @@ ifdef LINUX
 
 .PHONY: build
 build: configure
-	cd build/linux \
-&& cmake --build .
+	cmake --build build/linux
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
 	mkdir -p build/linux \
-&& cd build/linux \
-&& cmake ../.. \
+&& cmake -B build/windows -S . \
 -DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release)
 
 .PHONY: clean
@@ -135,21 +133,12 @@ ifdef WINDOWS
 
 .PHONY: build
 build: configure
-	cd build/windows \
-&& cmake --build .
+	cmake --build build/windows
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
-	ls -lah
-	id -u
-	id -g
-	touch test
 	mkdir -p build/windows \
-&& ls -lah \
-&& ls -lah ** \
-&& ls -lah **/** \
-&& cd build/windows \
-&& cmake ../.. \
+&& cmake -B build/windows -S . \
 -DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
 -DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
 -DCMAKE_AR=/usr/bin/llvm-lib \
@@ -174,20 +163,18 @@ ifdef MACOSX
 
 .PHONY: build
 build: configure
-	cd build/macosx
-	cmake --build .
+	cmake --build build/macosx
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
-	mkdir -p build/macosx
-	cd build/macosx
-	OSXCROSS_TARGET=darwin21.4 \
-	OSXCROSS_HOST=x86_64-apple-darwin21.4 \
-	OSXCROSS_TARGET_DIR=/osxcross/target \
-	OSXCROSS_SDK=/osxcross/target/SDK/MacOSX12.3.sdk \
-	cmake ../.. \
-	-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
-	-DCMAKE_TOOLCHAIN_FILE=/osxcross/tools/toolchain.cmake
+	mkdir -p build/macosx \
+&& OSXCROSS_TARGET=darwin21.4 \
+OSXCROSS_HOST=x86_64-apple-darwin21.4 \
+OSXCROSS_TARGET_DIR=/osxcross/target \
+OSXCROSS_SDK=/osxcross/target/SDK/MacOSX12.3.sdk \
+&& cmake -B build/macosx -S . \
+-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
+-DCMAKE_TOOLCHAIN_FILE=/osxcross/tools/toolchain.cmake
 
 .PHONY: clean
 clean:
