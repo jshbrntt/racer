@@ -73,10 +73,15 @@ docker-push: $(if $(CI),docker-login)
 	docker push \
 	$(IMAGE)/$(TARGET)
 
+.PHONY: docker-pull
+docker-pull:
+	$(DOCKER) pull \
+	$(IMAGE)/$(TARGET)
+
 .PHONY: docker-build
+docker-build: docker-pull
 docker-build: $(if $(CI),docker-login)
 	$(DOCKER) build \
-	--pull \
 	--cache-from $(IMAGE)/$(TARGET) \
 	--build-arg BUILDKIT_INLINE_CACHE=1 \
 	--target $(TARGET) \
