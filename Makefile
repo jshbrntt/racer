@@ -79,8 +79,8 @@ docker-pull:
 	$(IMAGE)/$(TARGET)
 
 .PHONY: docker-build
-docker-build: docker-pull
 docker-build: $(if $(CI),docker-login)
+docker-build: docker-pull
 	$(DOCKER) build \
 	--cache-from $(IMAGE)/$(TARGET) \
 	--build-arg BUILDKIT_INLINE_CACHE=1 \
