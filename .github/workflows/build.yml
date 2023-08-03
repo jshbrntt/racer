@@ -17,7 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: id
+      - uses: actions/cache@v3
+        id: cache
+        with:
+          path: build/${{ matrix.target }}
+          key: build-${{ matrix.target }}
       - run: make --debug=b build-${{ matrix.target }}
       - name: Find Archive
         run: |
@@ -31,10 +35,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: 1.0.0-rc.0
+          release_name: Release 1.0.0-rc.0
           draft: false
-          prerelease: false
+          prerelease: true
       - uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
