@@ -12,6 +12,7 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+      - uses: actions/checkout@v3
       - name: Git Short Hash
         run: |
           echo "git_hash_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
