@@ -27,6 +27,7 @@ jobs:
           draft: false
           prerelease: true
   build:
+    needs: release
     strategy:
       matrix:
         target:
