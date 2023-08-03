@@ -1,5 +1,8 @@
 export CWD := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
+.NOTPARALLEL:
+.ONESHELL:
+
 ifndef DOCKER
 
 UID := $(shell id -u)
@@ -52,7 +55,7 @@ push-macosx: docker-push
 .PHONY: shell
 shell: TARGET ?= windows
 shell: COMMAND := bash
-shell: docker-commanddocker-command
+shell: docker-command
 
 .PHONY: debug
 debug:
