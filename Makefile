@@ -120,7 +120,7 @@ build: configure
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
 	mkdir -p build/linux \
-&& cmake -B build/windows -S . \
+&& cmake -B build/linux -S . \
 -DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release)
 
 .PHONY: clean

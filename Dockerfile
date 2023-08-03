@@ -76,6 +76,10 @@ RUN UNATTENDED=1 ./build.sh \
 ENV PATH="${PATH}:/osxcross/target/bin"
 
 FROM llvm-cmake AS windows
+RUN apt-get update \
+&& apt-get install --no-install-recommends --yes \
+zip=3.0-13 \
+&& rm -rf /var/lib/apt/lists/*
 COPY --from=windows-sdk /xwin /xwin
 RUN groupadd --gid 123 docker \
 && useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
