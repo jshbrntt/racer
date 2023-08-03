@@ -138,6 +138,8 @@ configure: $(if $(CLEAN),clean)
 	id -g
 	touch test
 	mkdir -p build/windows \
+&& ls -lah \
+&& ls -lah ** \
 && ls -lah **/** \
 && cd build/windows \
 && cmake ../.. \
