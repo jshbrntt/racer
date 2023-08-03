@@ -108,15 +108,15 @@ ifdef LINUX
 
 .PHONY: build
 build: configure
-	cd build/linux
-	cmake --build .
+	cd build/linux \
+&& cmake --build .
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
-	mkdir -p build/linux
-	cd build/linux
-	cmake ../.. \
-	-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release)
+	mkdir -p build/linux \
+&& cd build/linux \
+&& cmake ../.. \
+-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release)
 
 .PHONY: clean
 clean:
@@ -128,27 +128,31 @@ ifdef WINDOWS
 
 .PHONY: build
 build: configure
-	cd build/windows
-	cmake --build .
+	cd build/windows \
+&& cmake --build .
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
-	mkdir -p build/windows
-	cd build/windows
-	cmake ../.. \
-	-DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
-	-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
-	-DCMAKE_AR=/usr/bin/llvm-lib \
-	-DCMAKE_RC_COMPILER=/usr/bin/llvm-windres \
-	-DCMAKE_C_COMPILER=/usr/bin/clang-cl \
-	-DCMAKE_CXX_COMPILER=/usr/bin/clang-cl \
-	-DCMAKE_LINKER=/usr/bin/lld-link \
-	-DMSVC_BASE=/xwin/crt \
-	-DWINSDK_BASE=/xwin/sdk \
-	-DWINSDK_VER=10.0.22000 \
-	-DTARGET_ARCH=x86_64 \
-	-DHAVE_STDINT_H=1 \
-	-DSDL_JOYSTICK_XINPUT=1
+	ls -lah
+	id -u
+	id -g
+	touch test
+	mkdir -p build/windows \
+&& cd build/windows \
+&& cmake ../.. \
+-DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
+-DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
+-DCMAKE_AR=/usr/bin/llvm-lib \
+-DCMAKE_RC_COMPILER=/usr/bin/llvm-windres \
+-DCMAKE_C_COMPILER=/usr/bin/clang-cl \
+-DCMAKE_CXX_COMPILER=/usr/bin/clang-cl \
+-DCMAKE_LINKER=/usr/bin/lld-link \
+-DMSVC_BASE=/xwin/crt \
+-DWINSDK_BASE=/xwin/sdk \
+-DWINSDK_VER=10.0.22000 \
+-DTARGET_ARCH=x86_64 \
+-DHAVE_STDINT_H=1 \
+-DSDL_JOYSTICK_XINPUT=1
 
 .PHONY: clean
 clean:
