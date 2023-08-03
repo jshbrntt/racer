@@ -1,6 +1,7 @@
 # TODO
 - [ ] Disable console in `Release` build.
 - [ ] Install project dependencies as Git submodules instead of using CMake to fetch them?
+- [ ] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
   - [  ] This will reduce CI cache sizes (but might increase checkout).
 - [ ] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
 - [ ] Calculate release sha without checkout in `release` job.
