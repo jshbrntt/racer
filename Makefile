@@ -138,6 +138,7 @@ configure: $(if $(CLEAN),clean)
 	id -g
 	touch test
 	mkdir -p build/windows \
+&& ls -lah **/** \
 && cd build/windows \
 && cmake ../.. \
 -DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
