@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: id
       - run: make --debug=b build-${{ matrix.target }}
       - name: Find Archive
         run: |
