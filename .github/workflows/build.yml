@@ -12,6 +12,9 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+      - name: Git Short Hash
+        run: |
+          echo "git_hash_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
       - name: Create Release
         continue-on-error: true
         id: create_release
@@ -45,7 +48,6 @@ jobs:
           echo "tar_asset_name=$(basename $(ls target/release/*.{tar.gz,zip}))" >> "$GITHUB_ENV"
           echo "sha256_asset_path=$(ls target/release/*.{tar.gz,zip}.sha256)" >> "$GITHUB_ENV"
           echo "sha256_asset_name=$(basename $(ls target/release/*.{tar.gz,zip}.sha256))" >> "$GITHUB_ENV"
-          echo "git_hash_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
       - uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
