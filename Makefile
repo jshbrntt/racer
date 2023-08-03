@@ -16,7 +16,7 @@ endif
 
 IMAGE := $(DOCKER_REGISTRY_URL)/jshbrntt/racer/devcontainer
 DOCKER := docker
-WORKDIR := /home/ubuntu/racer
+WORKDIR := /home/$(if $(CI),runner,ubuntu)/racer
 
 export DOCKER_BUILDKIT = 1
 export BUILDKIT_PROGRESS = plain
@@ -137,10 +137,6 @@ build: configure
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
-	pwd
-	ls -lah
-	ls -lah /home/ubuntu/racer
-	ls -lah /home/ubuntu
 	mkdir -p build/windows \
 && cmake -B build/windows -S . \
 -DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \

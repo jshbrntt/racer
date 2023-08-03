@@ -77,6 +77,8 @@ ENV PATH="${PATH}:/osxcross/target/bin"
 
 FROM llvm-cmake AS windows
 COPY --from=windows-sdk /xwin /xwin
+RUN groupadd --gid 123 docker \
+&& useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
 USER ubuntu
 
 FROM llvm-cmake AS macosx
@@ -87,6 +89,8 @@ COPY --from=macosx-toolchain /osxcross/tools/toolchain.cmake /osxcross/tools/too
 ARG MACOSX_DEPLOYMENT_TARGET="12.3"
 ENV MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 ENV PATH="${PATH}:/osxcross/target/bin"
+RUN groupadd --gid 123 docker \
+&& useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
 USER ubuntu
 
 FROM llvm-cmake AS linux
@@ -96,4 +100,6 @@ RUN apt-get update \
 libgles2-mesa-dev=23.0.4-0ubuntu1~23.04.1 \
 libxext-dev=2:1.3.4-1build1 \
 && rm -rf /var/lib/apt/lists/*
+RUN groupadd --gid 123 docker \
+&& useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
 USER ubuntu
