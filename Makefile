@@ -77,12 +77,11 @@ docker-push: $(if $(CI),docker-login)
 	$(IMAGE)/$(TARGET)
 
 .PHONY: docker-pull
-docker-pull:
+docker-pull: $(if $(CI),docker-login)
 	$(DOCKER) pull \
 	$(IMAGE)/$(TARGET)
 
 .PHONY: docker-build
-docker-build: $(if $(CI),docker-login)
 docker-build: docker-pull
 	$(DOCKER) build \
 	--cache-from $(IMAGE)/$(TARGET) \
