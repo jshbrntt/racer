@@ -2,6 +2,8 @@ export CWD := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 ifndef DOCKER
 
+UID := 1000
+GID := 1000
 DOCKER_REGISTRY_URL := ghcr.io
 
 ifdef CI
@@ -50,7 +52,7 @@ push-macosx: docker-push
 .PHONY: shell
 shell: TARGET ?= windows
 shell: COMMAND := bash
-shell: docker-command
+shell: docker-commanddocker-command
 
 .PHONY: debug
 debug:
@@ -81,6 +83,10 @@ docker-build: $(if $(CI),docker-login)
 	--tag $(IMAGE)/$(TARGET) \
 	.
 
+.PHONY: fix-permissions
+fix-permissions:
+	chown -R $(UID):$(GID)
+
 .PHONY: docker-run
 docker-run:
 	docker run \
@@ -95,6 +101,7 @@ docker-run:
 .PHONY: docker-command
 docker-command: docker-build
 docker-command: $(if $(CI),docker-push)
+docker-command: fix-permissions
 docker-command: docker-run
 
 else
