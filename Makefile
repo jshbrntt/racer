@@ -85,7 +85,7 @@ docker-build: $(if $(CI),docker-login)
 
 .PHONY: fix-permissions
 fix-permissions:
-	chown -R $(UID):$(GID)
+	chown -R $(UID):$(GID) .
 
 .PHONY: docker-run
 docker-run:
