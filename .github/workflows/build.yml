@@ -8,6 +8,7 @@ env:
 
 jobs:
   release:
+    runs-on: ubuntu-latest
     steps:
       - name: Create Release
         continue-on-error: true
