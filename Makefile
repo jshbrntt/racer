@@ -139,6 +139,8 @@ build: configure
 configure: $(if $(CLEAN),clean)
 	pwd
 	ls -lah
+	ls -lah /home/ubuntu/racer
+	ls -lah /home/ubuntu
 	mkdir -p build/windows \
 && cmake -B build/windows -S . \
 -DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
