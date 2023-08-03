@@ -137,6 +137,8 @@ build: configure
 
 .PHONY: configure
 configure: $(if $(CLEAN),clean)
+	pwd
+	ls -lah
 	mkdir -p build/windows \
 && cmake -B build/windows -S . \
 -DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
