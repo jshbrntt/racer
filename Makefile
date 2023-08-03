@@ -172,7 +172,7 @@ configure: $(if $(CLEAN),clean)
 OSXCROSS_HOST=x86_64-apple-darwin21.4 \
 OSXCROSS_TARGET_DIR=/osxcross/target \
 OSXCROSS_SDK=/osxcross/target/SDK/MacOSX12.3.sdk \
-&& cmake -B build/macosx -S . \
+cmake -B build/macosx -S . \
 -DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
 -DCMAKE_TOOLCHAIN_FILE=/osxcross/tools/toolchain.cmake
 
