@@ -65,7 +65,14 @@ project(racer VERSION 1.0.0)
 file(GLOB_RECURSE RACER_HDRS src/racer/*.h)
 file(GLOB_RECURSE RACER_SRCS src/racer/*.cpp)
 
-add_executable(${PROJECT_NAME} ${RACER_HDRS} ${RACER_SRCS})
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_BUILD_TYPE STREQUAL "Release")
+  add_executable(${PROJECT_NAME} WIN32 ${RACER_HDRS} ${RACER_SRCS})
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_BUILD_TYPE STREQUAL "Release")
+  add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${RACER_HDRS} ${RACER_SRCS})
+else()
+  add_executable(${PROJECT_NAME} ${RACER_HDRS} ${RACER_SRCS})
+endif()
+
 target_link_libraries(
   ${PROJECT_NAME}
   EnTT::EnTT
