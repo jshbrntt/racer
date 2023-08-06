@@ -3,58 +3,23 @@ cmake_minimum_required(VERSION 3.26.4)
 # Set to ON to debug the build
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-include(FetchContent)
-
-# EnTT
-FetchContent_Declare(
-  EnTT
-  GIT_REPOSITORY https://github.com/skypjack/entt.git
-  GIT_TAG        v3.2.2
-  GIT_SHALLOW    ON
-  GIT_PROGRESS   ON
-)
-
-FetchContent_MakeAvailable(EnTT)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/entt)
 
 # SDL2
 set(BUILD_SHARED_LIBS OFF)
 
-FetchContent_Declare(
-  SDL2
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG        release-2.28.1
-  GIT_SHALLOW    ON
-  GIT_PROGRESS   ON
-)
-
-FetchContent_MakeAvailable(SDL2)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL)
 
 # SDL2_image
 set(SDL2IMAGE_INSTALL OFF)
 
-FetchContent_Declare(
-  SDL2_image
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-  GIT_TAG        release-2.6.3
-  GIT_SHALLOW    ON
-  GIT_PROGRESS   ON
-)
-
-FetchContent_MakeAvailable(SDL2_image)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL_image)
 
 # SDL2_ttf
 set(SDL2TTF_INSTALL OFF)
 set(SDL2TTF_VENDORED ON)
 
-FetchContent_Declare(
-  SDL2_ttf
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-  GIT_TAG        release-2.20.2
-  GIT_SHALLOW    ON
-  GIT_PROGRESS   ON
-)
-
-FetchContent_MakeAvailable(SDL2_ttf)
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL_ttf)
 
 # Racer
 set(CMAKE_CXX_STANDARD 17)
