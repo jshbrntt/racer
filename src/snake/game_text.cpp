@@ -1,5 +1,5 @@
-#include "game_text.h"
-#include "components/components.h"
+#include "game_text.hpp"
+#include "components/components.hpp"
 #include <string>
 
 void setGameOverText(entt::registry& registry)

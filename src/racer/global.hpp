@@ -1,4 +1,4 @@
-// FILE: "global.h"
+// FILE: "global.hpp"
 
 #ifndef GLOBAL_H
 #define GLOBAL_H
@@ -26,15 +26,15 @@
 #include <SDL_ttf.h>
 
 // GAME HEADERS:
-#include "point.h" // Multi-purpose Textures: http://www.mptextures.com/
-#include "glrgb.h"
-#include "entity.h"
-#include "menu.h"
-#include "hud.h"
-#include "car.h"
-#include "player.h"
-#include "enemy.h"
-#include "track.h"
+#include "point.hpp" // Multi-purpose Textures: http://www.mptextures.com/
+#include "glrgb.hpp"
+#include "entity.hpp"
+#include "menu.hpp"
+#include "hud.hpp"
+#include "car.hpp"
+#include "player.hpp"
+#include "enemy.hpp"
+#include "track.hpp"
 
 // ENGINE VARIABLES:
 extern const float S_WIDTH;

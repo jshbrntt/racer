@@ -1,5 +1,5 @@
-#include "custom_events.h"
-#include "engine/logger.h"
+#include "custom_events.hpp"
+#include "engine/logger.hpp"
 
 Uint32 SNAKE_EVENT_TYPE = (Uint32)-1;
 

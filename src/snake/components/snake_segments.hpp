@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../constants.h"
-#include "transform.h"
+#include "../constants.hpp"
+#include "transform.hpp"
 
 class SnakeHead
 {

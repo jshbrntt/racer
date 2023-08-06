@@ -1,6 +1,6 @@
 // FILE: "hud.cpp"
 
-#include "hud.h"
+#include "hud.hpp"
 
 HUD::HUD()
 {

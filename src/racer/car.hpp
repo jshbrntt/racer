@@ -1,6 +1,6 @@
-// FILE: "car.h"
+// FILE: "car.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef CAR_H
 #define CAR_H
@@ -59,3 +59,4 @@ public:
 };
 
 #endif
+rename 's/\.h$/\.hpp/' *.h

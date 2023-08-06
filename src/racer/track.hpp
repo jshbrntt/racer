@@ -1,6 +1,6 @@
-// FILE: "track.h"
+// FILE: "track.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef TRACK_H
 #define TRACK_H

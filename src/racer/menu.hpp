@@ -1,6 +1,6 @@
-// FILE: "menu.h"
+// FILE: "menu.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef MENU_H
 #define MENU_H

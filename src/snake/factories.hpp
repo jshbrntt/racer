@@ -1,7 +1,7 @@
 #pragma once
 
 #include <entt/entity/registry.hpp>
-#include "SDL.h"
+#include "SDL.hpp"
 
 entt::entity makeBoundary(entt::registry& registry, float xPos, float yPos, float width, float height);
 entt::entity makePickup(entt::registry& registry);

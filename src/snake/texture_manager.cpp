@@ -1,6 +1,6 @@
-#include "texture_manager.h"
-#include "engine/logger.h"
-#include "constants.h"
+#include "texture_manager.hpp"
+#include "engine/logger.hpp"
+#include "constants.hpp"
 
 void TextureManager::SetDrawColor(Color color)
 {

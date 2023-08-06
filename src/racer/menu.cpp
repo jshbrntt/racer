@@ -1,6 +1,6 @@
 // FILE: "menu.cpp"
 
-#include "menu.h"
+#include "menu.hpp"
 
 SDL_Texture *Menu::menuTexture()
 {

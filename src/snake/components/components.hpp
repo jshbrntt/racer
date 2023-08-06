@@ -1,8 +1,8 @@
 #pragma once
 
-#include "transform.h"
-#include "sprite.h"
-#include "snake_segments.h"
-#include "collider.h"
-#include "pickup.h"
-#include "text.h"
+#include "transform.hpp"
+#include "sprite.hpp"
+#include "snake_segments.hpp"
+#include "collider.hpp"
+#include "pickup.hpp"
+#include "text.hpp"

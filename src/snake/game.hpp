@@ -1,8 +1,8 @@
 #pragma once
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
+#include "SDL.hpp"
+#include "SDL_image.hpp"
+#include "SDL_ttf.hpp"
 #include <entt/entity/registry.hpp>
 
 class Game

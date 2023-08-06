@@ -1,6 +1,6 @@
-// FILE: "hud.h"
+// FILE: "hud.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef HUD_H
 #define HUD_H

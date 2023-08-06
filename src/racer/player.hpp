@@ -1,6 +1,6 @@
-// FILE: "player.h"
+// FILE: "player.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef PLAYER_H
 #define PLAYER_H

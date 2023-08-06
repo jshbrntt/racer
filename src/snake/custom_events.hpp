@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SDL.h"
+#include "SDL.hpp"
 
 extern Uint32 SNAKE_EVENT_TYPE;
 

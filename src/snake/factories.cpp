@@ -1,5 +1,5 @@
-#include "factories.h"
-#include "components/components.h"
+#include "factories.hpp"
+#include "components/components.hpp"
 #include <time.h>
 
 entt::entity makeBoundary(entt::registry & registry, float xPos, float yPos, float width, float height)

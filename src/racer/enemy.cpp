@@ -1,6 +1,6 @@
 // FILE: "enemy.cpp"
 
-#include "enemy.h"
+#include "enemy.hpp"
 
 vector<Point> Enemy::enemyVerts()
 {

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "SDL.h"
-#include "../texture_manager.h"
-#include "transform.h"
-#include "../engine/logger.h"
-#include "../constants.h"
+#include "SDL.hpp"
+#include "../texture_manager.hpp"
+#include "transform.hpp"
+#include "../engine/logger.hpp"
+#include "../constants.hpp"
 
 class Sprite 
 {

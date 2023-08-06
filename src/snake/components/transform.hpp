@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../constants.h"
-#include "../engine/vector2.h"
-#include "../engine/logger.h"
+#include "../constants.hpp"
+#include "../engine/vector2.hpp"
+#include "../engine/logger.hpp"
 
 enum Direction
 {

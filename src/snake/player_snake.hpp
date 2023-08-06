@@ -1,8 +1,8 @@
 #pragma once
 
 #include <entt/entity/registry.hpp>
-#include "SDL.h"
-#include "components/collider.h"
+#include "SDL.hpp"
+#include "components/collider.hpp"
 
 void processInput(entt::registry& registry, SDL_Event& event);
 bool updateSnake(entt::registry& registry);

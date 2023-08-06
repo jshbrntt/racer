@@ -1,7 +1,7 @@
 #include <iostream>
-#include "game.h"
-#include "engine/vector2.h"
-#include "constants.h"
+#include "game.hpp"
+#include "engine/vector2.hpp"
+#include "constants.hpp"
 
 Game* game = nullptr;
 

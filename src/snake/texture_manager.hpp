@@ -1,6 +1,6 @@
 #pragma once
-#include "game.h"
-#include "engine/color.h"
+#include "game.hpp"
+#include "engine/color.hpp"
 
 class TextureManager
 {

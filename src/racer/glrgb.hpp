@@ -1,6 +1,6 @@
-// FILE: "glrgb.h"
+// FILE: "glrgb.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef GLRGB_H
 #define GLRGB_H

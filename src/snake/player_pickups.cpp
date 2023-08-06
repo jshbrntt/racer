@@ -1,7 +1,7 @@
-#include "player_pickups.h"
-#include "engine/vector2.h"
-#include "constants.h"
-#include "components/components.h"
+#include "player_pickups.hpp"
+#include "engine/vector2.hpp"
+#include "constants.hpp"
+#include "components/components.hpp"
 #include <vector>
 
 void movePickup(entt::registry & registry)

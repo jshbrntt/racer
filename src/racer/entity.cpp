@@ -1,6 +1,6 @@
 // FILE: "entity.cpp"
 
-#include "entity.h"
+#include "entity.hpp"
 #include <algorithm>
 
 Entity::Entity()

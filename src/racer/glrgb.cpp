@@ -1,6 +1,6 @@
 // FILE: "glrgb.cpp"
 
-#include "glrgb.h"
+#include "glrgb.hpp"
 
 glRGB::glRGB()
 {

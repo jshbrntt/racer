@@ -1,6 +1,6 @@
-#include "collision_handler.h"
-#include "constants.h"
-#include "custom_events.h"
+#include "collision_handler.hpp"
+#include "constants.hpp"
+#include "custom_events.hpp"
 
 void updateColliders(entt::registry & registry)
 {

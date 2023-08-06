@@ -1,6 +1,6 @@
-// FILE: "point.h"
+// FILE: "point.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef POINT_H
 #define POINT_H

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "SDL_ttf.h"
-#include "../texture_manager.h"
+#include "SDL_ttf.hpp"
+#include "../texture_manager.hpp"
 #include <string>
-#include "../engine/logger.h"
+#include "../engine/logger.hpp"
 
 class GameOverMainText {};
 class GameOverSubText {};

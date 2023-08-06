@@ -1,7 +1,7 @@
-#include "player_snake.h"
-#include "components/snake_segments.h"
-#include "components/transform.h"
-#include "engine/logger.h"
+#include "player_snake.hpp"
+#include "components/snake_segments.hpp"
+#include "components/transform.hpp"
+#include "engine/logger.hpp"
 
 void processInput(entt::registry & registry, SDL_Event& event)
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "SDL.h"
+#include "SDL.hpp"
 
 #if DEBUG == 1
 #define LOG(x) SDL_Log(x);

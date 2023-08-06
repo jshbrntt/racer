@@ -1,6 +1,6 @@
-// FILE: "entity.h"
+// FILE: "entity.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef ENTITY_H
 #define ENTITY_H

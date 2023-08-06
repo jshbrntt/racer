@@ -1,6 +1,6 @@
-// FILE: "enemy.h"
+// FILE: "enemy.hpp"
 
-#include "global.h"
+#include "global.hpp"
 
 #ifndef ENEMY_H
 #define ENEMY_H
