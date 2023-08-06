@@ -62,7 +62,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(racer VERSION 1.0.0)
 
-file(GLOB_RECURSE RACER_HDRS src/racer/*.h)
+file(GLOB_RECURSE RACER_HDRS src/racer/*.hpp)
 file(GLOB_RECURSE RACER_SRCS src/racer/*.cpp)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_BUILD_TYPE STREQUAL "Release")
