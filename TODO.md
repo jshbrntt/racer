@@ -1,8 +1,7 @@
 # TODO
-- [ ] Disable console in `Release` build.
 - [ ] Install project dependencies as Git submodules instead of using CMake to fetch them?
-- [ ] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
   - [  ] This will reduce CI cache sizes (but might increase checkout).
+- [ ] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
 - [ ] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
 - [ ] Calculate release sha without checkout in `release` job.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
@@ -10,6 +9,7 @@
 - [ ] Merge CMake toolchains?
 - [ ] Figure out how to get audio working on WSLg.
 - [ ] Get Wayland working on WSLg.
+- [x] Disable console in `Release` build.
 - [x] Split Docker image into multiple targets for each OS target.
 - [x] Make a proper "package" target in CMake instead of using `POST_BUILD` which will not trigger if there are no changes.
 - [x] Create build pipeline to build different targets and publish to GH/Releases page.
