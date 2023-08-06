@@ -37,25 +37,42 @@ jobs:
           - linux
           - macosx
     steps:
-      - uses: actions/cache@v3
-        id: external
+      - name: Restore external dependencies cache
+        id: external-restore
+        uses: actions/cache/restore@v3
         with:
           path: external
-          key: ${{ hashFiles('external/**') }}
-      - uses: actions/cache@v3
-        id: build
+          key: external
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Save external dependencies cache
+        id: external-save
+        uses: actions/cache/save@v3
+        with:
+          path: external
+          key: external
+      - name: Restore build cache
+        uses: actions/cache/restore@v3
+        id: build-restore
         with:
           path: build/${{ matrix.target }}
-          key: ${{ hashFiles('build/${{ matrix.target }}/**') }}
-      - uses: actions/checkout@v3
-      - run: make build-${{ matrix.target }}
-      - name: Find Archive
+          key: build-${{ matrix.target }}
+      - name: Build ${{ matrix.target }} release target
+        run: make build-${{ matrix.target }}
+      - name: Save build cache
+        uses: actions/cache/save@v3
+        id: build-save
+        with:
+          path: build/${{ matrix.target }}
+          key: build-${{ matrix.target }}
+      - name: Find release archive in target directory
         run: |
           echo "tar_asset_path=$(ls target/release/*.{tar.gz,zip})" >> "$GITHUB_ENV"
           echo "tar_asset_name=$(basename $(ls target/release/*.{tar.gz,zip}))" >> "$GITHUB_ENV"
           echo "sha256_asset_path=$(ls target/release/*.{tar.gz,zip}.sha256)" >> "$GITHUB_ENV"
           echo "sha256_asset_name=$(basename $(ls target/release/*.{tar.gz,zip}.sha256))" >> "$GITHUB_ENV"
-      - uses: actions/upload-release-asset@v1
+      - name: Upload archive to release
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -63,7 +80,8 @@ jobs:
           asset_path: ${{ env.tar_asset_path }}
           asset_name: ${{ env.tar_asset_name }}
           asset_content_type: application/gzip
-      - uses: actions/upload-release-asset@v1
+      - name: Upload archive sha256 sum to release
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
