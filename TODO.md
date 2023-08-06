@@ -1,5 +1,5 @@
 # TODO
-- [ ] Install project dependencies as Git submodules instead of using CMake to fetch them?
+- [x] Install project dependencies as Git submodules instead of using CMake to fetch them?
   - [  ] This will reduce CI cache sizes (but might increase checkout).
 - [ ] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
 - [ ] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
