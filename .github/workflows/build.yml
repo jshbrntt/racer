@@ -45,6 +45,8 @@ jobs:
           key: external
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Save external dependencies cache
         id: external-save
         uses: actions/cache/save@v3
