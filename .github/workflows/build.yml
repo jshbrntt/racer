@@ -29,23 +29,26 @@ jobs:
           prerelease: true
   build:
     needs: release
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
           - windows
           - linux
           - macosx
-    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
       - uses: actions/cache@v3
-        id: cache
+        id: external
+        with:
+          path: external
+          key: ${{ hashFiles('external/**') }}
+      - uses: actions/cache@v3
+        id: build
         with:
           path: build/${{ matrix.target }}
-          key: build-${{ matrix.target }}
-      - run: make --debug=b build-${{ matrix.target }}
+          key: ${{ hashFiles('build/${{ matrix.target }}/**') }}
+      - uses: actions/checkout@v3
+      - run: make build-${{ matrix.target }}
       - name: Find Archive
         run: |
           echo "tar_asset_path=$(ls target/release/*.{tar.gz,zip})" >> "$GITHUB_ENV"
