@@ -59,4 +59,3 @@ public:
 };
 
 #endif
-rename 's/\.h$/\.hpp/' *.h
