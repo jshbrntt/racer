@@ -30,20 +30,16 @@ jobs:
   checkout:
     runs-on: ubuntu-latest
     steps:
-      - name: Restore cache
-        uses: actions/cache/restore@v3
+      - name: Cache source
+        id: cache-source
+        uses: actions/cache@v3
         with:
-          key: source
           path: .
+          key: source
       - name: Checkout source
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Save cache
-        uses: actions/cache/save@v3
-        with:
-          key: source
-          path: .
   # build:
   #   needs: release
   #   runs-on: ubuntu-latest
