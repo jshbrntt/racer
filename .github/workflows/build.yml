@@ -30,20 +30,20 @@ jobs:
   checkout:
     runs-on: ubuntu-latest
     steps:
-      - name: Restore External Cache
+      - name: Restore cache
         uses: actions/cache/restore@v3
         with:
-          key: external
-          path: external
-      - name: Checkout Source Code
+          key: source
+          path: .
+      - name: Checkout source
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Save External Cache
+      - name: Save cache
         uses: actions/cache/save@v3
         with:
-          key: external
-          path: external
+          key: source
+          path: .
   # build:
   #   needs: release
   #   runs-on: ubuntu-latest
