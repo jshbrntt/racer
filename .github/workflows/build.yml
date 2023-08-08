@@ -3,30 +3,25 @@ name: build
 on:
   push
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
-  # release:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Git Short Hash
-  #       run: |
-  #         echo "git_hash_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-  #     - name: Create Release
-  #       continue-on-error: true
-  #       id: create_release
-  #       uses: actions/create-release@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         tag_name: 1.0.0-rc.${{ env.git_hash_short }}
-  #         release_name: Release 1.0.0-rc.${{ env.git_hash_short }}
-  #         draft: false
-  #         prerelease: true
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Get commit SHA
+        run: echo "commit_sha=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_ENV"
+      - name: Create Release
+        continue-on-error: true
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: 1.0.0-rc.${{ env.commit_sha }}
+          release_name: Release 1.0.0-rc.${{ env.commit_sha }}
+          draft: false
+          prerelease: true
   checkout:
     runs-on: ubuntu-latest
     steps:
@@ -43,13 +38,15 @@ jobs:
       - name: Update submodules
         if: steps.cache.outputs.cache-hit != 'true'
         run: git submodule update --init --recursive
+      - name: Archive source
+        run: tar --create --verbose --exclude .git --file source.tar .
       - name: Create source artifact
         uses: actions/upload-artifact@v3
         with:
           name: source
-          path: ${{ github.workspace }}
+          path: source.tar
   build:
-    needs: checkout
+    needs: [release, checkout]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -62,64 +59,43 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: source
-      - run: ls -lah **
-      # - name: Restore external dependencies cache
-      #   id: external-restore
-      #   uses: actions/cache/restore@v3
-      #   with:
-      #     path: external
-      #     key: external
-      # - name: Checkout source
-      #   uses: actions/checkout@v3
-      #   with:
-      #     submodules: recursive
-      # - name: Save external dependencies cache
-      #   id: external-save
-      #   uses: actions/cache/save@v3
-      #   with:
-      #     path: external
-      #     key: external
-      # - name: Restore source cache
-      #   uses: actions/cache/restore@v3
-      #   with:
-      #     path: .
-      #     key: source
-      # - run: ls -lah
-      # - name: Restore build cache
-      #   uses: actions/cache/restore@v3
-      #   id: build-restore
-      #   with:
-      #     path: build/${{ matrix.target }}
-      #     key: build-${{ matrix.target }}
-      # - name: Build ${{ matrix.target }} release target
-      #   run: make build-${{ matrix.target }}
-      # - name: Save build cache
-      #   uses: actions/cache/save@v3
-      #   id: build-save
-      #   with:
-      #     path: build/${{ matrix.target }}
-      #     key: build-${{ matrix.target }}
-      # - name: Find release archive in target directory
-      #   run: |
-      #     echo "tar_asset_path=$(ls target/release/*.{tar.gz,zip})" >> "$GITHUB_ENV"
-      #     echo "tar_asset_name=$(basename $(ls target/release/*.{tar.gz,zip}))" >> "$GITHUB_ENV"
-      #     echo "sha256_asset_path=$(ls target/release/*.{tar.gz,zip}.sha256)" >> "$GITHUB_ENV"
-      #     echo "sha256_asset_name=$(basename $(ls target/release/*.{tar.gz,zip}.sha256))" >> "$GITHUB_ENV"
-      # - name: Upload archive to release
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-      #     asset_path: ${{ env.tar_asset_path }}
-      #     asset_name: ${{ env.tar_asset_name }}
-      #     asset_content_type: application/gzip
-      # - name: Upload archive sha256 sum to release
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ needs.release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-      #     asset_path: ${{ env.sha256_asset_path }}
-      #     asset_name: ${{ env.sha256_asset_name }}
-      #     asset_content_type: text/plain
+      - name: Extract source
+        run: tar --extract --verbose --file source.tar .
+      - name: Restore build cache
+        uses: actions/cache/restore@v3
+        with:
+          path: build/${{ matrix.target }}
+          key: build-${{ matrix.target }}
+      - name: Build ${{ matrix.target }} release target
+        run: make build-${{ matrix.target }}
+      - name: Save build cache
+        uses: actions/cache/save@v3
+        with:
+          path: build/${{ matrix.target }}
+          key: build-${{ matrix.target }}
+      - name: Find release archive in target directory
+        run: |
+          echo "archive_asset_path=$(find target/release -name *.zip -name *.tar.gz)" >> "$GITHUB_ENV"
+          echo "archive_asset_name=$(basename ${{ env.tar_asset_path }})" >> "$GITHUB_ENV"
+          echo "archive_asset_content_type=$(file --mime-type -b ${{ env.tar_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
+          echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_name }})" >> "$GITHUB_ENV"
+      - name: Upload archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ${{ env.archive_asset_path }}
+          asset_name: ${{ env.archive_asset_name }}
+          asset_content_type: ${{ env.archive_asset_content_type }}
+      - name: Upload sha256
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ${{ env.sha256_asset_path }}
+          asset_name: ${{ env.sha256_asset_name }}
+          asset_content_type: ${{ env.sha256_asset_content_type }}
