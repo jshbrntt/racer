@@ -47,7 +47,9 @@ jobs:
       - name: Save source cache
         uses: actions/cache/save@v3
         with:
-          path: .
+          path: |
+            **
+            !.git
           key: source-${{ needs.release.outputs.commit_sha }}
       # - name: Archive source
       #   run: tar --create --verbose --exclude .git --file source.tar .
