@@ -67,7 +67,7 @@ jobs:
       # - name: Extract source
       #   run: tar --extract --verbose --file source.tar .
       - name: Restore source cache
-        uses: actions/cache/save@v3
+        uses: actions/cache/restore@v3
         with:
           path: .
           key: source
