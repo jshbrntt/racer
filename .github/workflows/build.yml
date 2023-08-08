@@ -65,8 +65,8 @@ jobs:
       matrix:
         target:
           - windows
-          # - linux
-          # - macosx
+          - linux
+          - macosx
     steps:
       # - name: Download source artifact
       #   uses: actions/download-artifact@v3
@@ -81,7 +81,6 @@ jobs:
             .
             !.git
           key: source-${{ needs.release.outputs.commit_sha }}
-      - run: ls -lah
       - name: Restore build cache
         uses: actions/cache/restore@v3
         with:
