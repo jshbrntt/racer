@@ -1,4 +1,5 @@
 # TODO
+- [ ] Try to cache `external` dependencies as part of a non-matrix step, or just as a layer in the Docker image.
 - [x] Install project dependencies as Git submodules instead of using CMake to fetch them?
   - [  ] This will reduce CI cache sizes (but might increase checkout).
 - [ ] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
