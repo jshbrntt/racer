@@ -8,9 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
+      commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
     steps:
       - name: Get commit SHA
-        run: echo "commit_sha=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_ENV"
+        id: get_commit_sha
+        run: echo "commit_sha=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_OUTPUT"
       - name: Create Release
         continue-on-error: true
         id: create_release
@@ -18,23 +20,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: 1.0.0-rc.${{ env.commit_sha }}
-          release_name: Release 1.0.0-rc.${{ env.commit_sha }}
+          tag_name: 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
+          release_name: Release 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
           draft: false
           prerelease: true
   checkout:
+    needs: release
     runs-on: ubuntu-latest
+    outputs:
+      external_sha: ${{ steps.get_external_sha.outputs.external_sha }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-      - name: Check for submodule changes
-        run: echo "external_submodules_sha256=$(git submodule status | sha256sum | head -c 64)" >> "$GITHUB_ENV"
+      - name: Get external SHA
+        id: get_external_sha
+        run: echo "external_sha=$(git submodule status | sha256sum | head -c 7)" >> "$GITHUB_OUTPUT"
       - name: Cache submodules
         id: cache
         uses: actions/cache@v3
         with:
           path: external
-          key: external-${{ env.external_submodules_sha256 }}
+          key: external-${{ steps.get_external_sha.outputs.external_sha }}
       - name: Update submodules
         if: steps.cache.outputs.cache-hit != 'true'
         run: git submodule update --init --recursive
@@ -42,7 +48,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: .
-          key: source
+          key: source-${{ needs.release.outputs.commit_sha }}
       # - name: Archive source
       #   run: tar --create --verbose --exclude .git --file source.tar .
       # - name: Create source artifact
@@ -70,7 +76,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: .
-          key: source
+          key: source-${{ needs.release.outputs.commit_sha }}
       - name: Restore build cache
         uses: actions/cache/restore@v3
         with:
@@ -85,12 +91,14 @@ jobs:
         with:
           path: build/${{ matrix.target }}
           key: build-${{ matrix.target }}
-      - name: Find release archive in target directory
+      - name: Find artifacts
         run: |
           echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
+          echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
+      - name: Get artifact basenames and content types
+        run: |
           echo "archive_asset_name=$(basename ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
           echo "archive_asset_content_type=$(file --mime-type -b ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
-          echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
           echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
           echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
       - name: Upload archive
