@@ -77,7 +77,9 @@ jobs:
       - name: Restore source cache
         uses: actions/cache/restore@v3
         with:
-          path: .
+          path: |
+            .
+            !.git
           key: source-${{ needs.release.outputs.commit_sha }}
       - run: ls -lah
       - name: Restore build cache
