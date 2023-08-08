@@ -30,17 +30,19 @@ jobs:
   checkout:
     runs-on: ubuntu-latest
     steps:
-      - name: Cache external dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            .git/modules/external
-            external
-          key: external-${{ hashFiles('.git/modules/external/*/HEAD') }}
       - name: Checkout source
         uses: actions/checkout@v3
+      - name: Check for submodule changes
+        run: echo "external_submodules_sha256=$(git submodule status | sha256sum | head -c 64)" >> "$GITHUB_ENV"
+      - name: Cache submodules
+        id: cache
+        uses: actions/cache@v3
         with:
-          submodules: recursive
+          path: external
+          key: external-${{ env.external_submodules_sha256 }}
+      - name: Update submodules
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: git submodule update --init --recursive
   build:
     needs: checkout
     runs-on: ubuntu-latest
