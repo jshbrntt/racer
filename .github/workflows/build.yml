@@ -48,7 +48,7 @@ jobs:
         uses: actions/cache/save@v3
         with:
           path: |
-            **
+            .
             !.git
           key: source-${{ needs.release.outputs.commit_sha }}
       # - name: Archive source
@@ -79,6 +79,7 @@ jobs:
         with:
           path: .
           key: source-${{ needs.release.outputs.commit_sha }}
+      - run: ls -lah
       - name: Restore build cache
         uses: actions/cache/restore@v3
         with:
