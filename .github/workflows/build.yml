@@ -81,20 +81,15 @@ jobs:
             .
             !.git
           key: source-${{ needs.release.outputs.commit_sha }}
-      - name: Restore build cache
-        uses: actions/cache/restore@v3
+      - name: Build cache
+        uses: actions/cache@v3
         with:
           path: build/${{ matrix.target }}
           key: build-${{ matrix.target }}
-      - name: Build ${{ matrix.target }} release target
+      - name: Build ${{ matrix.target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make build-${{ matrix.target }}
-      - name: Save build cache
-        uses: actions/cache/save@v3
-        with:
-          path: build/${{ matrix.target }}
-          key: build-${{ matrix.target }}
       - name: Find artifacts
         run: |
           echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
