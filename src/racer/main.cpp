@@ -215,7 +215,7 @@ void checkKeys()
   if (gameRun)
   {
     // P:
-    if (KEYS[SDLK_p])
+    if (KEYS[SDLK_p] || KEYS[SDLK_RETURN])
     {
       if (!pauseKey)
       {
