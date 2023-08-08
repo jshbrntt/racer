@@ -30,11 +30,13 @@ jobs:
   checkout:
     runs-on: ubuntu-latest
     steps:
-      - name: Cache source
+      - name: Cache external dependencies
         uses: actions/cache@v3
         with:
-          path: .
-          key: source
+          path: |
+            .git/modules/external
+            external
+          key: external-${{ hashFiles('.git/modules/external/*/HEAD') }}
       - name: Checkout source
         uses: actions/checkout@v3
         with:
