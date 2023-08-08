@@ -43,6 +43,11 @@ jobs:
       - name: Update submodules
         if: steps.cache.outputs.cache-hit != 'true'
         run: git submodule update --init --recursive
+      - name: Create source artifact
+        uses: actions/upload-artifact@v3
+          with:
+            name: source
+            path: ${{ github.workspace }}
   build:
     needs: checkout
     runs-on: ubuntu-latest
@@ -53,6 +58,11 @@ jobs:
           # - linux
           # - macosx
     steps:
+      - name: Download source artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: source
+      - run: ls -lah **
       # - name: Restore external dependencies cache
       #   id: external-restore
       #   uses: actions/cache/restore@v3
@@ -69,12 +79,12 @@ jobs:
       #   with:
       #     path: external
       #     key: external
-      - name: Restore source cache
-        uses: actions/cache/restore@v3
-        with:
-          path: .
-          key: source
-      - run: ls -lah
+      # - name: Restore source cache
+      #   uses: actions/cache/restore@v3
+      #   with:
+      #     path: .
+      #     key: source
+      # - run: ls -lah
       # - name: Restore build cache
       #   uses: actions/cache/restore@v3
       #   id: build-restore
