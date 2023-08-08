@@ -85,7 +85,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: build/${{ matrix.target }}
-          key: build-${{ matrix.target }}
+          key: build-${{ matrix.target }}-${{ needs.release.outputs.commit_sha }}
+          restore-keys: |
+            build-${{ matrix.target }}-
       - name: Build ${{ matrix.target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
