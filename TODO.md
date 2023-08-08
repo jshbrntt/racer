@@ -1,15 +1,15 @@
 # TODO
-- [ ] Try to cache `external` dependencies as part of a non-matrix step, or just as a layer in the Docker image.
-- [x] Install project dependencies as Git submodules instead of using CMake to fetch them?
-  - [  ] This will reduce CI cache sizes (but might increase checkout).
 - [ ] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
-- [ ] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
-- [ ] Calculate release sha without checkout in `release` job.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
+- [ ] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
 - [ ] Explore using CPack for distributing project builds.
 - [ ] Merge CMake toolchains?
 - [ ] Figure out how to get audio working on WSLg.
 - [ ] Get Wayland working on WSLg.
+- [x] Calculate release sha without checkout in `release` job.
+- [x] Try to cache `external` dependencies as part of a non-matrix step, or just as a layer in the Docker image.
+- [x] Install project dependencies as Git submodules instead of using CMake to fetch them?
+  - [x] This will reduce CI cache sizes (but might increase checkout).
 - [x] Disable console in `Release` build.
 - [x] Split Docker image into multiple targets for each OS target.
 - [x] Make a proper "package" target in CMake instead of using `POST_BUILD` which will not trigger if there are no changes.
