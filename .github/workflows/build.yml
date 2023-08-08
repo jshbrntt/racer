@@ -45,9 +45,9 @@ jobs:
         run: git submodule update --init --recursive
       - name: Create source artifact
         uses: actions/upload-artifact@v3
-          with:
-            name: source
-            path: ${{ github.workspace }}
+        with:
+          name: source
+          path: ${{ github.workspace }}
   build:
     needs: checkout
     runs-on: ubuntu-latest
