@@ -35,9 +35,36 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 bool debug = false;
 
+void print_version() {
+  std::cout << RACER_VERSION_MAJOR << "."
+            << RACER_VERSION_MINOR << "."
+            << RACER_VERSION_PATCH << std::endl;
+}
+
 // MAIN FUNCTION:
-int main(int argc, char *args[])
+int main(int argc, char **argv)
 {
+  print_version();
+  cxxopts::Options options("racer", "Topdown Racing");
+
+  options.add_options()
+      ("v,version", "Print version")
+      ("h,help", "Print usage")
+  ;
+
+  auto result = options.parse(argc, argv);
+
+  if (result.count("version"))
+  {
+    print_version();
+    exit(0);
+  }
+  if (result.count("help"))
+  {
+    std::cout << options.help() << std::endl;
+    exit(0);
+  }
+
   init();
 
   // INITIALIZING GAME MENU:
