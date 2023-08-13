@@ -21,3 +21,4 @@
 [submodule "picard"]
 	path = picard
 	url = https://github.com/jshbrntt/picard.git
+	shallow = true
