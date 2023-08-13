@@ -1,4 +1,17 @@
 # Cross toolchain configuration for using clang-cl.
+set(CMAKE_AR "/usr/bin/llvm-lib")
+set(CMAKE_RC_COMPILER "/usr/bin/llvm-windres")
+set(CMAKE_C_COMPILER "/usr/bin/clang-cl")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang-cl")
+set(CMAKE_LINKER "/usr/bin/lld-link")
+set(MSVC_BASE "/xwin/crt")
+set(WINSDK_BASE "/xwin/sdk")
+set(WINSDK_VER "10.0.22000")
+set(TARGET_ARCH "x86_64")
+
+# SDL2
+set(HAVE_STDINT_H "1")
+set(SDL_JOYSTICK_XINPUT "1")
 
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_VERSION 10.0)
@@ -44,8 +57,10 @@ set(COMPILE_FLAGS
   -imsvc "'${WINSDK_INCLUDE}/um'"
   -imsvc "'${WINSDK_INCLUDE}/winrt'"
 	-msse3
+  /EHsc
 )
 # msse3: https://github.com/libsdl-org/SDL/issues/5186
+# EHsc:  https://learn.microsoft.com/en-us/cpp/build/reference/eh-exception-handling-model?view=msvc-170
 
 string(REPLACE ";" " " COMPILE_FLAGS "${COMPILE_FLAGS}")
 

@@ -75,7 +75,7 @@ RUN UNATTENDED=1 ./build.sh \
 && echo "https://packages.macports.org" > /osxcross/target/macports/MIRROR
 ENV PATH="${PATH}:/osxcross/target/bin"
 
-FROM llvm-cmake AS windows
+FROM llvm-cmake AS devcontainer_windows
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
 zip=3.0-13 \
@@ -85,7 +85,7 @@ RUN groupadd --gid 123 docker \
 && useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
 USER ubuntu
 
-FROM llvm-cmake AS macosx
+FROM llvm-cmake AS devcontainer_macosx
 COPY --from=macosx-toolchain /osxcross/target/bin /osxcross/target/bin
 COPY --from=macosx-toolchain /osxcross/target/lib /osxcross/target/lib
 COPY --from=macosx-toolchain /osxcross/target/SDK/MacOSX12.3.sdk /osxcross/target/SDK/MacOSX12.3.sdk
@@ -97,7 +97,7 @@ RUN groupadd --gid 123 docker \
 && useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
 USER ubuntu
 
-FROM llvm-cmake AS linux
+FROM llvm-cmake AS devcontainer_linux
 # Required for linux build
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \

@@ -1,185 +1,59 @@
-export CWD := $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
+ifndef HOSTNAME
+# Outside container
 
-.NOTPARALLEL:
-.ONESHELL:
+include picard/picard.mk
 
-ifndef DOCKER
+REGISTRY_HOSTNAME := ghcr.io
+REGISTRY_NAMESPACE := jshbrntt
 
-UID := $(shell id -u)
-GID := $(shell id -g)
-DOCKER_REGISTRY_URL := ghcr.io
+PLATFORM ?= linux
 
-ifdef CI
-DOCKER_REGISTRY_USERNAME := $(GITHUB_ACTOR)
-DOCKER_REGISTRY_PASSWORD := $(GITHUB_TOKEN)
-endif
+.PHONY: build
+build: IMAGE_TARGET := devcontainer_$(PLATFORM)
+build: COMMAND := make $(if $(CLEAN),clean )build TARGET=$(PLATFORM)$(if $(DEBUG), DEBUG=1)
+build: docker-command
 
-IMAGE := $(DOCKER_REGISTRY_URL)/jshbrntt/racer/devcontainer
-DOCKER := docker
-WORKDIR := /home/$(if $(CI),runner,ubuntu)/racer
+.PHONY: build-%
+build-%:
+	$(MAKE) build PLATFORM=$*
 
-export DOCKER_BUILDKIT = 1
-export BUILDKIT_PROGRESS = plain
-
-.PHONY: require-%
-require-%:
-	@#$(or ${$*}, $(error $* is not set))
-
-.PHONY: build-linux
-build-linux: TARGET := linux
-build-linux: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )LINUX=1
-build-linux: docker-command
-
-.PHONY: build-windows
-build-windows: TARGET := windows
-build-windows: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )WINDOWS=1
-build-windows: docker-command
-
-.PHONY: build-macosx
-build-macosx: TARGET := macosx
-build-macosx: COMMAND := make $(if $(CLEAN),CLEAN=1 )$(if $(DEBUG),DEBUG=1 )MACOSX=1
-build-macosx: docker-command
-
-.PHONY: push-linux
-push-linux: TARGET := linux
-push-linux: docker-push
-
-.PHONY: push-windows
-push-windows: TARGET := windows
-push-windows: docker-push
-
-.PHONY: push-macosx
-push-macosx: TARGET := macosx
-push-macosx: docker-push
-
-.PHONY: shell
-shell: TARGET ?= windows
-shell: COMMAND := bash
-shell: docker-command
-
-.PHONY: debug
-debug:
-	printenv
-
-.PHONY: required-login-variables
-required-login-variables: require-DOCKER_REGISTRY_URL
-required-login-variables: require-DOCKER_REGISTRY_USERNAME
-required-login-variables: require-DOCKER_REGISTRY_PASSWORD
-
-.PHONY: docker-login
-docker-login: required-login-variables
-docker-login:
-	echo $(DOCKER_REGISTRY_PASSWORD) | $(DOCKER) login --password-stdin --username $(DOCKER_REGISTRY_USERNAME) $(DOCKER_REGISTRY_URL)
-
-.PHONY: docker-push
-docker-push: $(if $(CI),docker-login)
-	docker push \
-	$(IMAGE)/$(TARGET)
-
-.PHONY: docker-pull
-docker-pull: $(if $(CI),docker-login)
-	$(DOCKER) pull \
-	$(IMAGE)/$(TARGET)
-
-.PHONY: docker-build
-docker-build: docker-pull
-	$(DOCKER) build \
-	--cache-from $(IMAGE)/$(TARGET) \
-	--build-arg BUILDKIT_INLINE_CACHE=1 \
-	--target $(TARGET) \
-	--tag $(IMAGE)/$(TARGET) \
-	.
-
-.PHONY: docker-run
-docker-run:
-	docker run \
-	--user $(UID):$(GID) \
-	$(if $(CI),,--interactive )--tty \
-	--rm \
-	--env DOCKER=1 \
-	--volume $(CWD):$(WORKDIR) \
-	--workdir $(WORKDIR) \
-	$(IMAGE)/$(TARGET) \
-	$(COMMAND)
-
-.PHONY: docker-command
-docker-command: docker-build
-docker-command: $(if $(CI),docker-push)
-docker-command: docker-run
+.PHONY: all
+all: build-windows build-linux build-macosx
 
 else
+# Inside container
 
-.ONESHELL:
+include picard/constants.mk
+include picard/list.mk
+include picard/string.mk
 
-ifdef LINUX
+SUPPORTED_TARGETS = linux windows macosx
 
-.PHONY: build
-build: configure
-	cmake --build build/linux
+$(if $(filter-out $(SUPPORTED_TARGETS),$(TARGET)),$(error error: unsupported target: $(TARGET), expected one of the following: [$(call list_join,|,$(SUPPORTED_TARGETS))]))
 
-.PHONY: configure
-configure: $(if $(CLEAN),clean)
-	mkdir -p build/linux \
-&& cmake -B build/linux -S . \
--DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release)
+BUILD_TYPE := $(if $(DEBUG),Debug,Release)
+BUILD_TYPE_LC := $(call lowercase,$(BUILD_TYPE))
+BUILD_DIRECTORY_PARTS := build $(TARGET) $(BUILD_TYPE_LC)
+BUILD_DIRECTORY := $(call list_join,/,$(BUILD_DIRECTORY_PARTS))
 
-.PHONY: clean
-clean:
-	rm -rf build/linux
+.PHONY: all
+all: clean build
 
-endif
-
-ifdef WINDOWS
-
-.PHONY: build
-build: configure
-	cmake --build build/windows
-
-.PHONY: configure
-configure: $(if $(CLEAN),clean)
-	mkdir -p build/windows \
-&& cmake -B build/windows -S . \
--DCMAKE_TOOLCHAIN_FILE=$(CWD)/cmake/clang_windows_cross.cmake \
--DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
--DCMAKE_AR=/usr/bin/llvm-lib \
--DCMAKE_RC_COMPILER=/usr/bin/llvm-windres \
--DCMAKE_C_COMPILER=/usr/bin/clang-cl \
--DCMAKE_CXX_COMPILER=/usr/bin/clang-cl \
--DCMAKE_LINKER=/usr/bin/lld-link \
--DMSVC_BASE=/xwin/crt \
--DWINSDK_BASE=/xwin/sdk \
--DWINSDK_VER=10.0.22000 \
--DTARGET_ARCH=x86_64 \
--DHAVE_STDINT_H=1 \
--DSDL_JOYSTICK_XINPUT=1
+$(BUILD_DIRECTORY):
+	mkdir -p $(BUILD_DIRECTORY)
 
 .PHONY: clean
 clean:
-	rm -rf build/windows
-
-endif
-
-ifdef MACOSX
+	rm -rf $(BUILD_DIRECTORY)
 
 .PHONY: build
 build: configure
-	cmake --build build/macosx
+	cmake --build $(BUILD_DIRECTORY)
 
 .PHONY: configure
-configure: $(if $(CLEAN),clean)
-	mkdir -p build/macosx \
-&& OSXCROSS_TARGET=darwin21.4 \
-OSXCROSS_HOST=x86_64-apple-darwin21.4 \
-OSXCROSS_TARGET_DIR=/osxcross/target \
-OSXCROSS_SDK=/osxcross/target/SDK/MacOSX12.3.sdk \
-cmake -B build/macosx -S . \
--DCMAKE_BUILD_TYPE=$(if $(DEBUG),Debug,Release) \
--DCMAKE_TOOLCHAIN_FILE=/osxcross/tools/toolchain.cmake
-
-.PHONY: clean
-clean:
-	rm -rf build/macosx
-
-endif
+configure: $(BUILD_DIRECTORY)
+	cmake -B $(BUILD_DIRECTORY) -S . \
+-DCMAKE_TOOLCHAIN_FILE=$(CWD_PATH)/cmake/$(TARGET)-toolchain.cmake \
+-DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
 endif

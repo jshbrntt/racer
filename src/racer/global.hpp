@@ -24,8 +24,10 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <cxxopts.hpp>
 
 // GAME HEADERS:
+#include "version.hpp"
 #include "point.hpp" // Multi-purpose Textures: http://www.mptextures.com/
 #include "glrgb.hpp"
 #include "entity.hpp"
