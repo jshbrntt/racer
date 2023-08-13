@@ -8,6 +8,22 @@ REGISTRY_NAMESPACE := jshbrntt
 
 PLATFORM ?= linux
 
+WORKSPACE_USER := ubuntu
+
+.PHONY: shell
+shell: IMAGE_TARGET := devcontainer_$(PLATFORM)
+shell: COMMAND := bash
+shell: docker-command
+
+.PHONY: clean
+clean: IMAGE_TARGET := devcontainer_$(PLATFORM)
+clean: COMMAND := make clean TARGET=$(PLATFORM)$(if $(DEBUG), DEBUG=1)
+clean: docker-command
+
+.PHONY: clean-%
+clean-%:
+	$(MAKE) clean PLATFORM=$*
+
 .PHONY: build
 build: IMAGE_TARGET := devcontainer_$(PLATFORM)
 build: COMMAND := make $(if $(CLEAN),clean )build TARGET=$(PLATFORM)$(if $(DEBUG), DEBUG=1)
