@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.26.4)
 # Set to ON to debug the build
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
+# cxxopts
+add_subdirectory(${CMAKE_SOURCE_DIR}/external/cxxopts)
+
+# entt
 add_subdirectory(${CMAKE_SOURCE_DIR}/external/entt)
 
 # SDL2
@@ -27,6 +31,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(racer VERSION 1.0.0)
 
+configure_file(
+  "${CMAKE_SOURCE_DIR}/src/racer/version.hpp.in"
+  "${CMAKE_SOURCE_DIR}/src/racer/version.hpp"
+)
+
 file(GLOB_RECURSE RACER_HDRS src/racer/*.hpp)
 file(GLOB_RECURSE RACER_SRCS src/racer/*.cpp)
 
@@ -40,6 +49,7 @@ endif()
 
 target_link_libraries(
   ${PROJECT_NAME}
+  cxxopts::cxxopts
   EnTT::EnTT
   SDL2::SDL2main
   SDL2::SDL2-static
