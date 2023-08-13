@@ -16,6 +16,16 @@
         },
         {
             "type": "shell",
+            "label": "Clean: Linux",
+            "command": "make",
+            "args": [
+                "clean-linux",
+                "DEBUG=1"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
             "label": "Build: Windows",
             "command": "make",
             "args": [
@@ -29,6 +39,16 @@
         },
         {
             "type": "shell",
+            "label": "Clean: Windows",
+            "command": "make",
+            "args": [
+                "clean-windows",
+                "DEBUG=1"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
             "label": "Build: Mac OS X",
             "command": "make",
             "args": [
@@ -39,6 +59,16 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "shell",
+            "label": "Clean: Mac OS X",
+            "command": "make",
+            "args": [
+                "clean-macosx",
+                "DEBUG=1"
+            ],
+            "problemMatcher": []
         }
     ]
 }
