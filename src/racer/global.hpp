@@ -25,6 +25,9 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <cxxopts.hpp>
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 // GAME HEADERS:
 #include "version.hpp"

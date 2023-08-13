@@ -29,6 +29,17 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL_ttf)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Get the Git commit SHA using execute_process
+execute_process(
+    COMMAND git rev-parse HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_COMMIT_SHA
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Truncate the Git commit SHA to the first 7 characters
+string(SUBSTRING ${GIT_COMMIT_SHA} 0 7 GIT_COMMIT_SHA)
+
 project(racer VERSION 1.0.0)
 
 configure_file(
@@ -39,9 +50,7 @@ configure_file(
 file(GLOB_RECURSE RACER_HDRS src/racer/*.hpp)
 file(GLOB_RECURSE RACER_SRCS src/racer/*.cpp)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_BUILD_TYPE STREQUAL "Release")
-  add_executable(${PROJECT_NAME} WIN32 ${RACER_HDRS} ${RACER_SRCS})
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_BUILD_TYPE STREQUAL "Release")
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_BUILD_TYPE STREQUAL "Release")
   add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${RACER_HDRS} ${RACER_SRCS})
 else()
   add_executable(${PROJECT_NAME} ${RACER_HDRS} ${RACER_SRCS})

@@ -116,3 +116,4 @@ $RECYCLE.BIN/
 
 target/
 build/
+src/racer/version.hpp

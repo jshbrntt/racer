@@ -36,34 +36,31 @@ SDL_Renderer *renderer = NULL;
 bool debug = false;
 
 void print_version() {
-  std::cout << RACER_VERSION_MAJOR << "."
-            << RACER_VERSION_MINOR << "."
-            << RACER_VERSION_PATCH << std::endl;
+  std::cout << RACER_PROJECT_VERSION << "+" << RACER_GIT_COMMIT_SHA << std::endl;
 }
 
 // MAIN FUNCTION:
 int main(int argc, char **argv)
 {
-  print_version();
-  cxxopts::Options options("racer", "Topdown Racing");
-
+  cxxopts::Options options("racer", "Topdown racing");
   options.add_options()
-      ("v,version", "Print version")
-      ("h,help", "Print usage")
-  ;
-
+    ("v,version", "Print version information and exit", cxxopts::value<bool>()->default_value("false"))
+    ("h,help", "Print this help message and exit");
   auto result = options.parse(argc, argv);
-
-  if (result.count("version"))
-  {
-    print_version();
-    exit(0);
-  }
   if (result.count("help"))
   {
     std::cout << options.help() << std::endl;
     exit(0);
   }
+  bool version = result["version"].as<bool>();
+  if (version) {
+    print_version();
+    exit(0);
+  }
+  // We are done with potentially functioning as a CLI, hide the console on Windows.
+#ifdef WIN32
+  FreeConsole();
+#endif
 
   init();
 
