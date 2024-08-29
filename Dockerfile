@@ -43,7 +43,7 @@ RUN wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | tee /etc
 # Install CMake
 && apt-get update \
 && apt-get install --no-install-recommends --yes \
-cmake=3.27.1-0kitware1ubuntu22.04.1 \
+cmake=3.30.2-0kitware1ubuntu22.04.1 \
 && rm -rf /var/lib/apt/lists/*
 
 FROM base AS windows-sdk
