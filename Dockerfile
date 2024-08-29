@@ -57,7 +57,7 @@ wget -qO- https://github.com/Jake-Shadle/xwin/releases/download/${XWIN_VERSION}/
 FROM llvm-cmake AS macosx-toolchain
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-libssl-dev=3.0.8-1ubuntu1.2 \
+libssl-dev=3.0.8-1ubuntu1.4 \
 libxml2-dev=2.9.14+dfsg-1.1ubuntu0.1 \
 patch=2.7.6-7build2 \
 xz-utils=5.4.1-0.2 \
