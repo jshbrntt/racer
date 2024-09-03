@@ -27,6 +27,15 @@
         {
             "type": "shell",
             "label": "Build: Windows",
+            "windows": {
+                "command": "wsl.exe",
+                "args": [
+                    "--exec",
+                    "make",
+                    "build-windows",
+                    "DEBUG=1"
+                ],
+            },
             "command": "make",
             "args": [
                 "build-windows",
