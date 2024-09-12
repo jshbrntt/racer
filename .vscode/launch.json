@@ -5,36 +5,35 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug: Racer (Linux)",
-            "program": "${workspaceFolder}/target/debug/racer-x86_64-unknown-linux-gnu/racer",
+            "program": "${workspaceFolder}/build/linux/debug/racer",
             "args": [],
-            "cwd": "${workspaceFolder}/target/debug/racer-x86_64-unknown-linux-gnu",
+            "cwd": "${workspaceFolder}/build/linux/debug",
             "preLaunchTask": "Build: Linux",
             "sourceMap": {
-                "/root/racer": "${workspaceFolder}"
+                "/home/ubuntu/racer": "${workspaceFolder}"
             }
         },
         {
             "type": "lldb",
             "request": "launch",
             "name": "Debug: Racer (Windows)",
-            "program": "${workspaceFolder}/target/debug/racer-x86_64-pc-windows-msvc/racer.exe",
+            "program": "${workspaceFolder}/build/windows/debug/racer.exe",
             "args": [],
-            "cwd": "${workspaceFolder}/target/debug/racer-x86_64-pc-windows-msvc",
-            "preLaunchTask": "Build: Windows",
+            "cwd": "${workspaceFolder}/build/windows/debug",
             "sourceMap": {
-                "/root/racer": "${workspaceFolder}"
+                "/home/ubuntu/racer": "c:\\Users\\Josh\\racer",
             }
         },
         {
             "type": "lldb",
             "request": "launch",
             "name": "Debug: Racer (Mac OS X)",
-            "program": "${workspaceFolder}/target/debug/racer-x86_64-apple-darwin/racer",
+            "program": "${workspaceFolder}/build/macosx/debug/racer",
             "args": [],
-            "cwd": "${workspaceFolder}/target/debug/racer-x86_64-apple-darwin",
+            "cwd": "${workspaceFolder}/build/macosx/debug",
             "preLaunchTask": "Build: Mac OS X",
             "sourceMap": {
-                "/root/racer": "${workspaceFolder}"
+                "/home/ubuntu/racer": "${workspaceFolder}"
             }
         }
     ]
