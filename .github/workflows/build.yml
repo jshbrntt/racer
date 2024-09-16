@@ -4,33 +4,39 @@ on:
   push
 
 jobs:
-  # release:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-  #     commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
-  #   steps:
-  #     - name: Get commit SHA
-  #       id: get_commit_sha
-  #       run: echo "commit_sha=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_OUTPUT"
-  #     - name: Create Release
-  #       continue-on-error: true
-  #       id: create_release
-  #       uses: actions/create-release@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         tag_name: 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
-  #         release_name: Release 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
-  #         draft: false
-  #         prerelease: true
-  checkout:
-    # needs: release
+  release:
     runs-on: ubuntu-latest
-    # outputs:
-    #   external_sha: ${{ steps.get_external_sha.outputs.external_sha }}
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
     steps:
-      - name: Checkout latest source
+      - name: Get commit SHA
+        id: get_commit_sha
+        run: echo "commit_sha=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_OUTPUT"
+      - name: Create Release
+        continue-on-error: true
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
+          release_name: Release 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
+          draft: false
+          prerelease: true
+  checkout:
+    needs:
+      - release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore project source from cache
+        id: source_cache
+        uses: actions/cache/restore@v4
+        with:
+          key: source-${{ needs.release.outputs.commit_sha }}
+          restore-keys: source-
+          path: .
+      - name: Checkout latest project source
         uses: actions/checkout@v4
       - name: Calculate SHA256 hash of current external submodules
         id: external_hash
@@ -51,79 +57,70 @@ jobs:
         with:
           key: external-${{ steps.external_hash.outputs.sha256 }}
           path: external
-  #     - name: Save source cache
-  #       uses: actions/cache/save@v3
-  #       with:
-  #         path: |
-  #           .
-  #           !external
-  #         key: source-${{ needs.release.outputs.commit_sha }}
-  #     # - name: Archive source
-  #     #   run: tar --create --verbose --exclude .git --file source.tar .
-  #     # - name: Create source artifact
-  #     #   uses: actions/upload-artifact@v3
-  #     #   with:
-  #     #     name: source
-  #     #     path: source.tar
-  # build:
-  #   needs: [release, checkout]
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       target:
-  #         - windows
-  #         - linux
-  #         - macosx
-  #   steps:
-  #     # - name: Download source artifact
-  #     #   uses: actions/download-artifact@v3
-  #     #   with:
-  #     #     name: source
-  #     # - name: Extract source
-  #     #   run: tar --extract --verbose --file source.tar .
-  #     - name: Restore source cache
-  #       uses: actions/cache/restore@v3
-  #       with:
-  #         path: |
-  #           .
-  #           !.git
-  #         key: source-${{ needs.release.outputs.commit_sha }}
-  #     - name: Build cache
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: build/${{ matrix.target }}
-  #         key: build-${{ matrix.target }}-${{ needs.release.outputs.commit_sha }}
-  #         restore-keys: |
-  #           build-${{ matrix.target }}-
-  #     - name: Build ${{ matrix.target }}
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: make build-${{ matrix.target }}
-  #     - name: Find artifacts
-  #       run: |
-  #         echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
-  #         echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
-  #     - name: Get artifact basenames and content types
-  #       run: |
-  #         echo "archive_asset_name=$(basename ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
-  #         echo "archive_asset_content_type=$(file --mime-type -b ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
-  #         echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
-  #         echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
-  #     - name: Upload archive
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.release.outputs.upload_url }}
-  #         asset_path: ${{ env.archive_asset_path }}
-  #         asset_name: ${{ env.archive_asset_name }}
-  #         asset_content_type: ${{ env.archive_asset_content_type }}
-  #     - name: Upload sha256
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.release.outputs.upload_url }}
-  #         asset_path: ${{ env.sha256_asset_path }}
-  #         asset_name: ${{ env.sha256_asset_name }}
-  #         asset_content_type: ${{ env.sha256_asset_content_type }}
+      - name: Update picard submodule
+        run: git submodule update --init --recursive picard
+      - name: Save project source to cache
+        uses: actions/cache/save@v3
+        with:
+          key: source-${{ needs.release.outputs.commit_sha }}
+          path: |
+            .
+            !.git
+  build:
+    needs:
+      - release
+      - checkout
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - windows
+          - linux
+          - macosx
+    steps:
+      - name: Restore project source from cache
+        uses: actions/cache/restore@v3
+        with:
+          path: |
+            .
+            !.git
+          key: source-${{ needs.release.outputs.commit_sha }}
+      - name: Build cache
+        uses: actions/cache@v3
+        with:
+          path: build/${{ matrix.target }}
+          key: build-${{ matrix.target }}-${{ needs.release.outputs.commit_sha }}
+          restore-keys: |
+            build-${{ matrix.target }}-
+      - name: Build ${{ matrix.target }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make build-${{ matrix.target }}
+      - name: Find artifacts
+        run: |
+          echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
+          echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
+      - name: Get artifact basenames and content types
+        run: |
+          echo "archive_asset_name=$(basename ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
+          echo "archive_asset_content_type=$(file --mime-type -b ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+      - name: Upload archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ${{ env.archive_asset_path }}
+          asset_name: ${{ env.archive_asset_name }}
+          asset_content_type: ${{ env.archive_asset_content_type }}
+      - name: Upload sha256
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ${{ env.sha256_asset_path }}
+          asset_name: ${{ env.sha256_asset_name }}
+          asset_content_type: ${{ env.sha256_asset_content_type }}
