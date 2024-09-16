@@ -34,13 +34,13 @@ jobs:
         id: source_cache
         uses: actions/cache/restore@v4
         with:
-          key: source-*
+          restore-keys: source-
           path: .
       - name: Restore external from cache
         id: external_cache
         uses: actions/cache/restore@v4
         with:
-          key: external-*
+          restore-keys: external-
           path: external
       - name: Checkout latest source
         uses: actions/checkout@v4
