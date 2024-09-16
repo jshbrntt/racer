@@ -54,10 +54,8 @@ jobs:
         if: external-${{ steps.external_hash.outputs.sha256 }} != ${{ steps.external_cache.outputs.cache-matched-key }}
         uses: actions/cache/save@v4
         with:
-          path: external
           key: external-${{ steps.external_hash.outputs.sha256 }}
-          path: |
-            external
+          path: external
   #     - name: Save source cache
   #       uses: actions/cache/save@v3
   #       with:
