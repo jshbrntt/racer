@@ -32,18 +32,18 @@ jobs:
     steps:
       - name: Restore source from cache
         id: source_cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: source-*
           path: .
       - name: Restore external from cache
         id: external_cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with:
           key: external-*
           path: external
       - name: Checkout latest source
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Calculate SHA256 hash of current external submodules
         id: external_hash
         run: echo "sha256=$(git submodule status external | sha256sum | head -c 7)" >> "$GITHUB_OUTPUT"
@@ -52,11 +52,11 @@ jobs:
         run: git submodule update --init --recursive external
       - name: Cache updated external submodules
         if: external-${{ steps.external_hash.outputs.sha256 }} != ${{ steps.external_cache.outputs.cache-matched-key }}
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: external
           key: external-${{ steps.external_hash.outputs.sha256 }}
-          paths: |
+          path: |
             external
   #     - name: Save source cache
   #       uses: actions/cache/save@v3
