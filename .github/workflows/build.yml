@@ -30,28 +30,23 @@ jobs:
     # outputs:
     #   external_sha: ${{ steps.get_external_sha.outputs.external_sha }}
     steps:
-      - name: Restore source from cache
-        id: source_cache
-        uses: actions/cache/restore@v4
-        with:
-          restore-keys: source-
-          path: .
-      - name: Restore external from cache
-        id: external_cache
-        uses: actions/cache/restore@v4
-        with:
-          restore-keys: external-
-          path: external
       - name: Checkout latest source
         uses: actions/checkout@v4
       - name: Calculate SHA256 hash of current external submodules
         id: external_hash
         run: echo "sha256=$(git submodule status external | sha256sum | head -c 7)" >> "$GITHUB_OUTPUT"
+      - name: Restore external from cache
+        id: external_cache
+        uses: actions/cache/restore@v4
+        with:
+          key: external-${{ steps.external_hash.outputs.sha256 }}
+          restore-keys: external-
+          path: external
       - name: Update external submodules
-        if: external-${{ steps.external_hash.outputs.sha256 }} != ${{ steps.external_cache.outputs.cache-matched-key }}
+        if: steps.external_cache.outputs.cache-hit != 'true'
         run: git submodule update --init --recursive external
       - name: Cache updated external submodules
-        if: external-${{ steps.external_hash.outputs.sha256 }} != ${{ steps.external_cache.outputs.cache-matched-key }}
+        if: steps.external_cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           key: external-${{ steps.external_hash.outputs.sha256 }}
