@@ -35,11 +35,13 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: source-*
+          path: .
       - name: Restore external from cache
         id: external_cache
         uses: actions/cache/restore@v3
         with:
           key: external-*
+          path: external
       - name: Checkout latest source
         uses: actions/checkout@v3
       - name: Calculate SHA256 hash of current external submodules
