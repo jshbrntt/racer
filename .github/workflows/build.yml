@@ -27,7 +27,7 @@ jobs:
       - name: Checkout latest project source
         uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: recursive
 
       - name: Calculate project release version
         id: project
