@@ -74,6 +74,14 @@ jobs:
           key: build-${{ matrix.target }}-${{ needs.prepare.outputs.short_hash }}
           path: build/${{ matrix.target }}
 
+      - name: Setup contained image store
+        run: |
+          cat /etc/docker/daemon.json | jq '. | .+{"features": {"containerd-snapshotter": true}}' | sudo tee /etc/docker/daemon.json
+          cat /etc/docker/daemon.json
+          sudo systemctl restart docker
+          docker info -f '{{ .DriverStatus }}'
+          docker info
+
       - name: Build ${{ matrix.target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
