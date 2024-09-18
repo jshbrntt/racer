@@ -9,6 +9,16 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
+      - name: Cache project source
+        id: cache-project-source
+        uses: actions/cache@v4
+        with:
+          restore-keys: source-
+          key: source-${{ steps.commit.outputs.short_hash }}
+          path: |
+            .
+            !.git
+
       - name: Checkout latest project source
         uses: actions/checkout@v4
         with:
@@ -23,7 +33,7 @@ jobs:
         run: |
           name="${GITHUB_REPOSITORY#*/}"
           version="$(sed -n "s/^project($name VERSION \([0-9.]*\)).*/\1/p" CMakeLists.txt)"
-          echo "release=$name-rc.$short_hash" >> "$GITHUB_OUTPUT"
+          echo "release=$version-rc.${{ steps.commit.outputs.short_hash }}" >> "$GITHUB_OUTPUT"
 
       - name: Create release
         id: create_release
