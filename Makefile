@@ -56,6 +56,8 @@ BUILD_DIRECTORY := $(call list_join,/,$(BUILD_DIRECTORY_PARTS))
 all: clean build
 
 $(BUILD_DIRECTORY):
+	id
+	ls -lah
 	mkdir -p $(BUILD_DIRECTORY)
 
 .PHONY: clean
