@@ -4,78 +4,47 @@ on:
   push
 
 jobs:
-  debug:
+  prepare:
     runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      short_hash: ${{ steps.commit.outputs.short_hash }}
     steps:
-      - run: docker version
-      - run: docker info
-      - run: docker buildx ls
-      - uses: docker/setup-buildx-action@v3
-      - run: docker version
-      - run: docker info
-      - run: docker buildx ls
-  # release:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-  #     commit_sha: ${{ steps.get_commit_sha.outputs.commit_sha }}
-  #   steps:
-  #     - name: Get commit SHA
-  #       id: get_commit_sha
-  #       run: echo "commit_sha=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_OUTPUT"
-  #     - name: Create Release
-  #       continue-on-error: true
-  #       id: create_release
-  #       uses: actions/create-release@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         tag_name: 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
-  #         release_name: Release 1.0.0-rc.${{ steps.get_commit_sha.outputs.commit_sha }}
-  #         draft: false
-  #         prerelease: true
-  # checkout:
-  #   needs:
-  #     - release
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Restore project source from cache
-  #       id: source_cache
-  #       uses: actions/cache/restore@v4
-  #       with:
-  #         key: source-${{ needs.release.outputs.commit_sha }}
-  #         restore-keys: source-
-  #         path: .
-  #     - name: Checkout latest project source
-  #       uses: actions/checkout@v4
-  #     - name: Calculate SHA256 hash of current external submodules
-  #       id: external_hash
-  #       run: echo "sha256=$(git submodule status external | sha256sum | head -c 7)" >> "$GITHUB_OUTPUT"
-  #     - name: Restore external from cache
-  #       id: external_cache
-  #       uses: actions/cache/restore@v4
-  #       with:
-  #         key: external-${{ steps.external_hash.outputs.sha256 }}
-  #         restore-keys: external-
-  #         path: external
-  #     - name: Update external submodules
-  #       if: steps.external_cache.outputs.cache-hit != 'true'
-  #       run: git submodule update --init --recursive external
-  #     - name: Cache updated external submodules
-  #       if: steps.external_cache.outputs.cache-hit != 'true'
-  #       uses: actions/cache/save@v4
-  #       with:
-  #         key: external-${{ steps.external_hash.outputs.sha256 }}
-  #         path: external
-  #     - name: Update picard submodule
-  #       run: git submodule update --init --recursive picard
-  #     - name: Save project source to cache
-  #       uses: actions/cache/save@v3
-  #       with:
-  #         key: source-${{ needs.release.outputs.commit_sha }}
-  #         path: |
-  #           .
-  #           !.git
+      - name: Calculate short hash of commit
+        id: commit
+        run: echo "short_hash=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_OUTPUT"
+
+      - name: Calculate project details
+        id: project
+        run: |
+          name="${GITHUB_REPOSITORY#*/}"
+          version="$(sed -n "s/^project($name VERSION \([0-9.]*\)).*/\1/p" CMakeLists.txt)"
+          echo "release=$name-rc.$short_hash" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        id: create_release
+        continue-on-error: true
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.project.outputs.release }}
+          release_name: ${{ steps.project.outputs.release }}
+          draft: false
+          prerelease: true
+
+      # - name: Checkout latest project source
+      #   uses: actions/checkout@v4
+      #   with:
+      #     submodules: true
+
+      # - name: Save project source to cache
+      #   uses: actions/cache/save@v3
+      #   with:
+      #     key: source-${{ needs.release.outputs.sha }}
+      #     path: |
+      #       .
+      #       !.git
   # build:
   #   needs:
   #     - release
@@ -94,28 +63,33 @@ jobs:
   #         path: |
   #           .
   #           !.git
-  #         key: source-${{ needs.release.outputs.commit_sha }}
+  #         key: source-${{ needs.release.outputs.sha }}
+
   #     - name: Build cache
   #       uses: actions/cache@v3
   #       with:
   #         path: build/${{ matrix.target }}
-  #         key: build-${{ matrix.target }}-${{ needs.release.outputs.commit_sha }}
+  #         key: build-${{ matrix.target }}-${{ needs.release.outputs.sha }}
   #         restore-keys: |
   #           build-${{ matrix.target }}-
+
   #     - name: Build ${{ matrix.target }}
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #       run: make build-${{ matrix.target }}
+
   #     - name: Find artifacts
   #       run: |
   #         echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
   #         echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
+
   #     - name: Get artifact basenames and content types
   #       run: |
   #         echo "archive_asset_name=$(basename ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
   #         echo "archive_asset_content_type=$(file --mime-type -b ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
   #         echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
   #         echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+
   #     - name: Upload archive
   #       uses: actions/upload-release-asset@v1
   #       env:
@@ -125,6 +99,7 @@ jobs:
   #         asset_path: ${{ env.archive_asset_path }}
   #         asset_name: ${{ env.archive_asset_name }}
   #         asset_content_type: ${{ env.archive_asset_content_type }}
+
   #     - name: Upload sha256
   #       uses: actions/upload-release-asset@v1
   #       env:
