@@ -8,13 +8,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
-      short_hash: ${{ steps.commit.outputs.short_hash }}
     steps:
+      - name: Checkout latest project source
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
       - name: Calculate short hash of commit
         id: commit
         run: echo "short_hash=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_OUTPUT"
 
-      - name: Calculate project details
+      - name: Calculate project release version
         id: project
         run: |
           name="${GITHUB_REPOSITORY#*/}"
@@ -33,10 +37,6 @@ jobs:
           draft: false
           prerelease: true
 
-      # - name: Checkout latest project source
-      #   uses: actions/checkout@v4
-      #   with:
-      #     submodules: true
 
       # - name: Save project source to cache
       #   uses: actions/cache/save@v3
