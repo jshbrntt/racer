@@ -8,8 +8,6 @@ REGISTRY_NAMESPACE := jshbrntt
 
 PLATFORM ?= linux
 
-WORKSPACE_USER := ubuntu
-
 .PHONY: shell
 shell: IMAGE_TARGET := devcontainer_$(PLATFORM)
 shell: COMMAND := bash
