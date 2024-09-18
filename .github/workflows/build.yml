@@ -7,6 +7,7 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
+      short_hash: ${{ steps.commit.outputs.short_hash }}
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Calculate short hash of commit
@@ -47,75 +48,65 @@ jobs:
           draft: false
           prerelease: true
 
+  build:
+    needs:
+      - prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - windows
+          - linux
+          - macosx
+    steps:
+      - name: Restore project source from cache
+        uses: actions/cache/restore@v4
+        with:
+          key: source-${{ needs.prepare.outputs.short_hash }}
+          path: |
+            .
+            !.git
 
-      # - name: Save project source to cache
-      #   uses: actions/cache/save@v3
-      #   with:
-      #     key: source-${{ needs.release.outputs.sha }}
-      #     path: |
-      #       .
-      #       !.git
-  # build:
-  #   needs:
-  #     - release
-  #     - checkout
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       target:
-  #         - windows
-  #         - linux
-  #         - macosx
-  #   steps:
-  #     - name: Restore project source from cache
-  #       uses: actions/cache/restore@v3
-  #       with:
-  #         path: |
-  #           .
-  #           !.git
-  #         key: source-${{ needs.release.outputs.sha }}
+      - name: Build cache
+        uses: actions/cache@v4
+        with:
+          restore-keys: build-${{ matrix.target }}-
+          key: build-${{ matrix.target }}-${{ needs.prepare.outputs.short_hash }}
+          path: build/${{ matrix.target }}
 
-  #     - name: Build cache
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: build/${{ matrix.target }}
-  #         key: build-${{ matrix.target }}-${{ needs.release.outputs.sha }}
-  #         restore-keys: |
-  #           build-${{ matrix.target }}-
+      - name: Build ${{ matrix.target }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make build-${{ matrix.target }}
 
-  #     - name: Build ${{ matrix.target }}
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       run: make build-${{ matrix.target }}
+      - name: Find artifacts
+        run: |
+          echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
+          echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
 
-  #     - name: Find artifacts
-  #       run: |
-  #         echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
-  #         echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
+      - name: Get artifact basenames and content types
+        run: |
+          echo "archive_asset_name=$(basename ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
+          echo "archive_asset_content_type=$(file --mime-type -b ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
 
-  #     - name: Get artifact basenames and content types
-  #       run: |
-  #         echo "archive_asset_name=$(basename ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
-  #         echo "archive_asset_content_type=$(file --mime-type -b ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
-  #         echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
-  #         echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+      - name: Upload archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.prepare.outputs.upload_url }}
+          asset_path: ${{ env.archive_asset_path }}
+          asset_name: ${{ env.archive_asset_name }}
+          asset_content_type: ${{ env.archive_asset_content_type }}
 
-  #     - name: Upload archive
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.release.outputs.upload_url }}
-  #         asset_path: ${{ env.archive_asset_path }}
-  #         asset_name: ${{ env.archive_asset_name }}
-  #         asset_content_type: ${{ env.archive_asset_content_type }}
-
-  #     - name: Upload sha256
-  #       uses: actions/upload-release-asset@v1
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #       with:
-  #         upload_url: ${{ needs.release.outputs.upload_url }}
-  #         asset_path: ${{ env.sha256_asset_path }}
-  #         asset_name: ${{ env.sha256_asset_name }}
-  #         asset_content_type: ${{ env.sha256_asset_content_type }}
+      - name: Upload sha256
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.prepare.outputs.upload_url }}
+          asset_path: ${{ env.sha256_asset_path }}
+          asset_name: ${{ env.sha256_asset_name }}
+          asset_content_type: ${{ env.sha256_asset_content_type }}
