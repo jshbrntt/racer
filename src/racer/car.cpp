@@ -17,7 +17,7 @@ Car::Car(
 {
   // INITIALIZING CAR PROPERTIES:
   speed = 0;
-  speedAcceleration = 0.01f;
+  speedAcceleration = 0.04f;
   turboSpeedAcceleration = 0.02f;
   speedDeceleration = 0.986f;
   steer = 0;
