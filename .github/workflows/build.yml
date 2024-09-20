@@ -89,8 +89,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          id
-          ls -lah
           make build-${{ matrix.target }}
 
       - name: Find artifacts
