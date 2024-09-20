@@ -82,9 +82,6 @@ jobs:
           docker info -f '{{ .DriverStatus }}'
           docker info
 
-      - name: Printenv
-        run: printenv
-
       - name: Build ${{ matrix.target }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
