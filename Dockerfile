@@ -62,7 +62,6 @@ wget -qO- https://github.com/Jake-Shadle/xwin/releases/download/${XWIN_VERSION}/
 FROM llvm-cmake AS macosx-toolchain
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-libc++-20-dev=1:20~++20240919081728+752e10379c2f-1~exp1~20240919081747.423 \
 libssl-dev=3.0.13-0ubuntu3.4 \
 libxml2-dev=2.9.14+dfsg-1.3ubuntu3 \
 patch=2.7.6-7build3 \
@@ -102,7 +101,6 @@ FROM llvm-cmake AS devcontainer_linux
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
 libasound2-dev=1.2.11-1build2 \
-libc++-20-dev=1:20~++20240919081728+752e10379c2f-1~exp1~20240919081747.423 \
 libgles2-mesa-dev=24.0.9-0ubuntu0.1 \
 libxext-dev=2:1.3.4-1build2 \
 && rm -rf /var/lib/apt/lists/*
