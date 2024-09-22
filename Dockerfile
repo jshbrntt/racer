@@ -24,8 +24,9 @@ ARG LLVM_VERSION="20"
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
 clang-${LLVM_VERSION} \
-llvm-${LLVM_VERSION} \
+libc++-${LLVM_VERSION}-dev \
 lld-${LLVM_VERSION} \
+llvm-${LLVM_VERSION} \
 && rm -rf /var/lib/apt/lists/* \
 # Create missing LLVM symlinks
 && ln -s ../lib/llvm-${LLVM_VERSION}/bin/clang /usr/bin/clang \
