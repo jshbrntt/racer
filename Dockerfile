@@ -52,6 +52,7 @@ RUN wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | tee /etc
 cmake=3.30.2-0kitware1ubuntu24.04.1 \
 ninja-build=1.11.1-2 \
 && rm -rf /var/lib/apt/lists/*
+# Set CMake generator to Ninja
 ENV CMAKE_GENERATOR="Ninja"
 
 FROM base AS windows-sdk
@@ -78,7 +79,14 @@ ARG MACOSX_DEPLOYMENT_TARGET="12.3"
 ENV MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 RUN wget -q https://github.com/joseluisq/macosx-sdks/releases/download/${MACOSX_DEPLOYMENT_TARGET}/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz
 WORKDIR /osxcross
-RUN UNATTENDED=1 ./build.sh \
+# osxcross and dependencies appear to use these environment variables to control the build config
+ARG NINJA="1"
+ARG MAKE="ninja"
+ARG JOBS="4"
+ARG UNATTENDED="1"
+COPY patches/osxcross/build_llvm_dsymutil.sh.patch /osxcross/patches/build_llvm_dsymutil.sh.patch
+RUN git apply patches/build_llvm_dsymutil.sh.patch \
+&& ./build.sh \
 && ./build_llvm_dsymutil.sh \
 && mkdir -p /osxcross/target/macports \
 && echo "https://packages.macports.org" > /osxcross/target/macports/MIRROR
