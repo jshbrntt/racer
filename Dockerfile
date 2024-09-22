@@ -50,7 +50,9 @@ RUN wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | tee /etc
 && apt-get update \
 && apt-get install --no-install-recommends --yes \
 cmake=3.30.2-0kitware1ubuntu24.04.1 \
+ninja-build=1.11.1-2 \
 && rm -rf /var/lib/apt/lists/*
+ENV CMAKE_GENERATOR="Ninja"
 
 FROM base AS windows-sdk
 # Install Windows SDK (https://github.com/Jake-Shadle/xwin/blob/97d180c6d537c0bfd52f8ec559c45b247277f156/xwin.dockerfile#LL49C1-L58C1)
