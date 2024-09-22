@@ -1,0 +1,13 @@
+diff --git a/build_llvm_dsymutil.sh b/build_llvm_dsymutil.sh
+index eea7685..fa83765 100755
+--- a/build_llvm_dsymutil.sh
++++ b/build_llvm_dsymutil.sh
+@@ -29,7 +29,7 @@ if [ $f_res -eq 1 ]; then
+     -DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
+     -DLLVM_ENABLE_ASSERTIONS=Off
+ 
+-  $MAKE -f tools/dsymutil/Makefile -j$JOBS
++  $CMAKE --build . --target llvm-dsymutil -j$JOBS
+   cp bin/llvm-dsymutil $OSXCROSS_TARGET_DIR/bin/osxcross-llvm-dsymutil
+   echo "installed llvm-dsymutil to $OSXCROSS_TARGET_DIR/bin/osxcross-llvm-dsymutil"
+ 
