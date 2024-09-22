@@ -11,6 +11,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/external/entt)
 
 # SDL2
 set(BUILD_SHARED_LIBS OFF)
+set(SDL_TEST_ENABLED_BY_DEFAULT OFF)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL)
 
