@@ -10,6 +10,9 @@ make=4.3-4.1build2 \
 software-properties-common=0.99.48 \
 wget=1.21.4-1ubuntu4.1 \
 && rm -rf /var/lib/apt/lists/*
+# Add GitHub Actions runner user
+RUN groupadd --gid 127 docker \
+&& useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
 
 FROM base AS llvm
 # Add LLVM APT repository (https://apt.llvm.org/)
@@ -84,9 +87,6 @@ RUN apt-get update \
 zip=3.0-13build1 \
 && rm -rf /var/lib/apt/lists/*
 COPY --from=windows-sdk /xwin /xwin
-RUN groupadd --gid 127 docker \
-&& useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
-USER ubuntu
 
 FROM llvm-cmake AS devcontainer_macosx
 COPY --from=macosx-toolchain /osxcross/target/bin /osxcross/target/bin
@@ -96,9 +96,6 @@ COPY --from=macosx-toolchain /osxcross/tools/toolchain.cmake /osxcross/tools/too
 ARG MACOSX_DEPLOYMENT_TARGET="12.3"
 ENV MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 ENV PATH="${PATH}:/osxcross/target/bin"
-RUN groupadd --gid 127 docker \
-&& useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
-USER ubuntu
 
 FROM llvm-cmake AS devcontainer_linux
 # Required for linux build
@@ -109,6 +106,3 @@ libc++-20-dev=1:20~++20240919081728+752e10379c2f-1~exp1~20240919081747.423 \
 libgles2-mesa-dev=24.0.9-0ubuntu0.1 \
 libxext-dev=2:1.3.4-1build2 \
 && rm -rf /var/lib/apt/lists/*
-RUN groupadd --gid 127 docker \
-&& useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner
-USER ubuntu
