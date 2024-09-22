@@ -1,12 +1,14 @@
 # syntax=docker/dockerfile:1-labs
-FROM ubuntu:23.04@sha256:b5d5cddaeb8d2f150660cf8f9a1203dd450ac765e6c07630176ac6486eceaddb AS base
+FROM ubuntu:24.04@sha256:77d57fd89366f7d16615794a5b53e124d742404e20f035c22032233f1826bd6a AS base
+ARG DEBIAN_FRONTEND="noninteractive"
+ENV TZ="Etc/UTC"
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-git=1:2.39.2-1ubuntu1.1 \
-lsb-release=12.0-1ubuntu1 \
-make=4.3-4.1build1 \
-software-properties-common=0.99.35 \
-wget=1.21.3-1ubuntu1 \
+git=1:2.43.0-1ubuntu7.1 \
+lsb-release=12.0-2 \
+make=4.3-4.1build2 \
+software-properties-common=0.99.48 \
+wget=1.21.4-1ubuntu4.1 \
 && rm -rf /var/lib/apt/lists/*
 
 FROM base AS llvm
@@ -14,7 +16,7 @@ FROM base AS llvm
 RUN wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc \
 && OS_CODENAME=$(lsb_release -sc) \
 && add-apt-repository "deb http://apt.llvm.org/${OS_CODENAME}/ llvm-toolchain-${OS_CODENAME} main"
-ARG LLVM_VERSION="16"
+ARG LLVM_VERSION="20"
 # Install LLVM
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
@@ -38,17 +40,17 @@ FROM llvm AS llvm-cmake
 # Add CMake APT repository (https://apt.kitware.com/)
 RUN wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | tee /etc/apt/trusted.gpg.d/apt.kitware.com.asc \
 # TODO: Update this when a lunar one is available.
-&& OS_CODENAME=jammy \
+&& OS_CODENAME=$(lsb_release -sc) \
 && add-apt-repository "deb https://apt.kitware.com/ubuntu/ ${OS_CODENAME} main" \
 # Install CMake
 && apt-get update \
 && apt-get install --no-install-recommends --yes \
-cmake=3.30.2-0kitware1ubuntu22.04.1 \
+cmake=3.30.2-0kitware1ubuntu24.04.1 \
 && rm -rf /var/lib/apt/lists/*
 
 FROM base AS windows-sdk
 # Install Windows SDK (https://github.com/Jake-Shadle/xwin/blob/97d180c6d537c0bfd52f8ec559c45b247277f156/xwin.dockerfile#LL49C1-L58C1)
-ARG XWIN_VERSION="0.2.12"
+ARG XWIN_VERSION="0.6.5"
 RUN XWIN_PREFIX="xwin-${XWIN_VERSION}-x86_64-unknown-linux-musl"; \
 wget -qO- https://github.com/Jake-Shadle/xwin/releases/download/${XWIN_VERSION}/${XWIN_PREFIX}.tar.gz | tar -xvz -C /usr/local/bin --strip-components=1 ${XWIN_PREFIX}/xwin \
 && mkdir -p /xwin \
@@ -57,14 +59,15 @@ wget -qO- https://github.com/Jake-Shadle/xwin/releases/download/${XWIN_VERSION}/
 FROM llvm-cmake AS macosx-toolchain
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-libssl-dev=3.0.8-1ubuntu1.4 \
-libxml2-dev=2.9.14+dfsg-1.1ubuntu0.1 \
-patch=2.7.6-7build2 \
-xz-utils=5.4.1-0.2 \
-zlib1g-dev=1:1.2.13.dfsg-1ubuntu4 \
+libc++-20-dev=1:20~++20240919081728+752e10379c2f-1~exp1~20240919081747.423 \
+libssl-dev=3.0.13-0ubuntu3.4 \
+libxml2-dev=2.9.14+dfsg-1.3ubuntu3 \
+patch=2.7.6-7build3 \
+xz-utils=5.6.1+really5.4.5-1build0.1 \
+zlib1g-dev=1:1.3.dfsg-3.1ubuntu2.1 \
 && rm -rf /var/lib/apt/lists/*
 # Install macOS SDK (https://github.com/tpoechtrager/osxcross/blob/ed079949e7aee248ad7e7cb97726cd1c8556afd1/README.md#installation)
-ADD https://github.com/tpoechtrager/osxcross.git#564e2b9aa8e7a40da663d890c0e853a1259ff8b1 /osxcross/
+ADD https://github.com/tpoechtrager/osxcross.git#be6ffb3cbc6c0228614ebe6a4b5cd2726339ecc9 /osxcross/
 WORKDIR /osxcross/tarballs
 ARG MACOSX_DEPLOYMENT_TARGET="12.3"
 ENV MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
@@ -78,7 +81,7 @@ ENV PATH="${PATH}:/osxcross/target/bin"
 FROM llvm-cmake AS devcontainer_windows
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-zip=3.0-13 \
+zip=3.0-13build1 \
 && rm -rf /var/lib/apt/lists/*
 COPY --from=windows-sdk /xwin /xwin
 RUN groupadd --gid 127 docker \
@@ -101,8 +104,10 @@ FROM llvm-cmake AS devcontainer_linux
 # Required for linux build
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-libgles2-mesa-dev=23.0.4-0ubuntu1~23.04.1 \
-libxext-dev=2:1.3.4-1build1 \
+libasound2-dev=1.2.11-1build2 \
+libc++-20-dev=1:20~++20240919081728+752e10379c2f-1~exp1~20240919081747.423 \
+libgles2-mesa-dev=24.0.9-0ubuntu0.1 \
+libxext-dev=2:1.3.4-1build2 \
 && rm -rf /var/lib/apt/lists/*
 RUN groupadd --gid 127 docker \
 && useradd --uid 1001 --gid docker --shell /bin/bash --create-home runner

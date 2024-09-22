@@ -6,7 +6,7 @@ set(CMAKE_CXX_COMPILER "/usr/bin/clang-cl")
 set(CMAKE_LINKER "/usr/bin/lld-link")
 set(MSVC_BASE "/xwin/crt")
 set(WINSDK_BASE "/xwin/sdk")
-set(WINSDK_VER "10.0.22000")
+set(WINSDK_VER "10.0.26100")
 set(TARGET_ARCH "x86_64")
 
 # SDL2
