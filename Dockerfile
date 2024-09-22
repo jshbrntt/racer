@@ -77,7 +77,7 @@ ENV MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 RUN wget -q https://github.com/joseluisq/macosx-sdks/releases/download/${MACOSX_DEPLOYMENT_TARGET}/MacOSX${MACOSX_DEPLOYMENT_TARGET}.sdk.tar.xz
 WORKDIR /osxcross
 RUN UNATTENDED=1 ./build.sh \
-&& build_llvm_dsymutil.sh \
+&& ./build_llvm_dsymutil.sh \
 && mkdir -p /osxcross/target/macports \
 && echo "https://packages.macports.org" > /osxcross/target/macports/MIRROR
 ENV PATH="${PATH}:/osxcross/target/bin"
