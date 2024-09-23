@@ -1,11 +1,14 @@
 # TODO
-- [ ] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
+- [ ] Use a static path for the build context inside the container (`/home/ubuntu/racer`).
+- [ ] Publish packages to the playtest app in steamworks.
+- [ ] Add sokol to the project.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
-- [ ] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
 - [ ] Explore using CPack for distributing project builds.
 - [ ] Merge CMake toolchains?
 - [ ] Figure out how to get audio working on WSLg.
 - [ ] Get Wayland working on WSLg.
+- [x] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
+- [x] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
 - [x] Calculate release sha without checkout in `release` job.
 - [x] Try to cache `external` dependencies as part of a non-matrix step, or just as a layer in the Docker image.
 - [x] Install project dependencies as Git submodules instead of using CMake to fetch them?
