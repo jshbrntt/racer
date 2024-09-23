@@ -1,5 +1,6 @@
 # TODO
 - [ ] Use a static path for the build context inside the container (`/home/ubuntu/racer`).
+- [ ] User target triplet for build subdirectory.
 - [ ] Publish packages to the playtest app in steamworks.
 - [ ] Add sokol to the project.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
