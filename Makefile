@@ -59,7 +59,7 @@ clean:
 
 .PHONY: build
 build: configure
-	cmake --build $(BUILD_DIRECTORY)
+	cmake --build $(BUILD_DIRECTORY) --parallel $(shell nproc)
 
 .PHONY: configure
 configure: $(BUILD_DIRECTORY)
