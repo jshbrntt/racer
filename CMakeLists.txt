@@ -129,15 +129,26 @@ else()
 endif()
 set(TARGET_SHA256 "${TARGET_ARCHIVE}.sha256")
 
-add_custom_target(
-  target ALL
-  DEPENDS $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE}
-          ${CMAKE_SOURCE_DIR}/src/racer/assets
-  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE} ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/${TARGET_EXECUTABLE}
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/racer/assets ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/assets
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/racer/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
-  COMMAND ${ARCHIVE_COMMAND}
-  COMMAND sha256sum ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_ARCHIVE} > ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_SHA256}
-)
+if(BUILD_TYPE STREQUAL "release")
+  # Copy executable and assets to target directory for distribution
+  add_custom_target(
+    target ALL
+    DEPENDS $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/src/racer/assets
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE} ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/${TARGET_EXECUTABLE}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/racer/assets ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/assets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/racer/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+    COMMAND ${ARCHIVE_COMMAND}
+    COMMAND sha256sum ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_ARCHIVE} > ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_SHA256}
+  )
+else()
+  # Create symlink to assets directory for development
+  add_custom_target(
+    target ALL
+    DEPENDS $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/src/racer/assets
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ../../../src/racer/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+  )
+endif()
