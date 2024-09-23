@@ -38,6 +38,7 @@ llvm-${LLVM_VERSION} \
 && ln -s ../lib/llvm-${LLVM_VERSION}/bin/lld-link /usr/bin/lld-link \
 && ln -s ../lib/llvm-${LLVM_VERSION}/bin/llvm-lib /usr/bin/llvm-lib \
 && ln -s ../lib/llvm-${LLVM_VERSION}/bin/llvm-windres /usr/bin/llvm-windres \
+&& ln -s ../lib/llvm-${LLVM_VERSION}/bin/dsymutil /usr/bin/dsymutil \
 && ln -s clang /usr/lib/llvm-${LLVM_VERSION}/bin/clang-cl
 
 FROM llvm AS llvm-cmake
@@ -84,10 +85,7 @@ ARG NINJA="1"
 ARG MAKE="ninja"
 ARG JOBS="4"
 ARG UNATTENDED="1"
-COPY patches/osxcross/build_llvm_dsymutil.sh.patch /osxcross/patches/build_llvm_dsymutil.sh.patch
-RUN git apply patches/build_llvm_dsymutil.sh.patch \
-&& ./build.sh \
-&& ./build_llvm_dsymutil.sh \
+RUN ./build.sh \
 && mkdir -p /osxcross/target/macports \
 && echo "https://packages.macports.org" > /osxcross/target/macports/MIRROR
 ENV PATH="${PATH}:/osxcross/target/bin"
