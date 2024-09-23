@@ -60,6 +60,17 @@ else()
   add_executable(${PROJECT_NAME} ${RACER_HDRS} ${RACER_SRCS})
 endif()
 
+# Run dsymutil to generate debug symbols for macOS
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_custom_command(
+    TARGET ${PROJECT_NAME}
+    POST_BUILD
+    COMMAND dsymutil $<TARGET_FILE:${PROJECT_NAME}>
+    COMMENT "Running dsymutil on ${PROJECT_NAME}"
+  )
+endif()
+
+# Link project dependenciess
 target_link_libraries(
   ${PROJECT_NAME}
   cxxopts::cxxopts
