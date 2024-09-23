@@ -10,7 +10,7 @@
             "cwd": "${workspaceFolder}/build/linux/debug",
             "preLaunchTask": "Build: Linux",
             "sourceMap": {
-                "/home/ubuntu/racer": "${workspaceFolder}"
+                "/opt/racer": "${workspaceFolder}"
             }
         },
         {
@@ -20,8 +20,11 @@
             "program": "${workspaceFolder}/build/windows/debug/racer.exe",
             "args": [],
             "cwd": "${workspaceFolder}/build/windows/debug",
+            "preLaunchTask": "Build: Windows",
             "sourceMap": {
-                "/home/ubuntu/racer": "c:\\Users\\Josh\\racer",
+                // This has to be hardcoded because of bug in VSCode
+                // https://github.com/rust-lang/rust-analyzer/issues/14683#issuecomment-1528759387
+                "/opt/racer": "c:\\Users\\Josh\\racer",
             }
         },
         {
@@ -33,7 +36,7 @@
             "cwd": "${workspaceFolder}/build/macosx/debug",
             "preLaunchTask": "Build: Mac OS X",
             "sourceMap": {
-                "/home/ubuntu/racer": "${workspaceFolder}"
+                "/opt/racer": "${workspaceFolder}"
             }
         }
     ]
