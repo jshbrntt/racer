@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.26.4)
 # Set to ON to debug the build
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
+# Build and configure dependencies
 # cxxopts
 add_subdirectory(${CMAKE_SOURCE_DIR}/external/cxxopts)
 
@@ -27,7 +28,7 @@ set(SDL2TTF_VENDORED ON)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL_ttf)
 
-# Racer
+# Project
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -52,6 +53,7 @@ configure_file(
 file(GLOB_RECURSE RACER_HDRS src/racer/*.hpp)
 file(GLOB_RECURSE RACER_SRCS src/racer/*.cpp)
 
+# Create bundle on macOS
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_BUILD_TYPE STREQUAL "Release")
   add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${RACER_HDRS} ${RACER_SRCS})
 else()
@@ -105,12 +107,15 @@ function(get_target_triple TARGET_TRIPLE)
 endfunction()
 
 get_target_triple(TARGET_TRIPLE)
+
+# Add exe extension to executable on Windows
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(TARGET_EXECUTABLE "${PROJECT_NAME}.exe")
 else()
   set(TARGET_EXECUTABLE "${PROJECT_NAME}")
 endif()
 
+# Create target directory, only include project version in release builds
 string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 set(OUTPUT_DIRECTORY "target/${BUILD_TYPE}")
 if(BUILD_TYPE STREQUAL "debug")
@@ -120,6 +125,7 @@ elseif(BUILD_TYPE STREQUAL "release")
 endif()
 set(TARGET_DIRECTORY "${OUTPUT_DIRECTORY}/${TARGET_BASENAME}")
 
+# Create zip archive on Windows, tar.gz archive on other platforms
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(TARGET_ARCHIVE "${TARGET_BASENAME}.zip")
   set(ARCHIVE_COMMAND cd ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY} && zip -r ${TARGET_ARCHIVE} ${TARGET_BASENAME})
