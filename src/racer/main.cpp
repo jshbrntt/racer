@@ -46,9 +46,14 @@ void print_version() {
   std::cout << version << std::endl;
 }
 
+std::filesystem::path gameRoot;
+
 // MAIN FUNCTION:
 int main(int argc, char **argv)
 {
+  std::filesystem::path programName(*argv);
+  gameRoot = std::filesystem::canonical(std::filesystem::current_path() / programName).parent_path();
+
   cxxopts::Options options("racer", "Topdown racing");
   options.add_options()
     ("v,version", "Print version information and exit", cxxopts::value<bool>()->default_value("false"))
@@ -377,8 +382,10 @@ bool init()
   return success;
 }
 
-SDL_Texture *loadTexture(std::string path)
+SDL_Texture *loadTexture(std::string texturePath)
 {
+  std::string path = std::filesystem::path(gameRoot / texturePath).string();
+
   // The final texture
   SDL_Texture *newTexture = NULL;
 
