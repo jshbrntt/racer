@@ -70,9 +70,9 @@ jobs:
       - name: Build cache
         uses: actions/cache@v4
         with:
-          restore-keys: build-${{ matrix.target }}-
-          key: build-${{ matrix.target }}-${{ needs.prepare.outputs.short_hash }}
-          path: build/${{ matrix.target }}
+          restore-keys: build-
+          key: build-${{ needs.prepare.outputs.short_hash }}
+          path: build
 
       - name: Setup contained image store
         run: |
