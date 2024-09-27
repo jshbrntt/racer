@@ -28,22 +28,29 @@ set(SDL2TTF_VENDORED ON)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL_ttf)
 
-# Project
+# C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Get the Git commit SHA using execute_process
-execute_process(
+# Project
+project(racer VERSION 1.0.0)
+
+# Set semantic version variables
+set(SEMVER_VERSION_CORE ${PROJECT_VERSION})
+if(NOT CMAKE_BUILD_TYPE EQUAL "RELEASE")
+  # If not release assume it is a release candidate build
+  set(SEMVER_PRE_RELEASE "rc")
+endif()
+find_package(Git)
+if(Git_FOUND)
+  execute_process(
     COMMAND git rev-parse HEAD
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_COMMIT_SHA
+    OUTPUT_VARIABLE SEMVER_BUILD
     OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-# Truncate the Git commit SHA to the first 7 characters
-string(SUBSTRING ${GIT_COMMIT_SHA} 0 7 GIT_COMMIT_SHA)
-
-project(racer VERSION 1.0.0)
+  )
+  string(SUBSTRING ${SEMVER_BUILD} 0 7 SEMVER_BUILD)
+endif()
 
 configure_file(
   "${CMAKE_SOURCE_DIR}/src/racer/version.hpp.in"
@@ -81,44 +88,6 @@ target_link_libraries(
   SDL2_ttf::SDL2_ttf-static
 )
 
-# Create release directory
-function(get_target_triple TARGET_TRIPLE)
-  set(TARGET_ARCH ${CMAKE_SYSTEM_PROCESSOR})
-  set(TARGET_VENDOR ${CMAKE_SYSTEM_VENDOR})
-  set(TARGET_SYS ${CMAKE_SYSTEM_NAME})
-
-  if(TARGET_SYS STREQUAL "Linux")
-    if(NOT TARGET_VENDOR)
-      set(TARGET_VENDOR "unknown")
-    endif()
-    set(TARGET_ENV "gnu")
-  endif()
-
-  if(TARGET_SYS STREQUAL "Windows")
-    if(TARGET_ARCH STREQUAL "AMD64")
-      set(TARGET_ARCH "x86_64")
-    endif()
-    if(NOT TARGET_VENDOR)
-      set(TARGET_VENDOR "pc")
-    endif()
-    # TODO: Support gnu ABI in future.
-    set(TARGET_ENV "msvc")
-  endif()
-
-  if(TARGET_SYS STREQUAL "Darwin")
-    if(NOT TARGET_VENDOR)
-      set(TARGET_VENDOR "apple")
-    endif()
-  endif()
-
-  set(TARGET_COMPONENTS ${TARGET_ARCH} ${TARGET_VENDOR} ${TARGET_SYS} ${TARGET_ENV})
-  string(JOIN "-" TARGET_COMPONENTS ${TARGET_COMPONENTS})
-  string(TOLOWER ${TARGET_COMPONENTS} TARGET_COMPONENTS)
-  set(${TARGET_TRIPLE} ${TARGET_COMPONENTS} PARENT_SCOPE)
-endfunction()
-
-get_target_triple(TARGET_TRIPLE)
-
 # Add exe extension to executable on Windows
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(TARGET_EXECUTABLE "${PROJECT_NAME}.exe")
@@ -127,45 +96,43 @@ else()
 endif()
 
 # Create target directory, only include project version in release builds
-string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-set(OUTPUT_DIRECTORY "target/${BUILD_TYPE}")
-if(BUILD_TYPE STREQUAL "debug")
-  set(TARGET_BASENAME "${PROJECT_NAME}-${TARGET_TRIPLE}")
-elseif(BUILD_TYPE STREQUAL "release")
-  set(TARGET_BASENAME "${PROJECT_NAME}-${PROJECT_VERSION}-${TARGET_TRIPLE}")
-endif()
-set(TARGET_DIRECTORY "${OUTPUT_DIRECTORY}/${TARGET_BASENAME}")
+string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE_LC)
+set(TARGET_DIRECTORY "target")
+set(TARGET_BASENAME "${PROJECT_NAME}-${PROJECT_VERSION}-${TARGET_TRIPLE}-${BUILD_TYPE_LC}")
+set(TARGET_PATH "${TARGET_DIRECTORY}/${TARGET_BASENAME}")
 
 # Create zip archive on Windows, tar.gz archive on other platforms
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(TARGET_ARCHIVE "${TARGET_BASENAME}.zip")
-  set(ARCHIVE_COMMAND cd ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY} && zip -r ${TARGET_ARCHIVE} ${TARGET_BASENAME})
+  set(ARCHIVE_COMMAND cd ${CMAKE_SOURCE_DIR}/${TARGET_PATH} && zip -r ${TARGET_ARCHIVE} ${TARGET_BASENAME})
 else()
   set(TARGET_ARCHIVE "${TARGET_BASENAME}.tar.gz")
-  set(ARCHIVE_COMMAND tar -czvf ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_ARCHIVE} -C ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY} ${TARGET_BASENAME})
+  set(ARCHIVE_COMMAND tar -czvf ${CMAKE_SOURCE_DIR}/${TARGET_PATH}/${TARGET_ARCHIVE} -C ${CMAKE_SOURCE_DIR}/${TARGET_PATH} ${TARGET_BASENAME})
 endif()
-set(TARGET_SHA256 "${TARGET_ARCHIVE}.sha256")
+
+set(PROJECT_ASSETS_SOURCE_PATH ${CMAKE_SOURCE_DIR}/src/racer/assets)
 
 if(BUILD_TYPE STREQUAL "release")
   # Copy executable and assets to target directory for distribution
   add_custom_target(
     target ALL
     DEPENDS $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE}
-            ${CMAKE_SOURCE_DIR}/src/racer/assets
-    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE} ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/${TARGET_EXECUTABLE}
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/racer/assets ${CMAKE_SOURCE_DIR}/${TARGET_DIRECTORY}/assets
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/src/racer/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+            ${PROJECT_ASSETS_SOURCE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E create_symlink $<PATH:RELATIVE_PATH,${PROJECT_ASSETS_SOURCE_PATH},$<TARGET_FILE_DIR:${PROJECT_NAME}>> $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+    # Packaging for distribution
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/${TARGET_PATH}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/${TARGET_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE} ${CMAKE_SOURCE_DIR}/${TARGET_PATH}/${TARGET_EXECUTABLE}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_ASSETS_SOURCE_PATH} ${CMAKE_SOURCE_DIR}/${TARGET_PATH}/assets
     COMMAND ${ARCHIVE_COMMAND}
-    COMMAND sha256sum ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_ARCHIVE} > ${CMAKE_SOURCE_DIR}/${OUTPUT_DIRECTORY}/${TARGET_SHA256}
+    COMMAND sha256sum ${CMAKE_SOURCE_DIR}/${TARGET_PATH}/${TARGET_ARCHIVE} > ${CMAKE_SOURCE_DIR}/${TARGET_PATH}/${TARGET_ARCHIVE}.sha256
   )
 else()
   # Create symlink to assets directory for development
   add_custom_target(
     target ALL
     DEPENDS $<TARGET_FILE_DIR:${PROJECT_NAME}>/${TARGET_EXECUTABLE}
-            ${CMAKE_SOURCE_DIR}/src/racer/assets
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ../../../src/racer/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+            ${PROJECT_ASSETS_SOURCE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E create_symlink $<PATH:RELATIVE_PATH,${PROJECT_ASSETS_SOURCE_PATH},$<TARGET_FILE_DIR:${PROJECT_NAME}>> $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
   )
 endif()
