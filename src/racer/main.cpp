@@ -36,7 +36,14 @@ SDL_Renderer *renderer = NULL;
 bool debug = false;
 
 void print_version() {
-  std::cout << RACER_PROJECT_VERSION << "+" << RACER_GIT_COMMIT_SHA << std::endl;
+  std::string version = RACER_SEMVER_VERSION_CORE;
+  if (RACER_SEMVER_PRE_RELEASE && *RACER_SEMVER_PRE_RELEASE) {
+    version += "-" + std::string(RACER_SEMVER_PRE_RELEASE);
+  }
+  if (RACER_SEMVER_BUILD && *RACER_SEMVER_BUILD) {
+    version += "+" + std::string(RACER_SEMVER_BUILD);
+  }
+  std::cout << version << std::endl;
 }
 
 // MAIN FUNCTION:
