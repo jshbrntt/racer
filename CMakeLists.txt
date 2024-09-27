@@ -37,7 +37,7 @@ project(racer VERSION 1.0.0)
 
 # Set semantic version variables
 set(SEMVER_VERSION_CORE ${PROJECT_VERSION})
-if(NOT CMAKE_BUILD_TYPE EQUAL "RELEASE")
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
   # If not release assume it is a release candidate build
   set(SEMVER_PRE_RELEASE "rc")
 endif()
@@ -112,7 +112,7 @@ endif()
 
 set(PROJECT_ASSETS_SOURCE_PATH ${CMAKE_SOURCE_DIR}/src/racer/assets)
 
-if(BUILD_TYPE STREQUAL "release")
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
   # Copy executable and assets to target directory for distribution
   add_custom_target(
     target ALL
