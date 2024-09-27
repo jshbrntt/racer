@@ -5,9 +5,9 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug: Racer (Linux)",
-            "program": "${workspaceFolder}/build/linux/debug/racer",
+            "program": "${workspaceFolder}/build/x86_64-unknown-linux-gnu-debug/racer",
             "args": [],
-            "cwd": "${workspaceFolder}/build/linux/debug",
+            "cwd": "${workspaceFolder}/build/x86_64-unknown-linux-gnu-debug/debug",
             "preLaunchTask": "Build: Linux",
             "sourceMap": {
                 "/opt/racer": "${workspaceFolder}"
@@ -17,9 +17,9 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug: Racer (Windows)",
-            "program": "${workspaceFolder}/build/windows/debug/racer.exe",
+            "program": "${workspaceFolder}/build/x86_64-pc-windows-msvc-debug/racer.exe",
             "args": [],
-            "cwd": "${workspaceFolder}/build/windows/debug",
+            "cwd": "${workspaceFolder}/build/x86_64-pc-windows-msvc-debug/debug",
             "preLaunchTask": "Build: Windows",
             "sourceMap": {
                 // This has to be hardcoded because of bug in VSCode
@@ -31,9 +31,9 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug: Racer (Mac OS X)",
-            "program": "${workspaceFolder}/build/macosx/debug/racer",
+            "program": "${workspaceFolder}/build/x86_64-apple-darwin-debug/racer",
             "args": [],
-            "cwd": "${workspaceFolder}/build/macosx/debug",
+            "cwd": "${workspaceFolder}/build/x86_64-apple-darwin-debug",
             "preLaunchTask": "Build: Mac OS X",
             "sourceMap": {
                 "/opt/racer": "${workspaceFolder}"
