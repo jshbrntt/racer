@@ -34,7 +34,7 @@ jobs:
         run: |
           name="${GITHUB_REPOSITORY#*/}"
           version="$(sed -n "s/^project($name VERSION \([0-9.]*\)).*/\1/p" CMakeLists.txt)"
-          echo "release=$version-rc.${{ steps.commit.outputs.short_hash }}" >> "$GITHUB_OUTPUT"
+          echo "release=$version-rc+${{ steps.commit.outputs.short_hash }}" >> "$GITHUB_OUTPUT"
 
       - name: Create release
         id: create_release
