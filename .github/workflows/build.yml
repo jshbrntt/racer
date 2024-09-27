@@ -90,8 +90,8 @@ jobs:
 
       - name: Find artifacts
         run: |
-          echo "archive_asset_path=$(find target/release -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
-          echo "sha256_asset_path=$(find target/release -name *.sha256)" >> "$GITHUB_ENV"
+          echo "archive_asset_path=$(find target -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
+          echo "sha256_asset_path=$(find target -name *.sha256)" >> "$GITHUB_ENV"
 
       - name: Get artifact basenames and content types
         run: |
