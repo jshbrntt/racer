@@ -1,15 +1,15 @@
 # TODO
+- [ ] Publish packages to the playtest app in steamworks.
 - [ ] Tidy up the Git history of `feature/sdl-port`.
 - [ ] Merge `feature/sdl-port` to `master`.
-- [ ] Use target triplet for build subdirectory.
 - [ ] Create new demo previews for the `README.md`.
-- [ ] Publish packages to the playtest app in steamworks.
 - [ ] Clean up release if the build workflow failed.
 - [ ] Add sokol to the project.
 - [ ] Explore using CPack for distributing project builds.
-- [ ] Merge CMake toolchains?
 - [ ] Figure out how to get audio working on WSLg.
 - [ ] Get Wayland working on WSLg.
+- [x] Use target triplet for build subdirectory.
+- [x] Fix issue where assets fail to load unless current working directory is where the executable is.
 - [x] Use a static path for the build context inside the container (`/opt/racer`).
 - [x] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
 - [x] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
