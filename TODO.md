@@ -1,5 +1,8 @@
 # TODO
 - [ ] Publish packages to the playtest app in steamworks.
+- [ ] Hide the console window on macOS.
+- [ ] Package it as a `.app` on macOS with an icon.
+- [ ] Statically link libc++17?
 - [ ] Tidy up the Git history of `feature/sdl-port`.
 - [ ] Merge `feature/sdl-port` to `master`.
 - [ ] Create new demo previews for the `README.md`.
