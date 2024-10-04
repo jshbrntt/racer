@@ -3,6 +3,9 @@ ifndef HOSTNAME
 
 include picard/picard.mk
 
+REGISTRY_HOSTNAME := ghcr.io
+REGISTRY_NAMESPACE := jshbrntt
+
 PLATFORM ?= linux
 
 .PHONY: shell
