@@ -1,0 +1,30 @@
+# TODO
+- [ ] Publish packages to the playtest app in steamworks.
+- [ ] Hide the console window on macOS.
+- [ ] Package it as a `.app` on macOS with an icon.
+- [ ] Statically link libc++17?
+- [ ] Tidy up the Git history of `feature/sdl-port`.
+- [ ] Merge `feature/sdl-port` to `master`.
+- [ ] Create new demo previews for the `README.md`.
+- [ ] Clean up release if the build workflow failed.
+- [ ] Add sokol to the project.
+- [ ] Explore using CPack for distributing project builds.
+- [ ] Figure out how to get audio working on WSLg.
+- [ ] Get Wayland working on WSLg.
+- [x] Use target triplet for build subdirectory.
+- [x] Fix issue where assets fail to load unless current working directory is where the executable is.
+- [x] Use a static path for the build context inside the container (`/opt/racer`).
+- [x] Refactor `CMakeLists.txt` `release` target to reused all but the `zip`/`tar.gz` parts.
+- [x] Get version number/release tag from `CMakeLists.txt`/`PROJECT_VERSION`.
+- [x] Calculate release sha without checkout in `release` job.
+- [x] Try to cache `external` dependencies as part of a non-matrix step, or just as a layer in the Docker image.
+- [x] Install project dependencies as Git submodules instead of using CMake to fetch them?
+  - [x] This will reduce CI cache sizes (but might increase checkout).
+- [x] Disable console in `Release` build.
+- [x] Split Docker image into multiple targets for each OS target.
+- [x] Make a proper "package" target in CMake instead of using `POST_BUILD` which will not trigger if there are no changes.
+- [x] Create build pipeline to build different targets and publish to GH/Releases page.
+- [x] Enable splash screen and game restart.
+- [x] Attempt to compile for Apple M1/2 processors.
+- [x] Install `osxcross` in Docker image without Git submodule?
+- [x] Draw lap counter with SDL_ttf.

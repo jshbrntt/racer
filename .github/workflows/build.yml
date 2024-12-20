@@ -1,0 +1,122 @@
+name: build
+
+on:
+  push
+  workflow_dispatch
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      short_hash: ${{ steps.commit.outputs.short_hash }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Calculate short hash of commit
+        id: commit
+        run: echo "short_hash=$(echo $GITHUB_SHA | head -c 7)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache project source
+        id: cache-project-source
+        uses: actions/cache@v4
+        with:
+          restore-keys: source-
+          key: source-${{ steps.commit.outputs.short_hash }}
+          path: |
+            .
+            !.git
+
+      - name: Checkout latest project source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Calculate project release version
+        id: project
+        run: |
+          name="${GITHUB_REPOSITORY#*/}"
+          version="$(sed -n "s/^project($name VERSION \([0-9.]*\)).*/\1/p" CMakeLists.txt)"
+          echo "release=$version-rc+${{ steps.commit.outputs.short_hash }}" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        id: create_release
+        continue-on-error: true
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.project.outputs.release }}
+          release_name: ${{ steps.project.outputs.release }}
+          draft: false
+          prerelease: true
+
+  build:
+    needs:
+      - prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - windows
+          - linux
+          - macosx
+    steps:
+      - name: Restore project source from cache
+        uses: actions/cache/restore@v4
+        with:
+          key: source-${{ needs.prepare.outputs.short_hash }}
+          path: |
+            .
+            !.git
+
+      - name: Build cache
+        uses: actions/cache@v4
+        with:
+          restore-keys: build-
+          key: build-${{ needs.prepare.outputs.short_hash }}
+          path: build
+
+      - name: Setup contained image store
+        run: |
+          cat /etc/docker/daemon.json | jq '. | .+{"features": {"containerd-snapshotter": true}}' | sudo tee /etc/docker/daemon.json
+          cat /etc/docker/daemon.json
+          sudo systemctl restart docker
+          docker info -f '{{ .DriverStatus }}'
+          docker info
+
+      - name: Build ${{ matrix.target }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          make build-${{ matrix.target }}
+
+      - name: Find artifacts
+        run: |
+          echo "archive_asset_path=$(find target -name *.zip -o -name *.tar.gz)" >> "$GITHUB_ENV"
+          echo "sha256_asset_path=$(find target -name *.sha256)" >> "$GITHUB_ENV"
+
+      - name: Get artifact basenames and content types
+        run: |
+          echo "archive_asset_name=$(basename ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
+          echo "archive_asset_content_type=$(file --mime-type -b ${{ env.archive_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_name=$(basename ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+          echo "sha256_asset_content_type=$(file --mime-type -b ${{ env.sha256_asset_path }})" >> "$GITHUB_ENV"
+
+      - name: Upload archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.prepare.outputs.upload_url }}
+          asset_path: ${{ env.archive_asset_path }}
+          asset_name: ${{ env.archive_asset_name }}
+          asset_content_type: ${{ env.archive_asset_content_type }}
+
+      - name: Upload sha256
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.prepare.outputs.upload_url }}
+          asset_path: ${{ env.sha256_asset_path }}
+          asset_name: ${{ env.sha256_asset_name }}
+          asset_content_type: ${{ env.sha256_asset_content_type }}

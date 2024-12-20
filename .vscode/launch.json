@@ -2,16 +2,42 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Launch",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/racer",
+            "name": "Debug: Racer (Linux)",
+            "program": "${workspaceFolder}/build/x86_64-unknown-linux-gnu-debug/racer",
             "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb"
+            "cwd": "${workspaceFolder}/build/x86_64-unknown-linux-gnu-debug/debug",
+            "preLaunchTask": "Build: Linux",
+            "sourceMap": {
+                "/opt/racer": "${workspaceFolder}"
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug: Racer (Windows)",
+            "program": "${workspaceFolder}/build/x86_64-pc-windows-msvc-debug/racer.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/build/x86_64-pc-windows-msvc-debug/debug",
+            "preLaunchTask": "Build: Windows",
+            "sourceMap": {
+                // This has to be hardcoded because of bug in VSCode
+                // https://github.com/rust-lang/rust-analyzer/issues/14683#issuecomment-1528759387
+                "/opt/racer": "c:\\Users\\Josh\\racer",
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug: Racer (Mac OS X)",
+            "program": "${workspaceFolder}/build/x86_64-apple-darwin-debug/racer",
+            "args": [],
+            "cwd": "${workspaceFolder}/build/x86_64-apple-darwin-debug",
+            "preLaunchTask": "Build: Mac OS X",
+            "sourceMap": {
+                "/opt/racer": "${workspaceFolder}"
+            }
         }
     ]
 }

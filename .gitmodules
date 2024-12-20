@@ -1,3 +1,24 @@
-[submodule "SOIL"]
-	path = SOIL
-	url = git@github.com:DeVaukz/SOIL.git
+[submodule "external/entt"]
+	path = external/entt
+	url = https://github.com/skypjack/entt.git
+	shallow = true
+[submodule "external/SDL"]
+	path = external/SDL
+	url = https://github.com/libsdl-org/SDL.git
+	shallow = true
+[submodule "external/SDL_image"]
+	path = external/SDL_image
+	url = https://github.com/libsdl-org/SDL_image.git
+	shallow = true
+[submodule "external/SDL_ttf"]
+	path = external/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git
+	shallow = true
+[submodule "external/cxxopts"]
+	path = external/cxxopts
+	url = https://github.com/jarro2783/cxxopts.git
+	shallow = true
+[submodule "picard"]
+	path = picard
+	url = https://github.com/jshbrntt/picard.git
+	shallow = true

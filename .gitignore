@@ -1,79 +1,30 @@
 
-# Created by https://www.gitignore.io/api/c,c++,visualstudiocode,macos,windows,linux
-# Edit at https://www.gitignore.io/?templates=c,c++,visualstudiocode,macos,windows,linux
+# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,cmake,conan,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,cmake,conan,visualstudiocode
 
-### C ###
-# Prerequisites
-*.d
+### CMake ###
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
 
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+### CMake Patch ###
+# External projects
+*-prefix/
 
-# Linker output
-*.ilk
-*.map
-*.exp
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
-
-### C++ ###
-# Prerequisites
-
-# Compiled Object files
-*.slo
-
-# Precompiled Headers
-
-# Compiled Dynamic libraries
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-
-# Executables
+### Conan ###
+# Conan build information
+conan.lock
+conanbuildinfo.*
+conaninfo.txt
+graph_info.json
 
 ### Linux ###
 *~
@@ -98,6 +49,7 @@ dkms.conf
 
 # Icon must end with two \r
 Icon
+
 
 # Thumbnails
 ._*
@@ -124,10 +76,15 @@ Temporary Items
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
+.ionide
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -155,7 +112,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/c,c++,visualstudiocode,macos,windows,linux
+# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,cmake,conan,visualstudiocode
 
-# Build output directory
-bin/
+target/
+build/
+src/racer/version.hpp

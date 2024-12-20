@@ -2,36 +2,147 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build with Clang",
             "type": "shell",
-            "command": "clang++",
+            "label": "Build: Linux",
+            "command": "make",
             "args": [
-                "-std=c++17",
-                "-stdlib=libc++",
-                "-framework",
-                "SOIL",
-                "-framework",
-                "OpenGL",
-                "-framework",
-                "GLUT",
-                "src/car.cpp",
-                "src/enemy.cpp",
-                "src/entity.cpp",
-                "src/glrgb.cpp",
-                "src/hud.cpp",
-                "src/main.cpp",
-                "src/menu.cpp",
-                "src/player.cpp",
-                "src/point.cpp",
-                "src/track.cpp",
-                "-o",
-                "bin/racer",
-                "--debug"
+                "build",
+                "PLATFORM=linux",
+                "SKIP_BUILD=1",
+                "DEBUG=1"
             ],
-            "problemMatcher": "$gcc",
+            "windows": {
+                "command": "wsl.exe",
+                "args": [
+                    "--exec",
+                    "make",
+                    "build",
+                    "PLATFORM=linux",
+                    "SKIP_BUILD=1",
+                    "DEBUG=1"
+                ],
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Clean: Linux",
+            "command": "make",
+            "args": [
+                "clean",
+                "PLATFORM=linux",
+                "SKIP_BUILD=1",
+                "DEBUG=1"
+            ],
+            "windows": {
+                "command": "wsl.exe",
+                "args": [
+                    "--exec",
+                    "make",
+                    "clean",
+                    "PLATFORM=linux",
+                    "SKIP_BUILD=1",
+                    "DEBUG=1"
+                ],
+            },
+        },
+        {
+            "type": "shell",
+            "label": "Build: Windows",
+            "command": "make",
+            "args": [
+                "build",
+                "PLATFORM=windows",
+                "SKIP_BUILD=1",
+                "DEBUG=1"
+            ],
+            "windows": {
+                "command": "wsl.exe",
+                "args": [
+                    "--exec",
+                    "make",
+                    "build",
+                    "PLATFORM=windows",
+                    "SKIP_BUILD=1",
+                    "DEBUG=1"
+                ],
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Clean: Windows",
+            "command": "make",
+            "args": [
+                "clean",
+                "PLATFORM=windows",
+                "SKIP_BUILD=1",
+                "DEBUG=1"
+            ],
+            "windows": {
+                "command": "wsl.exe",
+                "args": [
+                    "--exec",
+                    "make",
+                    "clean",
+                    "PLATFORM=windows",
+                    "SKIP_BUILD=1",
+                    "DEBUG=1"
+                ],
+            },
+        },
+        {
+            "type": "shell",
+            "label": "Build: Mac OS X",
+            "command": "make",
+            "args": [
+                "build",
+                "PLATFORM=macosx",
+                "SKIP_BUILD=1",
+                "DEBUG=1"
+            ],
+            "windows": {
+                "command": "wsl.exe",
+                "args": [
+                    "--exec",
+                    "make",
+                    "build",
+                    "PLATFORM=macosx",
+                    "SKIP_BUILD=1",
+                    "DEBUG=1"
+                ],
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "Clean: Mac OS X",
+            "command": "make",
+            "args": [
+                "clean",
+                "PLATFORM=macosx",
+                "SKIP_BUILD=1",
+                "DEBUG=1"
+            ],
+            "windows": {
+                "command": "wsl.exe",
+                "args": [
+                    "--exec",
+                    "make",
+                    "clean",
+                    "PLATFORM=macosx",
+                    "SKIP_BUILD=1",
+                    "DEBUG=1"
+                ]
             }
         }
     ]
