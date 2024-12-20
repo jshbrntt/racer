@@ -11,6 +11,7 @@ PLATFORM ?= linux
 .PHONY: shell
 shell: IMAGE_TARGET := devcontainer_$(PLATFORM)
 shell: COMMAND := bash
+shell: RUN_OPTIONS += --env PLATFORM=$(PLATFORM)
 shell: docker-command
 
 .PHONY: clean
@@ -40,6 +41,15 @@ else
 include picard/constants.mk
 include picard/list.mk
 include picard/string.mk
+
+# Set platform if not already set
+ifdef LINUX
+	PLATFORM ?= linux
+endif
+ifdef MACOS
+	PLATFORM ?= macosx
+endif
+PLATFORM ?= windows
 
 # Validate selected platform
 SUPPORTED_PLATFORMS = linux windows macosx
@@ -71,6 +81,8 @@ BUILD_TYPE_LC := $(call lowercase,$(BUILD_TYPE))
 BUILD_DIRECTORY_PARTS := build $(TARGET_TRIPLE)-$(BUILD_TYPE_LC)
 BUILD_DIRECTORY := $(call list_join,/,$(BUILD_DIRECTORY_PARTS))
 
+SOURCE_DIRECTORY ?= $(CWD_PATH)
+
 .PHONY: all
 all: clean build
 
@@ -87,7 +99,9 @@ build: configure
 
 .PHONY: configure
 configure: $(BUILD_DIRECTORY)
-	cmake -B $(BUILD_DIRECTORY) -S . \
+	cmake \
+-S $(SOURCE_DIRECTORY) \
+-B $(BUILD_DIRECTORY) \
 -DTARGET_TRIPLE=$(TARGET_TRIPLE) \
 -DCMAKE_TOOLCHAIN_FILE=$(CWD_PATH)/cmake/$(BUILD_TARGET_SYS)-toolchain.cmake \
 -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
