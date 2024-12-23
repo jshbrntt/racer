@@ -84,7 +84,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
   )
 endif()
 
-# Link project dependenciess
+# Link project dependencies
+target_link_options(
+  ${PROJECT_NAME}
+  PRIVATE
+  -stdlib=libc++
+  -static-libgcc
+  -static-libstdc++
+)
 target_link_libraries(
   ${PROJECT_NAME}
   cxxopts::cxxopts
