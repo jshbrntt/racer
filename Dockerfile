@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1-labs
-FROM ubuntu:24.04@sha256:77d57fd89366f7d16615794a5b53e124d742404e20f035c22032233f1826bd6a AS base
+FROM ubuntu:20.04 AS base
 ARG DEBIAN_FRONTEND="noninteractive"
 ENV TZ="Etc/UTC"
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-git=1:2.43.0-1ubuntu7.1 \
-lsb-release=12.0-2 \
-make=4.3-4.1build2 \
-software-properties-common=0.99.48 \
-wget=1.21.4-1ubuntu4.1 \
+git \
+lsb-release \
+make \
+software-properties-common \
+wget \
 && rm -rf /var/lib/apt/lists/*
 # Add GitHub Actions runner user
 RUN groupadd --gid 127 docker \
@@ -50,8 +50,8 @@ RUN wget -qO- https://apt.kitware.com/keys/kitware-archive-latest.asc | tee /etc
 # Install CMake
 && apt-get update \
 && apt-get install --no-install-recommends --yes \
-cmake=3.30.2-0kitware1ubuntu24.04.1 \
-ninja-build=1.11.1-2 \
+cmake \
+ninja-build \
 && rm -rf /var/lib/apt/lists/*
 # Set CMake generator to Ninja
 ENV CMAKE_GENERATOR="Ninja"
@@ -67,11 +67,11 @@ wget -qO- https://github.com/Jake-Shadle/xwin/releases/download/${XWIN_VERSION}/
 FROM llvm-cmake AS macosx-toolchain
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-libssl-dev=3.0.13-0ubuntu3.4 \
-libxml2-dev=2.9.14+dfsg-1.3ubuntu3 \
-patch=2.7.6-7build3 \
-xz-utils=5.6.1+really5.4.5-1build0.1 \
-zlib1g-dev=1:1.3.dfsg-3.1ubuntu2.1 \
+libssl-dev \
+libxml2-dev \
+patch \
+xz-utils \
+zlib1g-dev \
 && rm -rf /var/lib/apt/lists/*
 # Install macOS SDK (https://github.com/tpoechtrager/osxcross/blob/ed079949e7aee248ad7e7cb97726cd1c8556afd1/README.md#installation)
 ADD https://github.com/tpoechtrager/osxcross.git#be6ffb3cbc6c0228614ebe6a4b5cd2726339ecc9 /osxcross/
@@ -93,7 +93,7 @@ ENV PATH="${PATH}:/osxcross/target/bin"
 FROM llvm-cmake AS devcontainer_windows
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-zip=3.0-13build1 \
+zip \
 && rm -rf /var/lib/apt/lists/*
 COPY --from=windows-sdk /xwin /xwin
 
@@ -110,7 +110,7 @@ FROM llvm-cmake AS devcontainer_linux
 # Required for linux build
 RUN apt-get update \
 && apt-get install --no-install-recommends --yes \
-libasound2-dev=1.2.11-1build2 \
-libgles2-mesa-dev=24.0.9-0ubuntu0.1 \
-libxext-dev=2:1.3.4-1build2 \
+libasound2-dev \
+libgles2-mesa-dev \
+libxext-dev \
 && rm -rf /var/lib/apt/lists/*
