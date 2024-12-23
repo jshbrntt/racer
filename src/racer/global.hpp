@@ -45,6 +45,7 @@
 // ENGINE VARIABLES:
 extern const float S_WIDTH;
 extern const float S_HEIGHT;
+extern const float S_SCALE;
 extern unordered_map<SDL_Keycode, bool> KEYS;
 
 // GAME VARIABLES:

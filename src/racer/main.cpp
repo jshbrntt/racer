@@ -9,6 +9,7 @@ using namespace std;
 // SCREEN DIMENSIONS:
 const float S_WIDTH = 800;
 const float S_HEIGHT = 600;
+const float S_SCALE = 2;
 
 // The frames per second
 const int FPS = 60;
@@ -337,8 +338,8 @@ bool init()
     window = SDL_CreateWindow("Topdown Racing",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
-                              S_WIDTH,
-                              S_HEIGHT,
+                              S_WIDTH * S_SCALE,
+                              S_HEIGHT * S_SCALE,
                               SDL_WINDOW_SHOWN);
     if (window == NULL)
     {
@@ -353,6 +354,7 @@ bool init()
           window,
           -1,
           SDL_RENDERER_ACCELERATED);
+      SDL_RenderSetScale(renderer, S_SCALE, S_SCALE);
       if (renderer == NULL)
       {
         SDL_Log("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
