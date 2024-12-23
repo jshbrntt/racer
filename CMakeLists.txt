@@ -89,9 +89,15 @@ target_link_options(
   ${PROJECT_NAME}
   PRIVATE
   -stdlib=libc++
-  -static-libgcc
   -static-libstdc++
 )
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  target_link_options(
+    ${PROJECT_NAME}
+    PRIVATE
+    -static-libgcc
+  )
+endif()
 target_link_libraries(
   ${PROJECT_NAME}
   cxxopts::cxxopts
