@@ -387,7 +387,6 @@ bool init()
 SDL_Texture *loadTexture(std::string texturePath)
 {
   std::string path = std::filesystem::path(gameRoot / texturePath).string();
-
   // The final texture
   SDL_Texture *newTexture = NULL;
 
@@ -416,8 +415,9 @@ SDL_Texture *loadTexture(std::string texturePath)
   return newTexture;
 }
 
-TTF_Font *loadFont(std::string path, int ptSize)
+TTF_Font *loadFont(std::string fontPath, int ptSize)
 {
+  std::string path = std::filesystem::path(gameRoot / fontPath).string();
   TTF_Font *font = TTF_OpenFont(path.c_str(), ptSize);
   if (font == NULL)
   {

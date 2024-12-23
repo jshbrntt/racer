@@ -63,8 +63,8 @@ extern SDL_Renderer *renderer;
 extern bool debug;
 
 // GLOBAL FUNCTIONS:
-SDL_Texture *loadTexture(std::string path);
-TTF_Font *loadFont(std::string path, int ptSize);
+SDL_Texture *loadTexture(std::string texturePath);
+TTF_Font *loadFont(std::string fontPath, int ptSize);
 int roundUp(int numToRound, int multiple);
 vector<Point> getBox(float width, float height, Point position = Point(0, 0));
 vector<Point> getPoly(int sides, float radius, Point position = Point(0, 0));
