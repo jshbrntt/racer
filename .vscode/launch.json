@@ -7,7 +7,7 @@
             "name": "Debug: Racer (Linux)",
             "program": "${workspaceFolder}/build/x86_64-unknown-linux-gnu-debug/racer",
             "args": [],
-            "cwd": "${workspaceFolder}/build/x86_64-unknown-linux-gnu-debug/debug",
+            "cwd": "${workspaceFolder}/build/x86_64-unknown-linux-gnu-debug",
             "preLaunchTask": "Build: Linux",
             "sourceMap": {
                 "/opt/racer": "${workspaceFolder}"
@@ -19,7 +19,7 @@
             "name": "Debug: Racer (Windows)",
             "program": "${workspaceFolder}/build/x86_64-pc-windows-msvc-debug/racer.exe",
             "args": [],
-            "cwd": "${workspaceFolder}/build/x86_64-pc-windows-msvc-debug/debug",
+            "cwd": "${workspaceFolder}/build/x86_64-pc-windows-msvc-debug",
             "preLaunchTask": "Build: Windows",
             "sourceMap": {
                 // This has to be hardcoded because of bug in VSCode
